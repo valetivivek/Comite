@@ -10,17 +10,19 @@ import {
   Cog6ToothIcon
 } from '@heroicons/react/24/outline';
 import { StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
-import { User, UserRating, ReadingHistory } from '../types';
+import { User, UserRating, ReadingHistory, Bookmark } from '../types';
+import { dataService } from '../services/dataService';
 
 const ProfilePage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [userRatings, setUserRatings] = useState<UserRating[]>([]);
   const [readingHistory, setReadingHistory] = useState<ReadingHistory[]>([]);
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const loadUserData = () => {
+    const loadUserData = async () => {
       try {
         const userData = localStorage.getItem('manga-reader-user');
         const ratingsData = localStorage.getItem('manga-reader-user-ratings');
@@ -37,6 +39,10 @@ const ProfilePage = () => {
         if (historyData) {
           setReadingHistory(JSON.parse(historyData));
         }
+
+        // Load bookmarks from data service
+        const bookmarksData = await dataService.getBookmarks();
+        setBookmarks(bookmarksData);
       } catch (error) {
         console.error('Error loading user data:', error);
       } finally {
@@ -142,7 +148,7 @@ const ProfilePage = () => {
             >
               <BookmarkIcon className="h-8 w-8 text-teal-500 mx-auto mb-2" />
               <h3 className="text-2xl font-bold text-manga-text mb-1">
-                {JSON.parse(localStorage.getItem('manga-reader-bookmarks') || '[]').length}
+                {bookmarks.length}
               </h3>
               <p className="text-manga-muted">Bookmarked Series</p>
             </motion.div>
@@ -206,11 +212,53 @@ const ProfilePage = () => {
             )}
           </motion.div>
 
-          {/* User Ratings */}
+          {/* Saved Titles */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
+            className="card p-6 mb-8"
+          >
+            <h3 className="text-xl font-bold text-manga-text mb-4">Saved Titles</h3>
+            {bookmarks.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {bookmarks.map((bookmark) => (
+                  <Link
+                    key={bookmark.id}
+                    to={`/series/${bookmark.seriesId}`}
+                    className="block p-3 bg-manga-surface rounded-lg hover:bg-manga-border transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={bookmark.series.coverImage}
+                        alt={bookmark.series.title}
+                        className="w-12 h-16 object-cover rounded"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-manga-text font-medium truncate">
+                          {bookmark.series.title}
+                        </h4>
+                        <p className="text-sm text-manga-muted">
+                          {bookmark.series.author}
+                        </p>
+                        <p className="text-xs text-manga-muted">
+                          {new Date(bookmark.lastReadAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <p className="text-manga-muted text-center py-8">No saved titles yet</p>
+            )}
+          </motion.div>
+
+          {/* User Ratings */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
             className="card p-6"
           >
             <h3 className="text-xl font-bold text-manga-text mb-4">Your Ratings</h3>

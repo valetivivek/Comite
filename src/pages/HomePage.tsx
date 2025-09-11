@@ -12,6 +12,7 @@ import {
 import { dataService } from '../services/dataService';
 import { Series, SearchFilters, ViewMode } from '../types';
 import SeriesCard from '../components/SeriesCard';
+import ListItem from '../components/ListItem';
 import Carousel from '../components/Carousel';
 import SearchFiltersModal from '../components/SearchFiltersModal';
 
@@ -21,7 +22,7 @@ const HomePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>({ type: 'grid' });
+  const [viewMode, setViewMode] = useState<ViewMode>({ type: 'list' });
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<SearchFilters>({
     query: '',
@@ -153,17 +154,6 @@ const HomePage = () => {
               </button>
             </div>
 
-            {/* Results Count and Pagination Info */}
-            <div className="flex items-center justify-between">
-              <p className="text-manga-muted">
-                {filteredSeries.length} series found
-              </p>
-              {totalPages > 1 && (
-                <p className="text-manga-muted text-sm">
-                  Page {currentPage} of {totalPages}
-                </p>
-              )}
-            </div>
           </div>
         </div>
       </section>
@@ -194,10 +184,14 @@ const HomePage = () => {
                   exit={{ opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <SeriesCard 
-                    series={series} 
-                    viewMode={viewMode.type}
-                  />
+                  {viewMode.type === 'list' ? (
+                    <ListItem series={series} />
+                  ) : (
+                    <SeriesCard 
+                      series={series} 
+                      viewMode={viewMode.type}
+                    />
+                  )}
                 </motion.div>
               ))}
             </AnimatePresence>

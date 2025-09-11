@@ -10,6 +10,7 @@ import {
   UserIcon
 } from '@heroicons/react/24/outline';
 import { User } from '../types';
+import Footer from './Footer';
 
 interface LayoutProps {
   children: ReactNode;
@@ -73,7 +74,9 @@ const Layout = ({ children }: LayoutProps) => {
           >
             <div className="p-6">
               <div className="flex items-center justify-between mb-8">
-                <h1 className="text-xl font-bold text-teal-500">Manga Reader</h1>
+                <Link to="/" className="text-xl font-bold text-teal-500 hover:text-teal-400 transition-colors">
+                  📚 ComiTe
+                </Link>
               </div>
               <nav className="space-y-2">
                 {navigation.map((item) => {
@@ -139,7 +142,9 @@ const Layout = ({ children }: LayoutProps) => {
       <div className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:w-64 lg:bg-manga-card lg:shadow-lg lg:z-30">
         <div className="p-6">
           <div className="flex items-center mb-8">
-            <h1 className="text-xl font-bold text-teal-500">Manga Reader</h1>
+            <Link to="/" className="text-xl font-bold text-teal-500 hover:text-teal-400 transition-colors">
+              📚 ComiTe
+            </Link>
           </div>
           <nav className="space-y-2">
             {navigation.map((item) => {
@@ -196,10 +201,11 @@ const Layout = ({ children }: LayoutProps) => {
       </div>
 
       {/* Main content */}
-      <div className="lg:pl-64">
-        <main className="min-h-screen">
+      <div className="lg:pl-64 flex flex-col min-h-screen">
+        <main className="flex-1">
           {children}
         </main>
+        <Footer />
       </div>
     </div>
   );

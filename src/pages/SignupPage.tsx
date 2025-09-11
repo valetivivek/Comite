@@ -28,6 +28,25 @@ const SignupPage = () => {
     setIsLoading(true);
     setError('');
 
+    // Basic validation
+    if (!formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
+      setError('Please fill in all fields');
+      setIsLoading(false);
+      return;
+    }
+
+    if (formData.username.length < 3) {
+      setError('Username must be at least 3 characters');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!formData.email.includes('@')) {
+      setError('Please enter a valid email address');
+      setIsLoading(false);
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       setIsLoading(false);
@@ -52,8 +71,8 @@ const SignupPage = () => {
         createdAt: new Date().toISOString(),
         preferences: {
           theme: 'dark' as const,
-          viewMode: 'grid' as const,
-          itemsPerPage: 24,
+          viewMode: 'list' as const, // Default to list view
+          itemsPerPage: 10,
           autoMarkAsRead: true,
           notifications: true,
         }

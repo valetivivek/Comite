@@ -25,6 +25,19 @@ const LoginPage = () => {
     setIsLoading(true);
     setError('');
 
+    // Basic validation
+    if (!formData.email || !formData.password) {
+      setError('Please fill in all fields');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!formData.email.includes('@')) {
+      setError('Please enter a valid email address');
+      setIsLoading(false);
+      return;
+    }
+
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -32,13 +45,13 @@ const LoginPage = () => {
       // Mock successful login
       const mockUser = {
         id: 'user-1',
-        username: 'mangareader',
+        username: formData.email.split('@')[0],
         email: formData.email,
         createdAt: new Date().toISOString(),
         preferences: {
           theme: 'dark' as const,
-          viewMode: 'grid' as const,
-          itemsPerPage: 24,
+          viewMode: 'list' as const, // Default to list view
+          itemsPerPage: 10,
           autoMarkAsRead: true,
           notifications: true,
         }
