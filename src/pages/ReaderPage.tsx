@@ -1,0 +1,370 @@
+import { useState, useEffect, useRef } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  ChevronLeftIcon, 
+  ChevronRightIcon, 
+  ArrowLeftIcon,
+  ChevronDownIcon,
+  XMarkIcon
+} from '@heroicons/react/24/outline';
+import { dataService } from '../services/dataService';
+import { Series, Chapter } from '../types';
+
+const ReaderPage = () => {
+  const { seriesId, chapterId } = useParams<{ seriesId: string; chapterId: string }>();
+  const navigate = useNavigate();
+  const [series, setSeries] = useState<Series | null>(null);
+  const [chapter, setChapter] = useState<Chapter | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showToolbar, setShowToolbar] = useState(true);
+  const [showChapterList, setShowChapterList] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [isMarkingAsRead, setIsMarkingAsRead] = useState(false);
+  const toolbarTimeoutRef = useRef<NodeJS.Timeout>();
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (!seriesId || !chapterId) return;
+
+      try {
+        setIsLoading(true);
+        const [seriesData, chapterData] = await Promise.all([
+          dataService.getSeriesById(seriesId),
+          dataService.getChapter(seriesId, chapterId)
+        ]);
+
+        if (seriesData && chapterData) {
+          setSeries(seriesData);
+          setChapter(chapterData);
+        } else {
+          navigate('/');
+        }
+      } catch (error) {
+        console.error('Error loading chapter:', error);
+        navigate('/');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, [seriesId, chapterId, navigate]);
+
+  useEffect(() => {
+    // Mark chapter as read when opened
+    if (chapter && !chapter.isRead && !isMarkingAsRead) {
+      setIsMarkingAsRead(true);
+      dataService.markChapterAsRead(seriesId!, chapterId!);
+    }
+  }, [chapter, seriesId, chapterId, isMarkingAsRead]);
+
+  useEffect(() => {
+    // Auto-hide toolbar
+    const handleMouseMove = () => {
+      setShowToolbar(true);
+      if (toolbarTimeoutRef.current) {
+        clearTimeout(toolbarTimeoutRef.current);
+      }
+      toolbarTimeoutRef.current = setTimeout(() => {
+        setShowToolbar(false);
+      }, 3000);
+    };
+
+    const handleScroll = () => {
+      setShowToolbar(true);
+      if (toolbarTimeoutRef.current) {
+        clearTimeout(toolbarTimeoutRef.current);
+      }
+      toolbarTimeoutRef.current = setTimeout(() => {
+        setShowToolbar(false);
+      }, 3000);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll);
+      if (toolbarTimeoutRef.current) {
+        clearTimeout(toolbarTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const getCurrentChapterIndex = () => {
+    if (!series || !chapter) return -1;
+    return series.chapters.findIndex(ch => ch.id === chapter.id);
+  };
+
+  const getPreviousChapter = () => {
+    if (!series) return null;
+    const currentIndex = getCurrentChapterIndex();
+    return currentIndex > 0 ? series.chapters[currentIndex - 1] : null;
+  };
+
+  const getNextChapter = () => {
+    if (!series) return null;
+    const currentIndex = getCurrentChapterIndex();
+    return currentIndex < series.chapters.length - 1 ? series.chapters[currentIndex + 1] : null;
+  };
+
+  const goToPreviousChapter = () => {
+    const prevChapter = getPreviousChapter();
+    if (prevChapter) {
+      navigate(`/series/${seriesId}/chapter/${prevChapter.id}`);
+    }
+  };
+
+  const goToNextChapter = () => {
+    const nextChapter = getNextChapter();
+    if (nextChapter) {
+      navigate(`/series/${seriesId}/chapter/${nextChapter.id}`);
+    } else {
+      // Mark as completed and go back to series
+      if (chapter && !chapter.isRead) {
+        dataService.markChapterAsRead(seriesId!, chapterId!);
+      }
+      navigate(`/series/${seriesId}`);
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    
+    // Mark as read when reaching the end
+    if (chapter && page === chapter.pages.length - 1 && !chapter.isRead) {
+      dataService.markChapterAsRead(seriesId!, chapterId!);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-manga-bg">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
+      </div>
+    );
+  }
+
+  if (!series || !chapter) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-manga-bg text-manga-text">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-2">Chapter Not Found</h2>
+          <p className="mb-4 text-manga-muted">The chapter you're looking for doesn't exist.</p>
+          <Link to="/" className="btn-primary">
+            Go Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const currentIndex = getCurrentChapterIndex();
+  const totalChapters = series.chapters.length;
+  const progress = ((currentIndex + 1) / totalChapters) * 100;
+
+  return (
+    <div className="min-h-screen bg-manga-bg text-manga-text">
+      {/* Top Toolbar */}
+      <AnimatePresence>
+        {showToolbar && (
+          <motion.div
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            exit={{ y: -100 }}
+            className="fixed top-0 left-0 right-0 z-50 bg-manga-bg bg-opacity-95 backdrop-blur-sm border-b border-manga-border"
+          >
+            <div className="flex items-center justify-between p-4">
+              <div className="flex items-center gap-4">
+                <Link
+                  to={`/series/${seriesId}`}
+                  className="flex items-center text-manga-text hover:text-teal-400 transition-colors jitter-hover"
+                >
+                  <ArrowLeftIcon className="h-5 w-5 mr-2" />
+                  Back to Series
+                </Link>
+                
+                <div className="hidden sm:block">
+                  <h1 className="text-lg font-semibold text-manga-text">{series.title}</h1>
+                  <p className="text-sm text-manga-muted">Chapter {chapter.chapterNumber}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                {/* Progress */}
+                <div className="hidden sm:block">
+                  <div className="text-sm text-manga-muted">
+                    {currentIndex + 1} of {totalChapters}
+                  </div>
+                  <div className="w-24 h-1 bg-manga-border rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-teal-500 transition-all duration-300"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Chapter Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowChapterList(!showChapterList)}
+                    className="flex items-center px-3 py-2 bg-manga-card rounded-lg hover:bg-manga-surface transition-colors"
+                  >
+                    <span className="hidden sm:inline mr-2">Chapters</span>
+                    <ChevronDownIcon className="h-4 w-4" />
+                  </button>
+
+                  <AnimatePresence>
+                    {showChapterList && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="absolute top-full right-0 mt-2 w-64 bg-manga-card rounded-lg shadow-xl z-20 max-h-80 overflow-y-auto"
+                      >
+                        <div className="p-2">
+                          {series.chapters.map((ch) => (
+                            <Link
+                              key={ch.id}
+                              to={`/series/${seriesId}/chapter/${ch.id}`}
+                              onClick={() => setShowChapterList(false)}
+                              className={`block px-3 py-2 text-sm rounded hover:bg-manga-surface transition-colors ${
+                                ch.id === chapter.id ? 'bg-teal-600 text-white' : 'text-manga-text'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span>Chapter {ch.chapterNumber}</span>
+                                {ch.isRead && (
+                                  <span className="text-xs text-green-400">✓</span>
+                                )}
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Reader Content */}
+      <div className="pt-16">
+        <div className="max-w-4xl mx-auto px-4">
+          {/* Chapter Title */}
+          <div className="text-center py-6 sm:hidden">
+            <h1 className="text-lg font-semibold text-manga-text">{series.title}</h1>
+            <p className="text-sm text-manga-muted">Chapter {chapter.chapterNumber}</p>
+          </div>
+
+          {/* Pages */}
+          <div className="space-y-4">
+            {chapter.pages.map((page, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="flex justify-center"
+              >
+                <img
+                  src={page}
+                  alt={`Page ${index + 1}`}
+                  className="max-w-full h-auto rounded-lg shadow-lg"
+                  loading="lazy"
+                  onLoad={() => handlePageChange(index)}
+                />
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Chapter Navigation */}
+          <div className="py-8">
+            <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
+              <div className="flex gap-4">
+                {getPreviousChapter() ? (
+                  <button
+                    onClick={goToPreviousChapter}
+                    className="flex items-center px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors jitter-hover"
+                  >
+                    <ChevronLeftIcon className="h-4 w-4 mr-2" />
+                    Previous Chapter
+                  </button>
+                ) : (
+                  <div className="px-4 py-2 text-gray-500">
+                    No Previous Chapter
+                  </div>
+                )}
+              </div>
+
+              <div className="text-center">
+                <div className="text-sm text-manga-muted mb-2">
+                  Chapter {chapter.chapterNumber} of {totalChapters}
+                </div>
+                <div className="w-32 h-1 bg-manga-border rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-teal-500 transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                {getNextChapter() ? (
+                  <button
+                    onClick={goToNextChapter}
+                    className="flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors jitter-hover"
+                  >
+                    Next Chapter
+                    <ChevronRightIcon className="h-4 w-4 ml-2" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => navigate(`/series/${seriesId}`)}
+                    className="flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors jitter-hover"
+                  >
+                    Back to Series
+                    <ChevronRightIcon className="h-4 w-4 ml-2" />
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Toolbar */}
+      <AnimatePresence>
+        {showToolbar && (
+          <motion.div
+            initial={{ y: 100 }}
+            animate={{ y: 0 }}
+            exit={{ y: 100 }}
+            className="fixed bottom-0 left-0 right-0 z-50 bg-manga-bg bg-opacity-95 backdrop-blur-sm border-t border-manga-border"
+          >
+            <div className="flex items-center justify-center p-4">
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-manga-muted">
+                  Page {currentPage + 1} of {chapter.pages.length}
+                </span>
+                <div className="w-32 h-1 bg-manga-border rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-teal-500 transition-all duration-300"
+                    style={{ width: `${((currentPage + 1) / chapter.pages.length) * 100}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+export default ReaderPage;
