@@ -11,9 +11,9 @@
     @apply bg-manga-bg text-manga-text font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
     background-image: 
-      radial-gradient(circle at 20% 80%, rgba(20, 184, 166, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(20, 184, 166, 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 40% 40%, rgba(20, 184, 166, 0.03) 0%, transparent 50%);
+      radial-gradient(circle at 20% 80%, rgba(0, 229, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(0, 229, 255, 0.03) 0%, transparent 50%);
   }
   
   html {
@@ -23,15 +23,15 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-manga-bg;
+    @apply bg-neon-500 hover:bg-neon-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-neon-500 focus:ring-offset-2 focus:ring-offset-manga-bg;
   }
   
   .btn-secondary {
-    @apply bg-manga-card hover:bg-manga-border text-manga-text px-4 py-2 rounded-lg font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-manga-bg;
+    @apply bg-manga-card hover:bg-manga-border text-manga-text px-4 py-2 rounded-lg font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-neon-500 focus:ring-offset-2 focus:ring-offset-manga-bg;
   }
   
   .btn-ghost {
-    @apply bg-transparent hover:bg-manga-surface text-manga-muted px-4 py-2 rounded-lg font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-manga-bg;
+    @apply bg-transparent hover:bg-manga-surface text-manga-muted px-4 py-2 rounded-lg font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-neon-500 focus:ring-offset-2 focus:ring-offset-manga-bg;
   }
   
   .card {
@@ -39,7 +39,7 @@
   }
   
   .input {
-    @apply w-full px-3 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors duration-200;
+    @apply w-full px-3 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-neon-500 focus:border-transparent transition-colors duration-200;
   }
   
   .jitter-hover {

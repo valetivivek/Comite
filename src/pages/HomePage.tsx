@@ -1,17 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { 
   MagnifyingGlassIcon, 
-  FunnelIcon,
-  Squares2X2Icon,
-  ListBulletIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon
+  FunnelIcon
 } from '@heroicons/react/24/outline';
 import { dataService } from '../services/dataService';
-import { Series, SearchFilters, ViewMode } from '../types';
-import SeriesCard from '../components/SeriesCard';
+import { Series, SearchFilters } from '../types';
 import ListItem from '../components/ListItem';
 import Carousel from '../components/Carousel';
 import SearchFiltersModal from '../components/SearchFiltersModal';
@@ -22,7 +16,6 @@ const HomePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState<ViewMode>({ type: 'list' });
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<SearchFilters>({
     query: '',
@@ -81,15 +74,9 @@ const HomePage = () => {
     }
   };
 
-  const toggleViewMode = () => {
-    setViewMode(prev => ({ 
-      type: prev.type === 'grid' ? 'list' : 'grid' 
-    }));
-    setCurrentPage(1); // Reset to first page when view mode changes
-  };
 
   // Pagination logic
-  const itemsPerPage = viewMode.type === 'list' ? 10 : 24;
+  const itemsPerPage = 10;
   const totalPages = Math.ceil(filteredSeries.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -115,11 +102,11 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-manga-bg">
-      {/* Search and Controls - Moved to top */}
+      {/* Search and Controls - Responsive */}
       <section className="sticky top-0 z-40 bg-manga-bg/95 backdrop-blur-sm border-b border-manga-border">
-        <div className="px-4 py-4 lg:px-8">
+        <div className="px-4 py-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col sm:flex-row gap-4 mb-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               {/* Search Bar */}
               <div className="flex-1 relative">
                 <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-manga-muted" />
@@ -128,32 +115,19 @@ const HomePage = () => {
                   placeholder="Search manga, manhua, or authors..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="input pl-10"
+                  className="w-full px-4 py-3 pl-10 bg-manga-card border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 />
               </div>
 
               {/* Filter Button */}
               <button
                 onClick={() => setShowFilters(true)}
-                className="flex items-center px-4 py-3 border border-manga-border rounded-lg hover:bg-manga-surface transition-colors jitter-hover"
+                className="flex items-center justify-center px-4 py-3 border border-manga-border rounded-lg hover:bg-manga-surface transition-colors jitter-hover min-h-[48px] sm:min-h-0"
               >
                 <FunnelIcon className="h-5 w-5 mr-2" />
-                Filters
-              </button>
-
-              {/* View Toggle */}
-              <button
-                onClick={toggleViewMode}
-                className="flex items-center px-4 py-3 border border-manga-border rounded-lg hover:bg-manga-surface transition-colors jitter-hover"
-              >
-                {viewMode.type === 'grid' ? (
-                  <ListBulletIcon className="h-5 w-5" />
-                ) : (
-                  <Squares2X2Icon className="h-5 w-5" />
-                )}
+                <span className="hidden sm:inline">Filters</span>
               </button>
             </div>
-
           </div>
         </div>
       </section>
@@ -163,16 +137,12 @@ const HomePage = () => {
         <Carousel series={topSeries} />
       </section>
 
-      {/* Series Grid/List */}
-      <section className="px-4 py-6 lg:px-8">
+      {/* Series List - Responsive */}
+      <section className="px-4 py-6 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div
             layout
-            className={
-              viewMode.type === 'grid'
-                ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4'
-                : 'space-y-4'
-            }
+            className="space-y-4 sm:space-y-6"
           >
             <AnimatePresence mode="popLayout">
               {paginatedSeries.map((series) => (
@@ -184,14 +154,7 @@ const HomePage = () => {
                   exit={{ opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.2 }}
                 >
-                  {viewMode.type === 'list' ? (
-                    <ListItem series={series} />
-                  ) : (
-                    <SeriesCard 
-                      series={series} 
-                      viewMode={viewMode.type}
-                    />
-                  )}
+                  <ListItem series={series} />
                 </motion.div>
               ))}
             </AnimatePresence>

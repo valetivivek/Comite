@@ -2,12 +2,10 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  BookmarkIcon, 
   ChevronDownIcon, 
   ChevronUpIcon,
   ArrowUpIcon
 } from '@heroicons/react/24/outline';
-import { BookmarkIcon as BookmarkSolidIcon } from '@heroicons/react/24/solid';
 import { dataService } from '../services/dataService';
 import { Series, User, UserRating } from '../types';
 import StarRating from '../components/StarRating';
@@ -17,7 +15,6 @@ const SeriesPage = () => {
   const { id } = useParams<{ id: string }>();
   const [series, setSeries] = useState<Series | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isBookmarked, setIsBookmarked] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
   const [showChapterDropdown, setShowChapterDropdown] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -34,8 +31,6 @@ const SeriesPage = () => {
         const seriesData = await dataService.getSeriesById(id);
         if (seriesData) {
           setSeries(seriesData);
-          const bookmarked = await dataService.isBookmarked(id);
-          setIsBookmarked(bookmarked);
         }
       } catch (error) {
         console.error('Error loading series:', error);
@@ -56,14 +51,15 @@ const SeriesPage = () => {
 
     // Load user rating for this series
     if (id) {
-      const ratingsData = localStorage.getItem('manga-reader-user-ratings');
-      if (ratingsData) {
-        const ratings: UserRating[] = JSON.parse(ratingsData);
-        const userRating = ratings.find(r => r.seriesId === id);
-        if (userRating) {
-          setUserRating(userRating.rating);
+      const loadUserRating = async () => {
+        try {
+          const rating = await dataService.getUserRating(id);
+          setUserRating(rating || 0);
+        } catch (error) {
+          console.error('Error loading user rating:', error);
         }
-      }
+      };
+      loadUserRating();
     }
   }, [id]);
 
@@ -76,49 +72,28 @@ const SeriesPage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleBookmark = async () => {
-    if (!id) return;
-    
-    try {
-      if (isBookmarked) {
-        await dataService.removeBookmark(id);
-        setIsBookmarked(false);
-      } else {
-        await dataService.addBookmark(id);
-        setIsBookmarked(true);
-      }
-    } catch (error) {
-      console.error('Error toggling bookmark:', error);
-    }
-  };
 
   const handleRating = async (rating: number) => {
     if (!user || !id || isRating) return;
     
     setIsRating(true);
     try {
-      const ratingsData = localStorage.getItem('manga-reader-user-ratings');
-      const ratings: UserRating[] = ratingsData ? JSON.parse(ratingsData) : [];
-      
-      const existingRatingIndex = ratings.findIndex(r => r.seriesId === id && r.userId === user.id);
-      const newRating: UserRating = {
-        id: `rating-${Date.now()}`,
-        userId: user.id,
-        seriesId: id,
-        rating,
-        createdAt: new Date().toISOString()
-      };
-
-      if (existingRatingIndex >= 0) {
-        ratings[existingRatingIndex] = newRating;
-      } else {
-        ratings.push(newRating);
-      }
-
-      localStorage.setItem('manga-reader-user-ratings', JSON.stringify(ratings));
+      // Optimistic update
       setUserRating(rating);
+      
+      // Submit rating to data service
+      await dataService.submitRating(id, rating);
+      
+      // Reload series to get updated average rating
+      const seriesData = await dataService.getSeriesById(id);
+      if (seriesData) {
+        setSeries(seriesData);
+      }
     } catch (error) {
       console.error('Error saving rating:', error);
+      // Revert optimistic update on error
+      const currentRating = await dataService.getUserRating(id);
+      setUserRating(currentRating || 0);
     } finally {
       setIsRating(false);
     }
@@ -131,7 +106,7 @@ const SeriesPage = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-500"></div>
       </div>
     );
   }
@@ -166,69 +141,57 @@ const SeriesPage = () => {
 
         {/* Content */}
         <div className="absolute inset-0 flex items-end">
-          <div className="container mx-auto px-4 lg:px-8 pb-8">
-            <div className="flex flex-col md:flex-row gap-6">
+          <div className="container mx-auto px-4 lg:px-8 pb-4 sm:pb-8">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
               {/* Cover Image */}
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 mx-auto sm:mx-0">
                 <img
                   src={series.coverImage}
                   alt={series.title}
-                  className="w-32 h-48 md:w-40 md:h-60 rounded-lg shadow-xl"
+                  className="w-24 h-36 sm:w-32 sm:h-48 md:w-40 md:h-60 rounded-lg shadow-xl"
                 />
               </div>
 
               {/* Series Info */}
-              <div className="flex-1 text-white">
-                <h1 className="text-3xl md:text-4xl font-bold mb-2">{series.title}</h1>
-                <p className="text-lg md:text-xl text-gray-200 mb-4">by {series.author}</p>
+              <div className="flex-1 text-white text-center sm:text-left">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">{series.title}</h1>
+                <p className="text-base sm:text-lg md:text-xl text-gray-200 mb-4">by {series.author}</p>
                 
-                <div className="flex flex-wrap gap-2 mb-4">
+                <div className="flex flex-wrap gap-2 mb-4 justify-center sm:justify-start">
                   {series.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-3 py-1 bg-white bg-opacity-20 text-white text-sm rounded-full backdrop-blur-sm"
+                      className="px-2 sm:px-3 py-1 bg-white bg-opacity-20 text-white text-xs sm:text-sm rounded-full backdrop-blur-sm"
                     >
                       {tag}
                     </span>
                   ))}
                 </div>
 
-                <div className="flex items-center gap-6 mb-4">
+                <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-6 mb-4">
                   <div className="flex items-center">
-                    <span className="text-yellow-400 text-lg">★</span>
-                    <span className="text-white ml-1 font-medium">{series.rating}</span>
+                    <span className="text-yellow-400 text-base sm:text-lg">★</span>
+                    <span className="text-white ml-1 font-medium text-sm sm:text-base">{series.rating}</span>
                   </div>
-                  <span className="text-gray-200">{series.totalChapters} chapters</span>
-                  <span className="text-gray-200 capitalize">{series.status}</span>
+                  <span className="text-gray-200 text-sm sm:text-base">{series.totalChapters} chapters</span>
+                  <span className="text-gray-200 capitalize text-sm sm:text-base">{series.status}</span>
                 </div>
 
-                {/* User Rating */}
+                {/* Dual Ratings */}
                 {user && (
                   <div className="mb-4">
-                    <p className="text-sm text-gray-300 mb-2">Your Rating:</p>
                     <StarRating
-                      rating={userRating}
+                      rating={series.rating}
+                      userRating={userRating}
                       onRatingChange={handleRating}
                       interactive={true}
-                      size="lg"
+                      size="md"
                       showValue={true}
+                      showDual={true}
                     />
                   </div>
                 )}
 
-                <div className="flex gap-4">
-                  <button
-                    onClick={handleBookmark}
-                    className="flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors jitter-hover"
-                  >
-                    {isBookmarked ? (
-                      <BookmarkSolidIcon className="h-5 w-5 mr-2" />
-                    ) : (
-                      <BookmarkIcon className="h-5 w-5 mr-2" />
-                    )}
-                    {isBookmarked ? 'Bookmarked' : 'Bookmark'}
-                  </button>
-                </div>
               </div>
             </div>
           </div>
@@ -248,7 +211,7 @@ const SeriesPage = () => {
               </p>
               <button
                 onClick={() => setShowDescription(!showDescription)}
-                className="mt-2 text-teal-500 hover:text-teal-400 font-medium flex items-center transition-colors"
+                className="mt-2 text-neon-500 hover:text-neon-400 font-medium flex items-center transition-colors"
               >
                 {showDescription ? (
                   <>
@@ -273,7 +236,7 @@ const SeriesPage = () => {
           <div className="max-w-4xl">
             {/* Chapter Stats */}
             <div className="card p-4 mb-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <span className="text-sm text-manga-muted">
                     {readChapters}/{series.totalChapters} chapters read
@@ -281,10 +244,10 @@ const SeriesPage = () => {
                 </div>
 
                 {/* Quick Jump */}
-                <div className="relative">
+                <div className="relative w-full sm:w-auto">
                   <button
                     onClick={() => setShowChapterDropdown(!showChapterDropdown)}
-                    className="flex items-center px-3 py-2 bg-manga-surface border border-manga-border rounded-lg text-sm text-manga-text hover:bg-manga-border transition-colors"
+                    className="flex items-center justify-center w-full sm:w-auto px-3 py-2 bg-manga-surface border border-manga-border rounded-lg text-sm text-manga-text hover:bg-manga-border transition-colors"
                   >
                     Jump to Chapter
                     <ChevronDownIcon className="ml-2 h-4 w-4" />
@@ -292,23 +255,35 @@ const SeriesPage = () => {
 
                   <AnimatePresence>
                     {showChapterDropdown && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="absolute top-full right-0 mt-1 w-48 bg-manga-card border border-manga-border rounded-lg shadow-lg z-20 max-h-60 overflow-y-auto"
-                      >
-                        {series.chapters.slice(0, 20).map((chapter) => (
-                          <Link
-                            key={chapter.id}
-                            to={`/series/${series.id}/chapter/${chapter.id}`}
-                            onClick={() => setShowChapterDropdown(false)}
-                            className="block px-3 py-2 text-sm text-manga-text hover:bg-manga-surface border-b border-manga-border last:border-b-0"
-                          >
-                            Chapter {chapter.chapterNumber}
-                          </Link>
-                        ))}
-                      </motion.div>
+                      <>
+                        {/* Backdrop */}
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="fixed inset-0 z-40"
+                          onClick={() => setShowChapterDropdown(false)}
+                        />
+                        
+                        {/* Dropdown */}
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="absolute top-full right-0 mt-1 w-48 bg-manga-card border border-manga-border rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto scrollbar-hide"
+                        >
+                          {series.chapters.map((chapter) => (
+                            <Link
+                              key={chapter.id}
+                              to={`/series/${series.id}/chapter/${chapter.id}`}
+                              onClick={() => setShowChapterDropdown(false)}
+                              className="block px-3 py-2 text-sm text-manga-text hover:bg-manga-surface border-b border-manga-border last:border-b-0 transition-colors"
+                            >
+                              Chapter {chapter.chapterNumber}
+                            </Link>
+                          ))}
+                        </motion.div>
+                      </>
                     )}
                   </AnimatePresence>
                 </div>
@@ -329,7 +304,7 @@ const SeriesPage = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             onClick={scrollToTop}
-            className="fixed bottom-6 right-6 p-3 bg-teal-600 hover:bg-teal-700 text-white rounded-full shadow-lg transition-colors jitter-hover z-20"
+            className="fixed bottom-6 right-6 p-3 bg-neon-500 hover:bg-neon-600 text-white rounded-full shadow-lg transition-colors jitter-hover z-20"
           >
             <ArrowUpIcon className="h-5 w-5" />
           </motion.button>

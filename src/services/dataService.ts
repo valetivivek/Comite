@@ -1,4 +1,4 @@
-import { Series, Chapter, Bookmark, ReadState, Notification, SearchFilters } from '../types';
+import { Series, Chapter, Bookmark, ReadState, Notification, SearchFilters, UserRating, ReadingHistory } from '../types';
 
 // Mock data generator
 const generateMockSeries = (): Series[] => {
@@ -61,6 +61,8 @@ class DataService {
   private bookmarks: Bookmark[] = [];
   private readStates: ReadState[] = [];
   private notifications: Notification[] = [];
+  private userRatings: UserRating[] = [];
+  private readingHistory: ReadingHistory[] = [];
 
   constructor() {
     this.loadFromStorage();
@@ -168,6 +170,19 @@ class DataService {
       });
     }
 
+    // Add to reading history
+    const existingHistory = this.readingHistory.find(h => h.seriesId === seriesId && h.chapterId === chapterId);
+    if (!existingHistory) {
+      this.readingHistory.push({
+        id: `history-${Date.now()}`,
+        userId: 'current-user', // In a real app, this would be the actual user ID
+        seriesId,
+        chapterId,
+        readAt: new Date().toISOString(),
+        progress: 1
+      });
+    }
+
     this.saveToStorage();
   }
 
@@ -225,18 +240,87 @@ class DataService {
     const series = this.series.find(s => s.id === seriesId);
     if (!series) return;
 
+    // Get the latest chapter for redirection
+    const latestChapter = series.chapters[0];
+
+    // Check if notification already exists for this chapter
+    const existingNotification = this.notifications.find(n => 
+      n.seriesId === seriesId && 
+      n.chapterId === latestChapter?.id &&
+      n.type === 'new_chapter'
+    );
+
+    if (existingNotification) {
+      return; // Don't create duplicate notifications
+    }
+
     const notification: Notification = {
-      id: `notification-${Date.now()}`,
+      id: `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       type: 'new_chapter',
       seriesId,
       seriesTitle: series.title,
-      message: `New chapter available for ${series.title}`,
+      chapterId: latestChapter?.id,
+      message: `New chapter ${latestChapter?.chapterNumber} available for ${series.title}`,
       isRead: false,
       createdAt: new Date().toISOString()
     };
 
     this.notifications.unshift(notification);
+    
+    // Keep only the last 50 notifications to prevent storage bloat
+    if (this.notifications.length > 50) {
+      this.notifications = this.notifications.slice(0, 50);
+    }
+    
     this.saveToStorage();
+  }
+
+  // User Rating methods
+  async submitRating(seriesId: string, rating: number): Promise<void> {
+    const userId = 'current-user'; // In a real app, this would be the actual user ID
+    
+    // Remove existing rating if any
+    this.userRatings = this.userRatings.filter(r => !(r.seriesId === seriesId && r.userId === userId));
+    
+    // Add new rating
+    this.userRatings.push({
+      id: `rating-${Date.now()}`,
+      userId,
+      seriesId,
+      rating,
+      createdAt: new Date().toISOString()
+    });
+
+    // Update series average rating
+    const series = this.series.find(s => s.id === seriesId);
+    if (series) {
+      const allRatings = this.userRatings.filter(r => r.seriesId === seriesId);
+      const averageRating = allRatings.reduce((sum, r) => sum + r.rating, 0) / allRatings.length;
+      series.rating = Math.round(averageRating * 10) / 10;
+    }
+
+    this.saveToStorage();
+  }
+
+  async getUserRating(seriesId: string): Promise<number | null> {
+    const userId = 'current-user';
+    const rating = this.userRatings.find(r => r.seriesId === seriesId && r.userId === userId);
+    return rating ? rating.rating : null;
+  }
+
+  // Reading History methods
+  async getReadingHistory(): Promise<ReadingHistory[]> {
+    return [...this.readingHistory].sort((a, b) => 
+      new Date(b.readAt).getTime() - new Date(a.readAt).getTime()
+    );
+  }
+
+  async getSeriesProgress(seriesId: string): Promise<{ read: number; total: number }> {
+    const series = this.series.find(s => s.id === seriesId);
+    if (!series) return { read: 0, total: 0 };
+
+    const readChapters = series.chapters.filter(ch => ch.isRead).length;
+    return { read: readChapters, total: series.totalChapters };
   }
 
   // Storage methods
@@ -261,6 +345,16 @@ class DataService {
       if (notificationsData) {
         this.notifications = JSON.parse(notificationsData);
       }
+
+      const userRatingsData = localStorage.getItem('manga-reader-user-ratings');
+      if (userRatingsData) {
+        this.userRatings = JSON.parse(userRatingsData);
+      }
+
+      const readingHistoryData = localStorage.getItem('manga-reader-reading-history');
+      if (readingHistoryData) {
+        this.readingHistory = JSON.parse(readingHistoryData);
+      }
     } catch (error) {
       console.error('Error loading data from storage:', error);
     }
@@ -272,6 +366,8 @@ class DataService {
       localStorage.setItem('manga-reader-bookmarks', JSON.stringify(this.bookmarks));
       localStorage.setItem('manga-reader-read-states', JSON.stringify(this.readStates));
       localStorage.setItem('manga-reader-notifications', JSON.stringify(this.notifications));
+      localStorage.setItem('manga-reader-user-ratings', JSON.stringify(this.userRatings));
+      localStorage.setItem('manga-reader-reading-history', JSON.stringify(this.readingHistory));
     } catch (error) {
       console.error('Error saving data to storage:', error);
     }

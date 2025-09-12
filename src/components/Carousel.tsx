@@ -12,13 +12,13 @@ const Carousel = ({ series }: CarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Auto-advance carousel
+  // Auto-advance carousel with 3-4 second delay
   useEffect(() => {
     if (isPaused || series.length <= 1) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % series.length);
-    }, 3000);
+    }, 4000); // Increased from 3000ms to 4000ms (4 seconds)
 
     return () => clearInterval(interval);
   }, [isPaused, series.length]);

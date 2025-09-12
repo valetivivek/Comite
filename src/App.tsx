@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import HomePage from './pages/HomePage';
 import SeriesPage from './pages/SeriesPage';
 import ReaderPage from './pages/ReaderPage';
@@ -8,8 +7,11 @@ import BookmarksPage from './pages/BookmarksPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import ProfilePage from './pages/ProfilePage';
+import ReadingHistoryPage from './pages/ReadingHistoryPage';
 import Layout from './components/Layout';
 import { notificationService } from './services/notificationService';
+
+const SIGNATURE = "cricky";
 
 function App() {
   useEffect(() => {
@@ -24,7 +26,7 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-manga-bg">
+      <div className="min-h-screen bg-manga-bg" data-signature={SIGNATURE}>
         <Layout>
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -34,6 +36,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/history" element={<ReadingHistoryPage />} />
           </Routes>
         </Layout>
       </div>
