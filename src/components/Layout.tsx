@@ -1,5 +1,5 @@
 import { ReactNode, useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   MagnifyingGlassIcon,
@@ -19,11 +19,13 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
+  const navigate = useNavigate();
   const [isProfileDrawerOpen, setIsProfileDrawerOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isSurpriseMeRolling, setIsSurpriseMeRolling] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const {
     query,
@@ -74,6 +76,35 @@ const Layout = ({ children }: LayoutProps) => {
       window.location.href = `/series/${notification.seriesId}/chapter/${notification.chapterId}`;
     } else {
       window.location.href = `/series/${notification.seriesId}`;
+    }
+  };
+
+  const handleSurpriseMe = async () => {
+    if (isSurpriseMeRolling) return;
+    
+    setIsSurpriseMeRolling(true);
+    
+    try {
+      // Start both the animation and the selection logic in parallel
+      const [selectedSeries] = await Promise.all([
+        user 
+          ? dataService.getPersonalizedSurpriseSeries(user.id)
+          : dataService.getRandomSeries(),
+        new Promise(resolve => setTimeout(resolve, 1000)) // Minimum 1 second wait
+      ]);
+      
+      // Wait for either 1.5 seconds total or until selection is complete
+      const maxWait = new Promise(resolve => setTimeout(resolve, 1500));
+      await Promise.race([Promise.resolve(selectedSeries), maxWait]);
+      
+      if (selectedSeries) {
+        navigate(`/series/${selectedSeries.id}`);
+        setIsProfileDrawerOpen(false);
+      }
+    } catch (error) {
+      console.error('Error getting surprise series:', error);
+    } finally {
+      setIsSurpriseMeRolling(false);
     }
   };
 
@@ -462,6 +493,22 @@ const Layout = ({ children }: LayoutProps) => {
                     </div>
                   </>
                 )}
+                
+                {/* Surprise Me Button - Available for all users */}
+                <div className="mt-4 pt-4 border-t border-manga-border">
+                  <button
+                    onClick={handleSurpriseMe}
+                    disabled={isSurpriseMeRolling}
+                    className={`flex items-center px-4 py-3 rounded-lg text-manga-text hover:bg-manga-surface transition-colors w-full text-left ${
+                      isSurpriseMeRolling ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                    aria-label="Surprise me"
+                    aria-busy={isSurpriseMeRolling}
+                  >
+                    <span className={`mr-3 text-lg ${isSurpriseMeRolling ? 'dice-rolling' : ''}`}>🎲</span>
+                    {isSurpriseMeRolling ? 'Rolling...' : 'Surprise me'}
+                  </button>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -475,6 +522,23 @@ const Layout = ({ children }: LayoutProps) => {
         </main>
         <Footer />
       </div>
+      
+      {/* Dice rolling animation styles */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @keyframes diceRoll {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(90deg) scale(1.1); }
+            50% { transform: rotate(180deg) scale(1); }
+            75% { transform: rotate(270deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+          }
+          
+          .dice-rolling {
+            animation: diceRoll 0.3s linear infinite;
+          }
+        `
+      }} />
     </div>
   );
 };

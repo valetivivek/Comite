@@ -51,16 +51,6 @@ const DashboardPage = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSurpriseMe = async () => {
-    try {
-      const randomSeries = await dataService.getRandomSeries();
-      if (randomSeries) {
-        navigate(`/series/${randomSeries.id}`);
-      }
-    } catch (error) {
-      console.error('Error getting random series:', error);
-    }
-  };
 
   const handleSignOut = () => {
     localStorage.removeItem('manga-reader-user');
@@ -92,16 +82,6 @@ const DashboardPage = () => {
       {/* Series Grid - Responsive */}
       <section className="px-4 py-6 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          {/* Surprise Me Button */}
-          <div className="mb-6 flex justify-center">
-            <button
-              onClick={handleSurpriseMe}
-              className="btn-primary px-6 py-3 text-lg font-medium"
-              aria-label="Surprise me"
-            >
-              🎲 Surprise me
-            </button>
-          </div>
           <motion.div
             layout
             className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6"

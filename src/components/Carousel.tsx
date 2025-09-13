@@ -11,6 +11,7 @@ interface CarouselProps {
 const Carousel = ({ series }: CarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [showArrows, setShowArrows] = useState(false);
 
   // Auto-advance carousel with 3-4 second delay
   useEffect(() => {
@@ -46,8 +47,18 @@ const Carousel = ({ series }: CarouselProps) => {
   return (
     <div 
       className="relative h-full overflow-hidden"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
+      onMouseEnter={() => {
+        setIsPaused(true);
+        setShowArrows(true);
+      }}
+      onMouseLeave={() => {
+        setIsPaused(false);
+        setShowArrows(false);
+      }}
+      onFocus={() => setShowArrows(true)}
+      onBlur={() => setShowArrows(false)}
+      onTouchStart={() => setShowArrows(true)}
+      tabIndex={0}
     >
       {/* Carousel Slides */}
       <div className="relative h-full">
@@ -139,12 +150,12 @@ const Carousel = ({ series }: CarouselProps) => {
         </AnimatePresence>
       </div>
 
-      {/* Navigation Arrows - Hidden on mobile */}
-      {series.length > 1 && (
+      {/* Navigation Arrows - Hidden on mobile, shown only on hover/focus */}
+      {series.length > 1 && showArrows && (
         <>
           <button
             onClick={goToPrevious}
-            className="hidden md:block absolute left-4 top-1/2 transform -translate-y-1/2 p-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full transition-all duration-200 jitter-hover"
+            className="hidden md:block absolute left-4 top-1/2 transform -translate-y-1/2 p-2 bg-white bg-opacity-20 rounded-full transition-opacity duration-200"
             aria-label="Previous slide"
           >
             <ChevronLeftIcon className="h-6 w-6 text-white" />
@@ -152,7 +163,7 @@ const Carousel = ({ series }: CarouselProps) => {
           
           <button
             onClick={goToNext}
-            className="hidden md:block absolute right-4 top-1/2 transform -translate-y-1/2 p-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full transition-all duration-200 jitter-hover"
+            className="hidden md:block absolute right-4 top-1/2 transform -translate-y-1/2 p-2 bg-white bg-opacity-20 rounded-full transition-opacity duration-200"
             aria-label="Next slide"
           >
             <ChevronRightIcon className="h-6 w-6 text-white" />

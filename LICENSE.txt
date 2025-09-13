@@ -1,0 +1,37 @@
+ComiTe Proprietary License
+Version 1.0
+
+Copyright © 2025 Vishnu Vivek Valeti. All rights reserved.
+
+1. Grant
+You may download and run the Software for personal evaluation or internal development only. Production use, commercial use, redistribution, hosting for others, and reuse of the UI or template require my prior written permission.
+
+2. Restrictions
+Without written permission you may not:
+a) copy, publish, distribute, sell, rent, or host the Software or any template derived from it,
+b) modify or create derivative works for any public or commercial purpose,
+c) remove or alter copyright, trademark, or attribution notices,
+d) reuse the UI layout, component structure, or visual template in other projects,
+e) train models or datasets on any part of the Software,
+f) circumvent technical controls.
+
+3. Ownership
+The Software is licensed, not sold. I retain all rights, title, and interest.
+
+4. Third party code
+Dependencies remain under their own licenses. This license covers ComiTe code and assets only.
+
+5. Termination
+This license ends automatically if you breach it. On termination you must stop using the Software and delete all copies.
+
+6. Disclaimer
+The Software is provided "as is". No warranties.
+
+7. Limitation of liability
+To the maximum extent allowed by law, total liability is limited to 50 USD.
+
+8. Governing law
+Florida, United States. Venue in Florida.
+
+9. Commercial license
+For permission or a commercial license contact: licensing@yourdomain.com

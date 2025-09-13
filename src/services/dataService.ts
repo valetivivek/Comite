@@ -87,6 +87,61 @@ class DataService {
     return this.series[randomIndex];
   }
 
+  async getPersonalizedSurpriseSeries(userId: string): Promise<Series | null> {
+    if (this.series.length === 0) return null;
+
+    // Get user's reading history to find read series
+    const userHistory = this.readingHistory.filter(h => h.userId === userId);
+    const readSeriesIds = new Set(userHistory.map(h => h.seriesId));
+
+
+    // Filter to unread series only
+    const unreadSeries = this.series.filter(s => !readSeriesIds.has(s.id));
+
+    if (unreadSeries.length === 0) return null;
+
+    // Calculate genre distribution from user's reading history
+    const genreCounts: { [key: string]: number } = {};
+    userHistory.forEach(history => {
+      const series = this.series.find(s => s.id === history.seriesId);
+      if (series) {
+        series.genre.forEach(genre => {
+          genreCounts[genre] = (genreCounts[genre] || 0) + 1;
+        });
+      }
+    });
+
+    // Find least-read genres (inverse weighting)
+    const allGenres = [...new Set(this.series.flatMap(s => s.genre))];
+    const genreWeights: { [key: string]: number } = {};
+    
+    allGenres.forEach(genre => {
+      const count = genreCounts[genre] || 0;
+      // Inverse weighting: less read = higher weight
+      genreWeights[genre] = 1 / (count + 1);
+    });
+
+    // Score unread series based on least-read genres
+    const scoredSeries = unreadSeries.map(series => {
+      let score = 0;
+      series.genre.forEach(genre => {
+        score += genreWeights[genre] || 0;
+      });
+      return { series, score };
+    });
+
+    // Sort by score (highest first) and pick randomly from top candidates
+    scoredSeries.sort((a, b) => b.score - a.score);
+    
+    // Take top 30% or at least 3 series for randomization
+    const topCandidates = scoredSeries.slice(0, Math.max(3, Math.ceil(scoredSeries.length * 0.3)));
+    
+    if (topCandidates.length === 0) return unreadSeries[Math.floor(Math.random() * unreadSeries.length)];
+    
+    const randomIndex = Math.floor(Math.random() * topCandidates.length);
+    return topCandidates[randomIndex].series;
+  }
+
   async searchSeries(filters: SearchFilters): Promise<Series[]> {
     let filtered = [...this.series];
 
@@ -242,10 +297,14 @@ class DataService {
     this.saveToStorage();
   }
 
-  // Mock notification generation (for demo purposes)
+  // Mock notification generation (for demo purposes) - only for bookmarked series
   async generateMockNotification(seriesId: string): Promise<void> {
     const series = this.series.find(s => s.id === seriesId);
     if (!series) return;
+
+    // Only generate notifications for bookmarked series
+    const isBookmarked = this.bookmarks.some(b => b.seriesId === seriesId);
+    if (!isBookmarked) return;
 
     // Get the latest chapter for redirection
     const latestChapter = series.chapters[0];

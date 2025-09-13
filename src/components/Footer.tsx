@@ -6,8 +6,6 @@ const Footer = () => {
   const footerLinks = [
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
-    { name: 'Terms', href: '/terms' },
-    { name: 'Privacy', href: '/privacy' },
   ];
 
   return (
@@ -48,23 +46,31 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <Link
-                  to="/terms"
+                  to="/legal/terms"
                   className="text-manga-muted hover:text-teal-400 transition-colors"
                 >
-                  Terms of Service
+                  Terms of Use
                 </Link>
               </li>
               <li>
                 <Link
-                  to="/privacy"
+                  to="/legal/license"
                   className="text-manga-muted hover:text-teal-400 transition-colors"
                 >
-                  Privacy Policy
+                  License
                 </Link>
               </li>
               <li>
                 <Link
-                  to="/dmca"
+                  to="/legal/privacy"
+                  className="text-manga-muted hover:text-teal-400 transition-colors"
+                >
+                  Privacy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/legal/dmca"
                   className="text-manga-muted hover:text-teal-400 transition-colors"
                 >
                   DMCA
@@ -77,11 +83,14 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-manga-border mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center">
           <p className="text-manga-muted text-sm">
-            © {currentYear} ComiTe. All rights reserved.
+            © {currentYear} ComiTe. All rights reserved. Templates and UI are proprietary. Do not reuse without written permission.
           </p>
-          <p className="text-manga-muted text-sm mt-2 sm:mt-0">
-            Made with ❤️ for comic lovers
-          </p>
+          <div className="text-manga-muted text-sm mt-2 sm:mt-0 flex flex-wrap gap-4">
+            <Link to="/legal/terms" className="hover:text-teal-400 transition-colors">Terms of Use</Link>
+            <Link to="/legal/license" className="hover:text-teal-400 transition-colors">License</Link>
+            <Link to="/legal/privacy" className="hover:text-teal-400 transition-colors">Privacy</Link>
+            <Link to="/legal/dmca" className="hover:text-teal-400 transition-colors">DMCA</Link>
+          </div>
         </div>
       </div>
     </footer>

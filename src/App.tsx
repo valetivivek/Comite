@@ -9,6 +9,10 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import ProfilePage from './pages/ProfilePage';
 import ReadingHistoryPage from './pages/ReadingHistoryPage';
+import LicensePage from './pages/legal/LicensePage';
+import TermsPage from './pages/legal/TermsPage';
+import PrivacyPage from './pages/legal/PrivacyPage';
+import DMCAPage from './pages/legal/DMCAPage';
 import Layout from './components/Layout';
 import { notificationService } from './services/notificationService';
 
@@ -40,6 +44,10 @@ function App() {
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/history" element={<ReadingHistoryPage />} />
+            <Route path="/legal/license" element={<LicensePage />} />
+            <Route path="/legal/terms" element={<TermsPage />} />
+            <Route path="/legal/privacy" element={<PrivacyPage />} />
+            <Route path="/legal/dmca" element={<DMCAPage />} />
           </Routes>
         </Layout>
       </div>

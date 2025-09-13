@@ -166,4 +166,13 @@ src/
 
 ## License
 
-MIT License - see LICENSE file for details.
+This project is under the **ComiTe Proprietary License**. 
+
+**Important**: This software, including its UI, templates, and design, is proprietary and protected by copyright. You may not reuse, copy, or derive from the UI layout, component structure, or visual template without written permission from Vishnu Vivek Valeti.
+
+For licensing inquiries or commercial use, please contact: licensing@yourdomain.com
+
+- [View Full License](/legal/license)
+- [Terms of Use](/legal/terms)
+- [Privacy Policy](/legal/privacy)
+- [DMCA Notice](/legal/dmca)
