@@ -81,6 +81,12 @@ class DataService {
     return this.series.find(s => s.id === id) || null;
   }
 
+  async getRandomSeries(): Promise<Series | null> {
+    if (this.series.length === 0) return null;
+    const randomIndex = Math.floor(Math.random() * this.series.length);
+    return this.series[randomIndex];
+  }
+
   async searchSeries(filters: SearchFilters): Promise<Series[]> {
     let filtered = [...this.series];
 

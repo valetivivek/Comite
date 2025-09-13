@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { dataService } from '../services/dataService';
-import { Series } from '../types';
+import { Series, User } from '../types';
 import ListItem from '../components/ListItem';
 import Carousel from '../components/Carousel';
 import CommentSection from '../components/CommentSection';
 
 const DashboardPage = () => {
+  const navigate = useNavigate();
   const [series, setSeries] = useState<Series[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [user, setUser] = useState<User | null>(null);
 
   // Load series data
   useEffect(() => {
@@ -28,6 +31,14 @@ const DashboardPage = () => {
     loadSeries();
   }, []);
 
+  // Load user data
+  useEffect(() => {
+    const userData = localStorage.getItem('manga-reader-user');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
+
   // Pagination logic
   const itemsPerPage = 10;
   const totalPages = Math.ceil(series.length / itemsPerPage);
@@ -38,6 +49,24 @@ const DashboardPage = () => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSurpriseMe = async () => {
+    try {
+      const randomSeries = await dataService.getRandomSeries();
+      if (randomSeries) {
+        navigate(`/series/${randomSeries.id}`);
+      }
+    } catch (error) {
+      console.error('Error getting random series:', error);
+    }
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem('manga-reader-user');
+    localStorage.removeItem('manga-reader-user-ratings');
+    setUser(null);
+    navigate('/');
   };
 
   // Get top series for carousel (highest rated)
@@ -63,6 +92,16 @@ const DashboardPage = () => {
       {/* Series Grid - Responsive */}
       <section className="px-4 py-6 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
+          {/* Surprise Me Button */}
+          <div className="mb-6 flex justify-center">
+            <button
+              onClick={handleSurpriseMe}
+              className="btn-primary px-6 py-3 text-lg font-medium"
+              aria-label="Surprise me"
+            >
+              🎲 Surprise me
+            </button>
+          </div>
           <motion.div
             layout
             className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6"
@@ -138,6 +177,21 @@ const DashboardPage = () => {
           />
         </div>
       </section>
+
+      {/* Sign Out Button - Only show when user is signed in */}
+      {user && (
+        <section className="px-4 py-6 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto flex justify-center">
+            <button
+              onClick={handleSignOut}
+              className="text-manga-muted hover:text-manga-text transition-colors text-sm"
+              aria-label="Sign out"
+            >
+              Sign out
+            </button>
+          </div>
+        </section>
+      )}
 
     </div>
   );
