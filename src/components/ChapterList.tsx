@@ -125,7 +125,7 @@ const ChapterList = ({ chapters, seriesId }: ChapterListProps) => {
                     <h3 className={`font-medium text-left transition-all duration-200 ${
                       chapter.isRead 
                         ? 'text-manga-text' 
-                        : 'text-neon-400 font-semibold'
+                        : 'text-midnight-primary-400 font-semibold'
                     }`}>
                       Ch {chapter.chapterNumber}
                     </h3>
@@ -141,7 +141,7 @@ const ChapterList = ({ chapters, seriesId }: ChapterListProps) => {
                         Read
                       </span>
                     ) : (
-                      <span className="text-xs bg-neon-500 text-white px-2 py-1 rounded-full">
+                      <span className="text-xs bg-midnight-primary-500 text-white px-2 py-1 rounded-full">
                         New
                       </span>
                     )}
@@ -161,7 +161,7 @@ const ChapterList = ({ chapters, seriesId }: ChapterListProps) => {
         <div ref={loadMoreRef} className="flex justify-center pt-4">
           {isLoading ? (
             <div className="flex items-center gap-2 px-6 py-3 text-manga-muted">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-neon-500"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-midnight-primary-500"></div>
               Loading more chapters...
             </div>
           ) : (

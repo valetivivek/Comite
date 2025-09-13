@@ -4,8 +4,8 @@
   "description": "Read comics with a clean, fast, mobile-first UI",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a0a",
-  "theme_color": "#0f766e",
+  "background_color": "#0f172a",
+  "theme_color": "#6366f1",
   "orientation": "portrait-primary",
   "scope": "/",
   "icons": [

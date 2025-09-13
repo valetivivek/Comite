@@ -97,7 +97,7 @@ const SeriesCard = ({ series, viewMode }: SeriesCardProps) => {
                     className={`text-xs py-1 px-2 rounded ${
                       chapter.isRead 
                         ? 'bg-manga-surface text-manga-muted' 
-                        : 'bg-neon-500 text-white'
+                        : 'bg-midnight-primary-500 text-white'
                     }`}
                     aria-label={`Chapter ${chapter.chapterNumber}`}
                   >
@@ -179,7 +179,7 @@ const SeriesCard = ({ series, viewMode }: SeriesCardProps) => {
                 className={`block text-xs py-1 px-2 rounded transition-colors ${
                   chapter.isRead 
                     ? 'text-manga-muted hover:text-manga-text hover:bg-manga-surface' 
-                    : 'text-teal-400 hover:text-teal-300 hover:bg-teal-50'
+                    : 'text-midnight-primary-400 hover:text-midnight-primary-300 hover:bg-midnight-primary-50'
                 }`}
                 aria-label={`Chapter ${chapter.chapterNumber}`}
               >

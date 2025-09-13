@@ -112,7 +112,7 @@ const ProfilePage = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-midnight-primary-600"></div>
       </div>
     );
   }
@@ -188,7 +188,7 @@ const ProfilePage = () => {
                     )}
                   </div>
                 ) : (
-                  <div className="w-20 h-20 rounded-full overflow-hidden bg-teal-600 flex items-center justify-center">
+                  <div className="w-20 h-20 rounded-full overflow-hidden bg-midnight-primary-600 flex items-center justify-center">
                     {profilePicture ? (
                       <img
                         src={profilePicture}
@@ -202,7 +202,7 @@ const ProfilePage = () => {
                 )}
                 
                 {isEditing && (
-                  <label className="absolute -bottom-1 -right-1 w-6 h-6 bg-teal-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-teal-700 transition-colors">
+                  <label className="absolute -bottom-1 -right-1 w-6 h-6 bg-midnight-primary-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-midnight-primary-700 transition-colors">
                     <CameraIcon className="h-3 w-3 text-white" />
                     <input
                       type="file"
@@ -227,7 +227,7 @@ const ProfilePage = () => {
                     value={tempDescription}
                     onChange={(e) => setTempDescription(e.target.value)}
                     placeholder="Tell us about yourself..."
-                    className="w-full p-3 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none"
+                    className="w-full p-3 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:border-transparent resize-none"
                     rows={3}
                   />
                 ) : (
@@ -242,7 +242,7 @@ const ProfilePage = () => {
                   <>
                     <button
                       onClick={handleSaveProfile}
-                      className="p-2 bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors"
+                      className="p-2 bg-midnight-primary-600 hover:bg-midnight-primary-700 rounded-lg transition-colors"
                     >
                       <PencilIcon className="h-5 w-5 text-white" />
                     </button>
@@ -273,7 +273,7 @@ const ProfilePage = () => {
               transition={{ delay: 0.1 }}
               className="card p-6 text-center"
             >
-              <BookmarkIcon className="h-8 w-8 text-teal-500 mx-auto mb-2" />
+              <BookmarkIcon className="h-8 w-8 text-midnight-primary-500 mx-auto mb-2" />
               <h3 className="text-2xl font-bold text-manga-text mb-1">
                 {bookmarks.length}
               </h3>
@@ -286,7 +286,7 @@ const ProfilePage = () => {
               transition={{ delay: 0.2 }}
               className="card p-6 text-center"
             >
-              <ClockIcon className="h-8 w-8 text-teal-500 mx-auto mb-2" />
+              <ClockIcon className="h-8 w-8 text-midnight-primary-500 mx-auto mb-2" />
               <h3 className="text-2xl font-bold text-manga-text mb-1">
                 {totalReadChapters}
               </h3>
@@ -299,7 +299,7 @@ const ProfilePage = () => {
               transition={{ delay: 0.3 }}
               className="card p-6 text-center"
             >
-              <StarIcon className="h-8 w-8 text-teal-500 mx-auto mb-2" />
+              <StarIcon className="h-8 w-8 text-midnight-primary-500 mx-auto mb-2" />
               <h3 className="text-2xl font-bold text-manga-text mb-1">
                 {averageRating > 0 ? averageRating.toFixed(1) : 'N/A'}
               </h3>

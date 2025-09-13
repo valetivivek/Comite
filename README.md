@@ -1,6 +1,12 @@
-# Manga Reader Web App
+# Comite - Comics Reimagined
 
 A mobile-first manga and manhua reading web application built with React, TypeScript, and Tailwind CSS. Features a teal-centric design with subtle micro-animations and smooth, accessible UI/UX.
+
+## 🚀 Live Demo
+
+**[View Live Demo](https://comitecomic.vercel.app/)**
+
+Experience the full application with all features including responsive design, interactive components, and smooth animations.
 
 ## Features
 

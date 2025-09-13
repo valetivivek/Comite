@@ -113,7 +113,7 @@ const ListItem = ({ series }: ListItemProps) => {
             <div className="flex-1 min-w-0">
               <Link to={`/series/${series.id}`} className="block">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="font-semibold text-manga-text text-xl sm:text-lg hover:text-teal-400 transition-colors">
+                  <h3 className="font-semibold text-manga-text text-xl sm:text-lg hover:text-midnight-primary-400 transition-colors">
                     {series.title}
                   </h3>
                   <div className="flex items-center gap-1">
@@ -158,7 +158,7 @@ const ListItem = ({ series }: ListItemProps) => {
                 className={`block text-sm py-1 px-2 rounded transition-colors hover:bg-manga-surface ${
                   chapter.isRead 
                     ? 'text-manga-muted hover:text-manga-text' 
-                    : 'text-teal-400 hover:text-manga-text'
+                    : 'text-midnight-primary-400 hover:text-manga-text'
                 }`}
                 aria-label={`Chapter ${chapter.chapterNumber}`}
               >

@@ -52,7 +52,7 @@ const DashboardPage = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-midnight-primary-600"></div>
       </div>
     );
   }
@@ -74,13 +74,22 @@ const DashboardPage = () => {
     <div className="min-h-screen bg-manga-bg">
       <JsonLd data={jsonLd} />
       {/* Hero Carousel */}
-      <section className="relative h-64 md:h-80 lg:h-96">
-        <Carousel series={topSeries} />
+      <section className="relative">
+        <div className="h-64 md:h-80 lg:h-96">
+          <Carousel series={topSeries} />
+        </div>
       </section>
 
       {/* Series Grid - Responsive */}
-      <section className="px-4 py-6 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <section className="section-spacing">
+        <div className="container-spacing">
+          <div className="text-center mb-12">
+            <h2 className="heading-2 mb-4">Featured Comics</h2>
+            <p className="body-text max-w-2xl mx-auto">
+              Discover trending comics, manga, and graphic novels. 
+              Our curated selection features the best stories across all genres.
+            </p>
+          </div>
           <motion.div
             layout
             className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6"
@@ -90,10 +99,15 @@ const DashboardPage = () => {
                 <motion.div
                   key={series.id}
                   layout
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.2 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ 
+                    duration: 0.3, 
+                    ease: "easeOut",
+                    layout: { duration: 0.3 }
+                  }}
+                  className="fade-in-smooth"
                 >
                   <ListItem series={series} />
                 </motion.div>
@@ -125,7 +139,7 @@ const DashboardPage = () => {
                     onClick={() => handlePageChange(page)}
                     className={`px-3 py-2 rounded-lg transition-colors ${
                       currentPage === page
-                        ? 'bg-teal-600 text-white'
+                        ? 'bg-midnight-primary-600 text-white'
                         : 'border border-manga-border hover:bg-manga-surface'
                     }`}
                   >

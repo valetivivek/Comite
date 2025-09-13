@@ -38,7 +38,7 @@ const Carousel = ({ series }: CarouselProps) => {
 
   if (series.length === 0) {
     return (
-      <div className="h-full bg-gradient-to-r from-teal-500 to-teal-600 flex items-center justify-center">
+      <div className="h-full bg-gradient-to-r from-midnight-primary-500 to-midnight-primary-600 flex items-center justify-center">
         <p className="text-white text-xl">No series available</p>
       </div>
     );
@@ -72,7 +72,7 @@ const Carousel = ({ series }: CarouselProps) => {
             className="absolute inset-0"
           >
             <Link to={`/series/${series[currentIndex].id}`}>
-              <div className="relative h-full bg-gradient-to-r from-teal-600 to-teal-700">
+              <div className="relative h-full bg-gradient-to-r from-midnight-primary-600 to-midnight-primary-700">
                 {/* Background Image */}
                 <div 
                   className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
@@ -107,7 +107,7 @@ const Carousel = ({ series }: CarouselProps) => {
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.3 }}
-                        className="text-lg md:text-xl text-teal-100 mb-4"
+                        className="text-lg md:text-xl text-midnight-primary-100 mb-4"
                       >
                         by {series[currentIndex].author}
                       </motion.p>
@@ -134,10 +134,10 @@ const Carousel = ({ series }: CarouselProps) => {
                         transition={{ delay: 0.5 }}
                         className="flex items-center gap-4"
                       >
-                        <span className="text-teal-200">
+                        <span className="text-midnight-primary-200">
                           {series[currentIndex].totalChapters} chapters
                         </span>
-                        <span className="text-teal-200 capitalize">
+                        <span className="text-midnight-primary-200 capitalize">
                           {series[currentIndex].status}
                         </span>
                       </motion.div>

@@ -152,18 +152,18 @@ const Layout = ({ children }: LayoutProps) => {
     <div className="min-h-screen bg-manga-bg">
       {/* Top Navigation Bar */}
       <nav className="sticky top-0 z-50 bg-manga-card/95 backdrop-blur-sm border-b border-manga-border">
-        <div className="px-4 py-3 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="mobile-container py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-4">
             {/* Logo - Extreme Left */}
             <Link 
               to="/" 
-              className="text-xl sm:text-2xl font-bold text-neon-500 hover:text-neon-400 transition-colors"
+              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-midnight-primary-500 hover:text-midnight-primary-400 transition-all duration-200 transform hover:scale-105"
             >
               ComiTe
             </Link>
 
             {/* Search Bar - Desktop */}
-            <div className="hidden lg:flex items-center flex-1 max-w-md mx-4" ref={searchRef}>
+            <div className="hidden lg:flex items-center flex-1 max-w-md mx-2" ref={searchRef}>
               <div className="relative w-full">
                 <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-manga-muted" />
                 <input
@@ -172,7 +172,7 @@ const Layout = ({ children }: LayoutProps) => {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onFocus={() => setShowResults(true)}
-                  className="w-full pl-10 pr-10 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors"
+                  className="w-full pl-10 pr-10 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:border-transparent transition-colors"
                   aria-label="Search for manga, manhua, or authors"
                 />
                 {query && (
@@ -196,7 +196,7 @@ const Layout = ({ children }: LayoutProps) => {
                     >
                       {isSearching ? (
                         <div className="p-4 text-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-500 mx-auto"></div>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-midnight-primary-500 mx-auto"></div>
                           <p className="text-sm text-manga-muted mt-2">Searching...</p>
                         </div>
                       ) : results.length > 0 ? (
@@ -238,7 +238,7 @@ const Layout = ({ children }: LayoutProps) => {
             </div>
 
             {/* Mobile Search Bar */}
-            <div className="flex lg:hidden items-center flex-1 max-w-xs mx-2" ref={searchRef}>
+            <div className="flex lg:hidden items-center flex-1 max-w-[200px] mx-1" ref={searchRef}>
               <div className="relative w-full">
                 <MagnifyingGlassIcon className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-manga-muted" />
                 <input
@@ -247,7 +247,7 @@ const Layout = ({ children }: LayoutProps) => {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onFocus={() => setShowResults(true)}
-                  className="w-full pl-8 pr-8 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors text-sm"
+                  className="w-full pl-8 pr-8 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:border-transparent transition-colors text-sm"
                   aria-label="Search"
                 />
                 {query && (
@@ -271,7 +271,7 @@ const Layout = ({ children }: LayoutProps) => {
                     >
                       {isSearching ? (
                         <div className="p-3 text-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-500 mx-auto"></div>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-midnight-primary-500 mx-auto"></div>
                           <p className="text-xs text-manga-muted mt-2">Searching...</p>
                         </div>
                       ) : results.length > 0 ? (
@@ -371,7 +371,7 @@ const Layout = ({ children }: LayoutProps) => {
                                 className={`w-full text-left p-3 rounded-lg transition-colors ${
                                   notification.isRead 
                                     ? 'bg-manga-surface hover:bg-manga-border' 
-                                    : 'bg-neon-50 hover:bg-neon-100'
+                                    : 'bg-midnight-primary-50 hover:bg-midnight-primary-100'
                                 }`}
                               >
                                 <p className="text-sm font-medium text-manga-text mb-1">
@@ -450,7 +450,7 @@ const Layout = ({ children }: LayoutProps) => {
                     {/* User Profile Section */}
                     <div className="p-4 bg-manga-surface rounded-lg">
                       <div className="flex items-center space-x-3 mb-3">
-                        <div className="w-12 h-12 bg-neon-500 rounded-full flex items-center justify-center">
+                        <div className="w-12 h-12 bg-midnight-primary-500 rounded-full flex items-center justify-center">
                           <UserIcon className="h-6 w-6 text-white" />
                         </div>
                         <div>
@@ -557,7 +557,7 @@ const Layout = ({ children }: LayoutProps) => {
                   <div className="mt-4 pt-4 border-t border-manga-border">
                     <button
                       onClick={handleSignOut}
-                      className="flex items-center px-4 py-3 rounded-lg text-red-500 hover:bg-red-500/10 hover:text-red-400 transition-colors w-full text-left"
+                      className="flex items-center px-4 py-3 rounded-lg text-midnight-accent-500 hover:bg-midnight-accent-500/10 hover:text-midnight-accent-400 transition-colors w-full text-left"
                       aria-label="Sign out"
                     >
                       <span className="mr-3 text-lg">🚪</span>

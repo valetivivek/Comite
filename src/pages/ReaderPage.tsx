@@ -267,7 +267,7 @@ const ReaderPage = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-manga-bg">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-midnight-primary-600"></div>
       </div>
     );
   }
@@ -302,7 +302,7 @@ const ReaderPage = () => {
               <div className="flex items-center gap-4">
                 <Link
                   to={`/series/${seriesId}`}
-                  className="flex items-center text-manga-text hover:text-teal-400 transition-colors jitter-hover"
+                  className="flex items-center text-manga-text hover:text-midnight-primary-400 transition-colors jitter-hover"
                 >
                   <ArrowLeftIcon className="h-5 w-5 mr-2" />
                   Back to Series
@@ -352,7 +352,7 @@ const ReaderPage = () => {
                               to={`/series/${seriesId}/chapter/${ch.id}`}
                               onClick={() => setShowChapterList(false)}
                               className={`block px-3 py-2 text-sm rounded hover:bg-manga-surface transition-colors ${
-                                ch.id === chapter.id ? 'bg-teal-600 text-white' : 'text-manga-text'
+                                ch.id === chapter.id ? 'bg-midnight-primary-600 text-white' : 'text-manga-text'
                               }`}
                             >
                               <div className="flex items-center justify-between">
@@ -435,7 +435,7 @@ const ReaderPage = () => {
                 {getNextChapter() ? (
                   <button
                     onClick={goToNextChapter}
-                    className="w-full flex items-center justify-center px-4 py-3 bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors jitter-hover"
+                    className="w-full flex items-center justify-center px-4 py-3 bg-midnight-primary-600 hover:bg-midnight-primary-700 rounded-lg transition-colors jitter-hover"
                   >
                     <span className="text-sm font-medium">Next</span>
                     <ChevronRightIcon className="h-5 w-5 ml-2" />
@@ -443,7 +443,7 @@ const ReaderPage = () => {
                 ) : (
                   <button
                     onClick={() => navigate(`/series/${seriesId}`)}
-                    className="w-full flex items-center justify-center px-4 py-3 bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors jitter-hover"
+                    className="w-full flex items-center justify-center px-4 py-3 bg-midnight-primary-600 hover:bg-midnight-primary-700 rounded-lg transition-colors jitter-hover"
                   >
                     <span className="text-sm font-medium">Back to Series</span>
                     <ChevronRightIcon className="h-5 w-5 ml-2" />
@@ -476,7 +476,7 @@ const ReaderPage = () => {
                 {getNextChapter() ? (
                   <button
                     onClick={goToNextChapter}
-                    className="flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors jitter-hover"
+                    className="flex items-center px-4 py-2 bg-midnight-primary-600 hover:bg-midnight-primary-700 rounded-lg transition-colors jitter-hover"
                   >
                     Next Chapter
                     <ChevronRightIcon className="h-4 w-4 ml-2" />
@@ -484,7 +484,7 @@ const ReaderPage = () => {
                 ) : (
                   <button
                     onClick={() => navigate(`/series/${seriesId}`)}
-                    className="flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors jitter-hover"
+                    className="flex items-center px-4 py-2 bg-midnight-primary-600 hover:bg-midnight-primary-700 rounded-lg transition-colors jitter-hover"
                   >
                     Back to Series
                     <ChevronRightIcon className="h-4 w-4 ml-2" />
@@ -508,7 +508,7 @@ const ReaderPage = () => {
       {/* Scroll to Top Button */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-6 right-4 z-50 p-3 bg-teal-600 hover:bg-teal-700 text-white rounded-full shadow-lg transition-colors duration-200"
+        className="fixed bottom-6 right-4 z-50 p-3 bg-midnight-primary-600 hover:bg-midnight-primary-700 text-white rounded-full shadow-lg transition-colors duration-200"
         aria-label="Scroll to top"
       >
         <ArrowUpIcon className="h-5 w-5" />

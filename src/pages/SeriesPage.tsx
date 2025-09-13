@@ -107,7 +107,7 @@ const SeriesPage = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-midnight-primary-500"></div>
       </div>
     );
   }
@@ -272,7 +272,7 @@ const SeriesPage = () => {
               <div className="flex justify-center mt-2">
                 <button
                   onClick={() => setShowDescription(!showDescription)}
-                  className="text-neon-500 hover:text-neon-400 font-medium flex items-center transition-colors"
+                  className="text-midnight-primary-500 hover:text-midnight-primary-400 font-medium flex items-center transition-colors"
                 >
                   {showDescription ? (
                     <>
@@ -374,7 +374,7 @@ const SeriesPage = () => {
                             <h3 className={`font-medium text-left transition-all duration-200 ${
                               chapter.isRead 
                                 ? 'text-manga-text' 
-                                : 'text-neon-400 font-semibold'
+                                : 'text-midnight-primary-400 font-semibold'
                             }`}>
                               Chapter {chapter.chapterNumber}
                             </h3>
@@ -389,7 +389,7 @@ const SeriesPage = () => {
                                 Read
                               </span>
                             ) : (
-                              <span className="text-xs bg-neon-500 text-white px-2 py-1 rounded-full">
+                              <span className="text-xs bg-midnight-primary-500 text-white px-2 py-1 rounded-full">
                                 New
                               </span>
                             )}
@@ -433,7 +433,7 @@ const SeriesPage = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             onClick={scrollToTop}
-            className="fixed bottom-6 right-6 p-3 bg-neon-500 hover:bg-neon-600 text-white rounded-full shadow-lg transition-colors jitter-hover z-20"
+            className="fixed bottom-6 right-6 p-3 bg-midnight-primary-500 hover:bg-midnight-primary-600 text-white rounded-full shadow-lg transition-colors jitter-hover z-20"
           >
             <ArrowUpIcon className="h-5 w-5" />
           </motion.button>

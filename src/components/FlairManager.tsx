@@ -133,7 +133,7 @@ const FlairManager = ({ userId, onFlairsUpdated }: FlairManagerProps) => {
               disabled={!selectedFlairs.includes(genre) && selectedFlairs.length >= 3}
               className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 selectedFlairs.includes(genre)
-                  ? 'bg-teal-500 text-white'
+                  ? 'bg-midnight-primary-500 text-white'
                   : selectedFlairs.length >= 3
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -155,7 +155,7 @@ const FlairManager = ({ userId, onFlairsUpdated }: FlairManagerProps) => {
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-medium hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-2 bg-midnight-primary-600 text-white rounded-lg text-sm font-medium hover:bg-midnight-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           aria-label="Save flair selection"
         >
           {isSaving ? 'Saving...' : 'Save'}

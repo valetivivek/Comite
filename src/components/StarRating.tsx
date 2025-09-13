@@ -96,7 +96,7 @@ const StarRating = ({
                   whileTap={interactive ? { scale: 0.95 } : {}}
                 >
                   {isFilled ? (
-                    <StarSolidIcon className={`${sizeClasses[size]} text-neon-400`} />
+                    <StarSolidIcon className={`${sizeClasses[size]} text-midnight-primary-400`} />
                   ) : (
                     <StarIcon className={`${sizeClasses[size]} text-manga-muted`} />
                   )}

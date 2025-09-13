@@ -213,7 +213,7 @@ const CommentSection = ({ contextId, contextType, title = 'Comments' }: CommentS
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
               placeholder="Enter your name (optional)"
-              className="w-full px-3 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="w-full px-3 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:border-transparent"
               aria-label="Your name for comments"
             />
           </div>
@@ -230,7 +230,7 @@ const CommentSection = ({ contextId, contextType, title = 'Comments' }: CommentS
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder="Share your thoughts..."
                 rows={3}
-                className="w-full px-3 py-2 pr-20 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none"
+                className="w-full px-3 py-2 pr-20 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:border-transparent resize-none"
                 aria-label="Comment text"
               />
               
@@ -322,7 +322,7 @@ const CommentSection = ({ contextId, contextType, title = 'Comments' }: CommentS
             <button
               type="submit"
               disabled={!newComment.trim() || isSubmitting}
-              className="flex items-center px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center px-4 py-2 bg-midnight-primary-600 text-white rounded-lg hover:bg-midnight-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               aria-label="Submit comment"
             >
               {isSubmitting ? (
@@ -382,7 +382,7 @@ const CommentItem = ({ comment, onLike, onReply, formatTimestamp }: CommentItemP
       <div className="flex items-start space-x-3">
         {/* Avatar */}
         <div className="flex-shrink-0">
-          <div className="w-8 h-8 bg-neon-500 rounded-full flex items-center justify-center">
+          <div className="w-8 h-8 bg-midnight-primary-500 rounded-full flex items-center justify-center">
             <UserIcon className="h-5 w-5 text-white" />
           </div>
         </div>
