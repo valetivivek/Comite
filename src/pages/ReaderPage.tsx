@@ -93,10 +93,6 @@ const ReaderPage = () => {
     };
   }, []);
 
-  const getCurrentChapterIndex = () => {
-    if (!series || !chapter) return -1;
-    return series.chapters.findIndex(ch => ch.id === chapter.id);
-  };
 
   const getPreviousChapter = () => {
     if (!series || !chapter) return null;
@@ -161,9 +157,6 @@ const ReaderPage = () => {
     );
   }
 
-  const currentIndex = getCurrentChapterIndex();
-  const totalChapters = series.chapters.length;
-  const progress = ((currentIndex + 1) / totalChapters) * 100;
 
   return (
     <div className="min-h-screen bg-manga-bg text-manga-text">
@@ -193,19 +186,6 @@ const ReaderPage = () => {
               </div>
 
               <div className="flex items-center gap-4">
-                {/* Progress */}
-                <div className="hidden sm:block">
-                  <div className="text-sm text-manga-muted">
-                    {currentIndex + 1} of {totalChapters}
-                  </div>
-                  <div className="w-24 h-1 bg-manga-border rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-teal-500 transition-all duration-300"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-                </div>
-
                 {/* Chapter Dropdown */}
                 <div className="relative">
                   <button
@@ -299,17 +279,6 @@ const ReaderPage = () => {
                 )}
               </div>
 
-              <div className="text-center">
-                <div className="text-sm text-manga-muted mb-2">
-                  Chapter {chapter.chapterNumber} of {totalChapters}
-                </div>
-                <div className="w-32 h-1 bg-manga-border rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-teal-500 transition-all duration-300"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-              </div>
 
               <div className="flex gap-4">
                 {getNextChapter() ? (
@@ -344,28 +313,6 @@ const ReaderPage = () => {
         </div>
       </div>
 
-      {/* Bottom Toolbar */}
-      <AnimatePresence>
-        {showToolbar && (
-          <motion.div
-            initial={{ y: 100 }}
-            animate={{ y: 0 }}
-            exit={{ y: 100 }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-manga-bg bg-opacity-95 backdrop-blur-sm border-t border-manga-border"
-          >
-            <div className="flex items-center justify-center p-4">
-              <div className="flex items-center gap-4">
-                <div className="w-32 h-1 bg-manga-border rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-teal-500 transition-all duration-300"
-                    style={{ width: `${((currentPage + 1) / chapter.pages.length) * 100}%` }}
-                  />
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
