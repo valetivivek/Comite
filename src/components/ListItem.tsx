@@ -48,6 +48,44 @@ const ListItem = ({ series }: ListItemProps) => {
 
   const recentChapters = series.chapters.slice(0, 5); // Show 5 chapters
 
+  const formatRelativeTime = (timestamp: string | Date) => {
+    if (!timestamp) return null;
+    
+    const now = new Date();
+    const chapterDate = new Date(timestamp);
+    
+    if (isNaN(chapterDate.getTime())) return null;
+    
+    const diffInSeconds = Math.floor((now.getTime() - chapterDate.getTime()) / 1000);
+    
+    if (diffInSeconds < 60) {
+      return `${diffInSeconds}s ago`;
+    }
+    
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) {
+      return `${diffInMinutes} min ago`;
+    }
+    
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) {
+      return `${diffInHours} hr ago`;
+    }
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 30) {
+      return `${diffInDays} days ago`;
+    }
+    
+    const diffInMonths = Math.floor(diffInDays / 30);
+    if (diffInMonths < 12) {
+      return `${diffInMonths} months ago`;
+    }
+    
+    const diffInYears = Math.floor(diffInMonths / 12);
+    return `${diffInYears} years ago`;
+  };
+
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
@@ -115,14 +153,24 @@ const ListItem = ({ series }: ListItemProps) => {
               <Link
                 key={chapter.id}
                 to={`/series/${series.id}/chapter/${chapter.id}`}
-                className={`block text-sm py-1 px-2 rounded transition-colors hover:underline ${
+                className={`block text-sm py-1 px-2 rounded transition-colors hover:bg-manga-surface ${
                   chapter.isRead 
-                    ? 'text-manga-muted hover:text-manga-text hover:bg-manga-surface' 
-                    : 'text-teal-400 hover:text-manga-text hover:bg-manga-surface'
+                    ? 'text-manga-muted hover:text-manga-text' 
+                    : 'text-teal-400 hover:text-manga-text'
                 }`}
                 aria-label={`Chapter ${chapter.chapterNumber}`}
               >
-                Ch. {chapter.chapterNumber}
+                <div className="flex justify-between items-center">
+                  <span>Ch. {chapter.chapterNumber}</span>
+                  {chapter.publishedAt && formatRelativeTime(chapter.publishedAt) && (
+                    <span 
+                      className="text-xs text-manga-muted"
+                      title={new Date(chapter.publishedAt).toLocaleString()}
+                    >
+                      {formatRelativeTime(chapter.publishedAt)}
+                    </span>
+                  )}
+                </div>
               </Link>
             ))}
           </div>

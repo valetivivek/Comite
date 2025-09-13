@@ -10,6 +10,44 @@ interface SeriesCardProps {
 const SeriesCard = ({ series, viewMode }: SeriesCardProps) => {
   const recentChapters = series.chapters.slice(0, 5);
 
+  const formatRelativeTime = (timestamp: string | Date) => {
+    if (!timestamp) return null;
+    
+    const now = new Date();
+    const chapterDate = new Date(timestamp);
+    
+    if (isNaN(chapterDate.getTime())) return null;
+    
+    const diffInSeconds = Math.floor((now.getTime() - chapterDate.getTime()) / 1000);
+    
+    if (diffInSeconds < 60) {
+      return `${diffInSeconds}s ago`;
+    }
+    
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) {
+      return `${diffInMinutes} min ago`;
+    }
+    
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) {
+      return `${diffInHours} hr ago`;
+    }
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 30) {
+      return `${diffInDays} days ago`;
+    }
+    
+    const diffInMonths = Math.floor(diffInDays / 30);
+    if (diffInMonths < 12) {
+      return `${diffInMonths} months ago`;
+    }
+    
+    const diffInYears = Math.floor(diffInMonths / 12);
+    return `${diffInYears} years ago`;
+  };
+
   if (viewMode === 'list') {
     return (
       <motion.div
@@ -51,20 +89,30 @@ const SeriesCard = ({ series, viewMode }: SeriesCardProps) => {
                 <span className="text-sm text-manga-muted">{series.totalChapters} chapters</span>
               </div>
 
-              {/* Recent Chapters - Compact Pills */}
-              <div className="flex flex-wrap gap-1">
+              {/* Recent Chapters - Vertical List */}
+              <div className="space-y-1">
                 {recentChapters.map((chapter) => (
-                  <span
+                  <div
                     key={chapter.id}
-                    className={`px-2 py-1 text-xs rounded ${
+                    className={`text-xs py-1 px-2 rounded ${
                       chapter.isRead 
                         ? 'bg-manga-surface text-manga-muted' 
                         : 'bg-neon-500 text-white'
                     }`}
                     aria-label={`Chapter ${chapter.chapterNumber}`}
                   >
-                    {chapter.chapterNumber}
-                  </span>
+                    <div className="flex justify-between items-center">
+                      <span>Ch. {chapter.chapterNumber}</span>
+                      {chapter.publishedAt && formatRelativeTime(chapter.publishedAt) && (
+                        <span 
+                          className="text-xs opacity-75"
+                          title={new Date(chapter.publishedAt).toLocaleString()}
+                        >
+                          {formatRelativeTime(chapter.publishedAt)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -135,7 +183,17 @@ const SeriesCard = ({ series, viewMode }: SeriesCardProps) => {
                 }`}
                 aria-label={`Chapter ${chapter.chapterNumber}`}
               >
-                Ch. {chapter.chapterNumber}
+                <div className="flex justify-between items-center">
+                  <span>Ch. {chapter.chapterNumber}</span>
+                  {chapter.publishedAt && formatRelativeTime(chapter.publishedAt) && (
+                    <span 
+                      className="text-xs text-manga-muted"
+                      title={new Date(chapter.publishedAt).toLocaleString()}
+                    >
+                      {formatRelativeTime(chapter.publishedAt)}
+                    </span>
+                  )}
+                </div>
               </Link>
             ))}
           </div>

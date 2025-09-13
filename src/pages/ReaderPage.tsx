@@ -136,6 +136,44 @@ const ReaderPage = () => {
     }
   };
 
+  const formatRelativeTime = (timestamp: string | Date) => {
+    if (!timestamp) return null;
+    
+    const now = new Date();
+    const chapterDate = new Date(timestamp);
+    
+    if (isNaN(chapterDate.getTime())) return null;
+    
+    const diffInSeconds = Math.floor((now.getTime() - chapterDate.getTime()) / 1000);
+    
+    if (diffInSeconds < 60) {
+      return `${diffInSeconds}s ago`;
+    }
+    
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) {
+      return `${diffInMinutes} min ago`;
+    }
+    
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) {
+      return `${diffInHours} hr ago`;
+    }
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 30) {
+      return `${diffInDays} days ago`;
+    }
+    
+    const diffInMonths = Math.floor(diffInDays / 30);
+    if (diffInMonths < 12) {
+      return `${diffInMonths} months ago`;
+    }
+    
+    const diffInYears = Math.floor(diffInMonths / 12);
+    return `${diffInYears} years ago`;
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-manga-bg">
@@ -182,7 +220,17 @@ const ReaderPage = () => {
                 
                 <div className="hidden sm:block">
                   <h1 className="text-lg font-semibold text-manga-text">{series.title}</h1>
-                  <p className="text-sm text-manga-muted">Chapter {chapter.chapterNumber}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm text-manga-muted">Chapter {chapter.chapterNumber}</p>
+                    {chapter.publishedAt && formatRelativeTime(chapter.publishedAt) && (
+                      <span 
+                        className="text-xs text-manga-muted"
+                        title={new Date(chapter.publishedAt).toLocaleString()}
+                      >
+                        • {formatRelativeTime(chapter.publishedAt)}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -193,7 +241,9 @@ const ReaderPage = () => {
                     onClick={() => setShowChapterList(!showChapterList)}
                     className="flex items-center px-3 py-2 bg-manga-card rounded-lg hover:bg-manga-surface transition-colors"
                   >
-                    <span className="hidden sm:inline mr-2">Chapters</span>
+                    <span className="hidden sm:inline mr-2">
+                      {chapter ? `Chapter ${chapter.chapterNumber}` : 'Chapter'}
+                    </span>
                     <ChevronDownIcon className="h-4 w-4" />
                   </button>
 
@@ -237,7 +287,17 @@ const ReaderPage = () => {
           {/* Chapter Title */}
           <div className="text-center py-6 sm:hidden">
             <h1 className="text-lg font-semibold text-manga-text">{series.title}</h1>
-            <p className="text-sm text-manga-muted">Chapter {chapter.chapterNumber}</p>
+            <div className="flex items-center justify-center gap-2">
+              <p className="text-sm text-manga-muted">Chapter {chapter.chapterNumber}</p>
+              {chapter.publishedAt && formatRelativeTime(chapter.publishedAt) && (
+                <span 
+                  className="text-xs text-manga-muted"
+                  title={new Date(chapter.publishedAt).toLocaleString()}
+                >
+                  • {formatRelativeTime(chapter.publishedAt)}
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Pages */}
