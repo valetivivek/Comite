@@ -3,8 +3,9 @@ import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ChevronDownIcon, 
-  ChevronUpIcon,
-  ArrowUpIcon
+  ArrowUpIcon,
+  ArrowUpCircleIcon,
+  ArrowDownCircleIcon
 } from '@heroicons/react/24/outline';
 import { dataService } from '../services/dataService';
 import { Series, User } from '../types';
@@ -22,6 +23,10 @@ const SeriesPage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [userRating, setUserRating] = useState<number>(0);
   const [isRating, setIsRating] = useState(false);
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>(() => {
+    const saved = localStorage.getItem('chapter-sort-order');
+    return (saved as 'desc' | 'asc') || 'desc';
+  });
 
   useEffect(() => {
     const loadSeries = async () => {
@@ -103,6 +108,27 @@ const SeriesPage = () => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const handleSortChange = (newSortOrder: 'desc' | 'asc') => {
+    setSortOrder(newSortOrder);
+    localStorage.setItem('chapter-sort-order', newSortOrder);
+  };
+
+  // Helper function to check if chapter is "new" (within 6 days)
+  const isChapterNew = (publishedAt: string | Date) => {
+    if (!publishedAt) return false;
+    const chapterDate = new Date(publishedAt);
+    const now = new Date();
+    const diffInDays = Math.floor((now.getTime() - chapterDate.getTime()) / (1000 * 60 * 60 * 24));
+    return diffInDays <= 6;
+  };
+
+  // Sort chapters based on current sort order
+  const sortedChapters = series ? [...series.chapters].sort((a, b) => {
+    return sortOrder === 'desc' 
+      ? b.chapterNumber - a.chapterNumber 
+      : a.chapterNumber - b.chapterNumber;
+  }) : [];
 
   if (isLoading) {
     return (
@@ -302,6 +328,20 @@ const SeriesPage = () => {
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-bold text-manga-text">Chapters</h2>
                   <div className="flex items-center gap-4">
+                    {/* Sort Toggle - Single Icon Button */}
+                    <button
+                      onClick={() => handleSortChange(sortOrder === 'desc' ? 'asc' : 'desc')}
+                      className="p-2 rounded-lg bg-manga-surface border border-manga-border text-manga-text hover:bg-manga-border transition-colors focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:ring-offset-2 focus:ring-offset-manga-bg min-h-[44px] min-w-[44px] flex items-center justify-center"
+                      aria-pressed={sortOrder === 'desc'}
+                      aria-label={sortOrder === 'desc' ? 'Sort: Newest First' : 'Sort: Oldest First'}
+                    >
+                      {sortOrder === 'desc' ? (
+                        <ArrowDownCircleIcon className="h-5 w-5" />
+                      ) : (
+                        <ArrowUpCircleIcon className="h-5 w-5" />
+                      )}
+                    </button>
+                    
                     {/* Quick Jump */}
                     <div className="relative">
                       <button
@@ -360,48 +400,93 @@ const SeriesPage = () => {
               </div>
               <div className="h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-manga-border scrollbar-track-manga-surface">
                 <div className="space-y-1 p-2">
-                  {series.chapters
-                    .sort((a, b) => b.chapterNumber - a.chapterNumber)
-                    .map((chapter) => (
+                  {sortedChapters.map((chapter) => (
                       <Link
                         key={chapter.id}
                         id={`chapter-${chapter.id}`}
                         to={`/series/${series.id}/chapter/${chapter.id}`}
-                        className="block w-full p-3 rounded-lg transition-all duration-200 hover:bg-manga-surface active:bg-manga-border"
+                        className="block w-full p-3 rounded-lg transition-all duration-200 hover:bg-manga-surface active:bg-manga-border min-h-[44px] focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:ring-offset-2 focus:ring-offset-manga-bg"
+                        aria-label={`Chapter ${chapter.chapterNumber}${chapter.title ? `, ${chapter.title}` : ''}${chapter.isRead ? ', read' : isChapterNew(chapter.publishedAt) ? ', new' : ''}${chapter.publishedAt && formatRelativeTime(chapter.publishedAt) ? `, ${formatRelativeTime(chapter.publishedAt)}` : ''}`}
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1 min-w-0">
-                            <h3 className={`font-medium text-left transition-all duration-200 ${
+                        {/* Desktop: Two-region grid */}
+                        <div className="hidden sm:grid sm:grid-cols-2 sm:gap-4 sm:items-center">
+                          {/* Left: Chapter label + Status badges */}
+                          <div className="flex items-center gap-2 min-w-0">
+                            <h3 className={`font-semibold text-left transition-all duration-200 text-sm ${
                               chapter.isRead 
                                 ? 'text-manga-text' 
-                                : 'text-midnight-primary-400 font-semibold'
+                                : 'text-midnight-primary-400'
                             }`}>
-                              Chapter {chapter.chapterNumber}
+                              Ch. {chapter.chapterNumber}
+                              {chapter.title && (
+                                <span className="block text-xs text-manga-muted mt-1 truncate">
+                                  {chapter.title}
+                                </span>
+                              )}
                             </h3>
-                            <p className="text-sm text-manga-muted text-left">
-                              {new Date(chapter.publishedAt).toLocaleDateString()}
-                            </p>
-                          </div>
-                          
-                          <div className="flex items-center gap-3 ml-4">
+                            
+                            {/* Status badges */}
                             {chapter.isRead ? (
-                              <span className="text-xs bg-green-500 text-white px-2 py-1 rounded-full">
+                              <span className="text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium flex-shrink-0" aria-label="read">
                                 Read
                               </span>
-                            ) : (
-                              <span className="text-xs bg-midnight-primary-500 text-white px-2 py-1 rounded-full">
+                            ) : isChapterNew(chapter.publishedAt) ? (
+                              <span className="text-xs bg-midnight-primary-500 text-white px-2 py-1 rounded-full font-medium flex-shrink-0" aria-label="new">
                                 New
                               </span>
-                            )}
+                            ) : null}
+                          </div>
+                          
+                          {/* Right: Time */}
+                          <div className="text-right">
                             {chapter.publishedAt && formatRelativeTime(chapter.publishedAt) && (
-                              <span 
-                                className="text-sm text-manga-muted"
-                                title={new Date(chapter.publishedAt).toLocaleString()}
+                              <time 
+                                dateTime={new Date(chapter.publishedAt).toISOString()}
+                                className="text-xs text-neutral-400 font-medium"
                               >
                                 {formatRelativeTime(chapter.publishedAt)}
-                              </span>
+                              </time>
                             )}
                           </div>
+                        </div>
+                        
+                        {/* Mobile: Stacked layout */}
+                        <div className="sm:hidden">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className={`font-semibold text-left transition-all duration-200 text-sm ${
+                              chapter.isRead 
+                                ? 'text-manga-text' 
+                                : 'text-midnight-primary-400'
+                            }`}>
+                              Ch. {chapter.chapterNumber}
+                              {chapter.title && (
+                                <span className="block text-xs text-manga-muted mt-1 truncate">
+                                  {chapter.title}
+                                </span>
+                              )}
+                            </h3>
+                            
+                            {/* Status badges */}
+                            {chapter.isRead ? (
+                              <span className="text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium flex-shrink-0" aria-label="read">
+                                Read
+                              </span>
+                            ) : isChapterNew(chapter.publishedAt) ? (
+                              <span className="text-xs bg-midnight-primary-500 text-white px-2 py-1 rounded-full font-medium flex-shrink-0" aria-label="new">
+                                New
+                              </span>
+                            ) : null}
+                          </div>
+                          
+                          {/* Mobile: Time on second line */}
+                          {chapter.publishedAt && formatRelativeTime(chapter.publishedAt) && (
+                            <time 
+                              dateTime={new Date(chapter.publishedAt).toISOString()}
+                              className="text-xs text-neutral-400 font-medium"
+                            >
+                              {formatRelativeTime(chapter.publishedAt)}
+                            </time>
+                          )}
                         </div>
                       </Link>
                     ))}
