@@ -9,6 +9,7 @@ import {
   ArrowUpIcon
 } from '@heroicons/react/24/outline';
 import { dataService } from '../services/dataService';
+import { readingStatsService } from '../services/readingStatsService';
 import { Series, Chapter } from '../types';
 import CommentSection from '../components/CommentSection';
 
@@ -22,7 +23,11 @@ const ReaderPage = () => {
   const [showChapterList, setShowChapterList] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [isMarkingAsRead, setIsMarkingAsRead] = useState(false);
+  const [isTrackingRead, setIsTrackingRead] = useState(false);
   const toolbarTimeoutRef = useRef<number>();
+  const scrollDepthRef = useRef<number>(0);
+  const imageObserverRef = useRef<IntersectionObserver | null>(null);
+  const imagesSeenRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     const loadData = async () => {
@@ -59,6 +64,91 @@ const ReaderPage = () => {
       dataService.markChapterAsRead(seriesId!, chapterId!);
     }
   }, [chapter, seriesId, chapterId, isMarkingAsRead]);
+
+  // Reading tracking effect
+  useEffect(() => {
+    if (!chapter || !series || isTrackingRead) return;
+
+    const userId = 'current-user'; // In a real app, get from auth context
+    const totalImages = chapter.pages.length;
+    
+    // Start tracking
+    setIsTrackingRead(true);
+    readingStatsService.startChapterRead(userId, chapterId!, seriesId!, totalImages);
+
+    // Set up scroll tracking
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollDepth = Math.min((scrollTop / scrollHeight) * 100, 100);
+      
+      scrollDepthRef.current = scrollDepth;
+      readingStatsService.updateScrollDepth(userId, chapterId!, scrollDepth);
+      readingStatsService.updateActivity(userId, chapterId!);
+    };
+
+    // Set up activity tracking
+    const handleActivity = () => {
+      readingStatsService.updateActivity(userId, chapterId!);
+    };
+
+    // Set up image visibility tracking
+    const setupImageTracking = () => {
+      if (imageObserverRef.current) {
+        imageObserverRef.current.disconnect();
+      }
+
+      imageObserverRef.current = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const imageId = entry.target.getAttribute('data-image-id');
+              if (imageId && !imagesSeenRef.current.has(imageId)) {
+                imagesSeenRef.current.add(imageId);
+                readingStatsService.updateImageSeen(userId, chapterId!);
+              }
+            }
+          });
+        },
+        { threshold: 0.5 }
+      );
+
+      // Observe all chapter images
+      const images = document.querySelectorAll('[data-image-id]');
+      images.forEach((img) => imageObserverRef.current?.observe(img));
+    };
+
+    // Add event listeners
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('mousemove', handleActivity);
+    window.addEventListener('touchstart', handleActivity);
+    window.addEventListener('keydown', handleActivity);
+    window.addEventListener('click', handleActivity);
+
+    // Set up image tracking after a short delay to ensure images are rendered
+    setTimeout(setupImageTracking, 1000);
+
+    // Cleanup function
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('mousemove', handleActivity);
+      window.removeEventListener('touchstart', handleActivity);
+      window.removeEventListener('keydown', handleActivity);
+      window.removeEventListener('click', handleActivity);
+      
+      if (imageObserverRef.current) {
+        imageObserverRef.current.disconnect();
+      }
+
+      // Stop tracking and validate read
+      readingStatsService.stopChapterRead(userId, chapterId!, series).then((isValidRead) => {
+        if (isValidRead) {
+          // Dispatch event to update UI
+          window.dispatchEvent(new CustomEvent('readingStatsUpdated'));
+        }
+      });
+    };
+  }, [chapter, series, seriesId, chapterId, isTrackingRead]);
 
   useEffect(() => {
     // Auto-hide toolbar
@@ -315,6 +405,7 @@ const ReaderPage = () => {
                   alt={`Page ${index + 1}`}
                   className="w-full max-w-2xl sm:max-w-3xl h-auto rounded-lg shadow-lg"
                   loading="lazy"
+                  data-image-id={`${chapterId}-${index}`}
                   onLoad={() => handlePageChange(index)}
                 />
               </motion.div>

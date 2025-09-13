@@ -13,6 +13,7 @@ import { User, Notification } from '../types';
 import { dataService } from '../services/dataService';
 import { useNavSearch } from '../hooks/useNavSearch';
 import Footer from './Footer';
+import UserFlairs from './UserFlairs';
 
 interface LayoutProps {
   children: ReactNode;
@@ -424,14 +425,18 @@ const Layout = ({ children }: LayoutProps) => {
                 {user ? (
                   <>
                     {/* User Profile Section */}
-                    <div className="flex items-center space-x-3 p-4 bg-manga-surface rounded-lg">
-                      <div className="w-12 h-12 bg-neon-500 rounded-full flex items-center justify-center">
-                        <UserIcon className="h-6 w-6 text-white" />
+                    <div className="p-4 bg-manga-surface rounded-lg">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <div className="w-12 h-12 bg-neon-500 rounded-full flex items-center justify-center">
+                          <UserIcon className="h-6 w-6 text-white" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-manga-text">{user.username}</p>
+                          <p className="text-sm text-manga-muted">{user.email}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium text-manga-text">{user.username}</p>
-                        <p className="text-sm text-manga-muted">{user.email}</p>
-                      </div>
+                      {/* Rank and Genre Flairs */}
+                      <UserFlairs userId={user.id} variant="dashboard" />
                     </div>
 
                     {/* Dashboard Options */}
