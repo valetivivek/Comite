@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { readingStatsService, ReadingStats } from '../services/readingStatsService';
+import { readingStatsService } from '../services/readingStatsService';
 import { dataService } from '../services/dataService';
 
 interface UserFlairsProps {

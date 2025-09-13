@@ -21,7 +21,7 @@ const ReaderPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showToolbar, setShowToolbar] = useState(true);
   const [showChapterList, setShowChapterList] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [, setCurrentPage] = useState(0);
   const [isMarkingAsRead, setIsMarkingAsRead] = useState(false);
   const [isTrackingRead, setIsTrackingRead] = useState(false);
   const toolbarTimeoutRef = useRef<number>();

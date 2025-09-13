@@ -1,4 +1,4 @@
-import { Series, Chapter } from '../types';
+import { Series } from '../types';
 
 export interface ReadingStats {
   totalChaptersRead: number;
@@ -20,7 +20,7 @@ export class ReadingStatsService {
   private static instance: ReadingStatsService;
   private stats: { [userId: string]: ReadingStats } = {};
   private activeReads: { [key: string]: ValidReadData } = {};
-  private heartbeatTimers: { [key: string]: NodeJS.Timeout } = {};
+  private heartbeatTimers: { [key: string]: number } = {};
   private lastActivityTimes: { [key: string]: number } = {};
 
   static getInstance(): ReadingStatsService {
@@ -163,7 +163,7 @@ export class ReadingStatsService {
     return true;
   }
 
-  private updateUserStats(userId: string, readData: ValidReadData, series: Series): void {
+  private updateUserStats(userId: string, _readData: ValidReadData, series: Series): void {
     if (!this.stats[userId]) {
       this.stats[userId] = {
         totalChaptersRead: 0,

@@ -125,7 +125,7 @@ const SeriesPage = () => {
     );
   }
 
-  const readChapters = series.chapters.filter(ch => ch.isRead).length;
+  const _readChapters = series.chapters.filter(ch => ch.isRead).length;
 
   const formatRelativeTime = (timestamp: string | Date) => {
     if (!timestamp) return null;
