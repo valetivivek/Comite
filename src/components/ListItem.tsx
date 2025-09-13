@@ -46,7 +46,7 @@ const ListItem = ({ series }: ListItemProps) => {
     }
   };
 
-  const recentChapters = series.chapters.slice(0, 3); // Show 3 chapters
+  const recentChapters = series.chapters.slice(0, 5); // Show 5 chapters
 
   return (
     <motion.div
@@ -55,8 +55,8 @@ const ListItem = ({ series }: ListItemProps) => {
       className="card hover:shadow-lg transition-shadow duration-200 relative"
     >
       <div className="flex p-4">
-        {/* Cover Image - Left aligned */}
-        <div className="relative flex-shrink-0 w-16 h-24 rounded-lg overflow-hidden mr-4">
+        {/* Cover Image - Left aligned with specified dimensions */}
+        <div className="relative flex-shrink-0 w-[148px] sm:w-[168px] lg:w-[184px] aspect-[3/4] rounded-lg overflow-hidden mr-4">
           <Link to={`/series/${series.id}`} className="block">
             <img
               src={series.coverImage}

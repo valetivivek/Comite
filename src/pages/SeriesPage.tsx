@@ -203,30 +203,32 @@ const SeriesPage = () => {
       {/* Description Section */}
       <section className="py-8">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="max-w-4xl">
-            <h2 className="text-2xl font-bold text-manga-text mb-4">Description</h2>
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold text-manga-text mb-4 text-center">Description</h2>
             <div className="card p-6">
-              <p className={`text-manga-text leading-relaxed ${
+              <p className={`text-manga-text leading-relaxed text-center ${
                 !showDescription ? 'line-clamp-3' : ''
               }`}>
                 {series.description}
               </p>
-              <button
-                onClick={() => setShowDescription(!showDescription)}
-                className="mt-2 text-neon-500 hover:text-neon-400 font-medium flex items-center transition-colors"
-              >
-                {showDescription ? (
-                  <>
-                    <ChevronUpIcon className="h-4 w-4 mr-1" />
-                    Read Less
-                  </>
-                ) : (
-                  <>
-                    <ChevronDownIcon className="h-4 w-4 mr-1" />
-                    Read More
-                  </>
-                )}
-              </button>
+              <div className="flex justify-center mt-2">
+                <button
+                  onClick={() => setShowDescription(!showDescription)}
+                  className="text-neon-500 hover:text-neon-400 font-medium flex items-center transition-colors"
+                >
+                  {showDescription ? (
+                    <>
+                      <ChevronUpIcon className="h-4 w-4 mr-1" />
+                      Read Less
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDownIcon className="h-4 w-4 mr-1" />
+                      Read More
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -235,17 +237,13 @@ const SeriesPage = () => {
       {/* Chapters Section */}
       <section className="pb-8">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="max-w-4xl">
+          <div className="max-w-4xl mx-auto">
             {/* Chapter List - Fixed Height Scrollable */}
             <div className="card p-0">
               <div className="p-4 border-b border-manga-border">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-bold text-manga-text">Chapters</h2>
                   <div className="flex items-center gap-4">
-                    <span className="text-sm text-manga-muted">
-                      {readChapters}/{series.totalChapters} read
-                    </span>
-                    
                     {/* Quick Jump */}
                     <div className="relative">
                       <button

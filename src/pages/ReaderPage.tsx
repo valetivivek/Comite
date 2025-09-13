@@ -99,15 +99,15 @@ const ReaderPage = () => {
   };
 
   const getPreviousChapter = () => {
-    if (!series) return null;
-    const currentIndex = getCurrentChapterIndex();
-    return currentIndex > 0 ? series.chapters[currentIndex - 1] : null;
+    if (!series || !chapter) return null;
+    const prevChapterNumber = chapter.chapterNumber - 1;
+    return series.chapters.find(ch => ch.chapterNumber === prevChapterNumber) || null;
   };
 
   const getNextChapter = () => {
-    if (!series) return null;
-    const currentIndex = getCurrentChapterIndex();
-    return currentIndex < series.chapters.length - 1 ? series.chapters[currentIndex + 1] : null;
+    if (!series || !chapter) return null;
+    const nextChapterNumber = chapter.chapterNumber + 1;
+    return series.chapters.find(ch => ch.chapterNumber === nextChapterNumber) || null;
   };
 
   const goToPreviousChapter = () => {
@@ -236,9 +236,6 @@ const ReaderPage = () => {
                             >
                               <div className="flex items-center justify-between">
                                 <span>Chapter {ch.chapterNumber}</span>
-                                {ch.isRead && (
-                                  <span className="text-xs text-green-400">✓</span>
-                                )}
                               </div>
                             </Link>
                           ))}
@@ -358,9 +355,6 @@ const ReaderPage = () => {
           >
             <div className="flex items-center justify-center p-4">
               <div className="flex items-center gap-4">
-                <span className="text-sm text-manga-muted">
-                  Page {currentPage + 1} of {chapter.pages.length}
-                </span>
                 <div className="w-32 h-1 bg-manga-border rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-teal-500 transition-all duration-300"
