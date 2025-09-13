@@ -1,7 +1,7 @@
 import { dataService } from './dataService';
 
 class NotificationService {
-  private intervalId: number | null = null;
+  private intervalId: NodeJS.Timeout | null = null;
   private isRunning = false;
   private lastCheckTime = 0;
   private throttleDelay = 5000; // 5 seconds throttle

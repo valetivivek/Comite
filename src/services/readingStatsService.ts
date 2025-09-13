@@ -20,7 +20,7 @@ export class ReadingStatsService {
   private static instance: ReadingStatsService;
   private stats: { [userId: string]: ReadingStats } = {};
   private activeReads: { [key: string]: ValidReadData } = {};
-  private heartbeatTimers: { [key: string]: number } = {};
+  private heartbeatTimers: { [key: string]: NodeJS.Timeout } = {};
   private lastActivityTimes: { [key: string]: number } = {};
 
   static getInstance(): ReadingStatsService {

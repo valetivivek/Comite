@@ -21,15 +21,6 @@ const ChapterList = ({ chapters, seriesId }: ChapterListProps) => {
   );
 
   // Calculate reading time estimate (assuming 2 minutes per page)
-  const getReadingTime = (pages: string[]) => {
-    const minutes = Math.ceil(pages.length * 2);
-    if (minutes < 60) {
-      return `${minutes}m`;
-    }
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
-  };
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 

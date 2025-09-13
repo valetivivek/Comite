@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { dataService } from '../services/dataService';
-import { Series, ReadingHistory } from '../types';
+import { Series } from '../types';
 import ListItem from '../components/ListItem';
 import SkeletonLoader from '../components/SkeletonLoader';
 import { JsonLd } from '../components/JsonLd';
