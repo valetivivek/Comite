@@ -5,12 +5,14 @@ import { Series } from '../types';
 import ListItem from '../components/ListItem';
 import Carousel from '../components/Carousel';
 import CommentSection from '../components/CommentSection';
+import SkeletonLoader from '../components/SkeletonLoader';
 import { JsonLd } from '../components/JsonLd';
 
 const DashboardPage = () => {
   const [series, setSeries] = useState<Series[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Load series data
   useEffect(() => {
@@ -29,9 +31,22 @@ const DashboardPage = () => {
     loadSeries();
   }, []);
 
+  // Handle responsive pagination
+  useEffect(() => {
+    const handleResize = () => {
+      const newItemsPerPage = window.innerWidth >= 1024 ? 12 : 10;
+      setItemsPerPage(newItemsPerPage);
+    };
+
+    // Set initial value
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
 
   // Pagination logic
-  const itemsPerPage = 10;
   const totalPages = Math.ceil(series.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -49,14 +64,6 @@ const DashboardPage = () => {
     .sort((a, b) => b.rating - a.rating)
     .slice(0, 5);
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-midnight-primary-600"></div>
-      </div>
-    );
-  }
-
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -70,6 +77,35 @@ const DashboardPage = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-manga-bg">
+        <JsonLd data={jsonLd} />
+        {/* Hero Carousel Skeleton */}
+        <section className="relative">
+          <div className="h-64 md:h-80 lg:h-96">
+            <SkeletonLoader type="cover" className="w-full h-full" />
+          </div>
+        </section>
+
+        {/* Series Grid Skeleton */}
+        <section className="section-spacing">
+          <div className="container-spacing">
+            <div className="text-center mb-12">
+              <SkeletonLoader type="text" className="h-8 w-48 mx-auto mb-4" />
+              <SkeletonLoader type="text" className="h-4 w-96 mx-auto" />
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <SkeletonLoader key={i} type="list" />
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-manga-bg">
       <JsonLd data={jsonLd} />
@@ -80,19 +116,13 @@ const DashboardPage = () => {
         </div>
       </section>
 
+
       {/* Series Grid - Responsive */}
       <section className="section-spacing">
         <div className="container-spacing">
-          <div className="text-center mb-12">
-            <h2 className="heading-2 mb-4">Featured Comics</h2>
-            <p className="body-text max-w-2xl mx-auto">
-              Discover trending comics, manga, and graphic novels. 
-              Our curated selection features the best stories across all genres.
-            </p>
-          </div>
           <motion.div
             layout
-            className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"
           >
             <AnimatePresence mode="popLayout">
               {paginatedSeries.map((series) => (

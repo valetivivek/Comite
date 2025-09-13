@@ -154,13 +154,34 @@ const Layout = ({ children }: LayoutProps) => {
       <nav className="sticky top-0 z-50 bg-manga-card/95 backdrop-blur-sm border-b border-manga-border">
         <div className="mobile-container py-3 sm:py-4">
           <div className="flex items-center justify-between gap-4">
-            {/* Logo - Extreme Left */}
-            <Link 
-              to="/" 
-              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-midnight-primary-500 hover:text-midnight-primary-400 transition-all duration-200 transform hover:scale-105"
-            >
-              ComiTe
-            </Link>
+            {/* Logo with enhanced contrast and tagline */}
+            <div className="flex flex-col">
+              <Link 
+                to="/" 
+                className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white hover:text-midnight-primary-300 transition-all duration-200 transform hover:scale-105 bg-gradient-to-r from-midnight-primary-500 to-midnight-primary-600 bg-clip-text text-transparent drop-shadow-lg"
+              >
+                ComiTe
+              </Link>
+              <p className="text-xs sm:text-sm text-midnight-secondary-300 hidden sm:block">
+                Read thousands of manga, manhwa & comics online
+              </p>
+            </div>
+
+            {/* Primary Navigation - Desktop */}
+            <div className="hidden lg:flex items-center space-x-6">
+              <Link to="/" className="text-manga-text hover:text-midnight-primary-400 transition-colors font-medium">
+                Browse
+              </Link>
+              <Link to="/popular" className="text-manga-text hover:text-midnight-primary-400 transition-colors font-medium">
+                Popular
+              </Link>
+              <Link to="/new-releases" className="text-manga-text hover:text-midnight-primary-400 transition-colors font-medium">
+                New Releases
+              </Link>
+              <Link to="/anime-adaptation" className="text-manga-text hover:text-midnight-primary-400 transition-colors font-medium">
+                Anime Adaptation
+              </Link>
+            </div>
 
             {/* Search Bar - Desktop */}
             <div className="hidden lg:flex items-center flex-1 max-w-md mx-2" ref={searchRef}>
@@ -168,12 +189,12 @@ const Layout = ({ children }: LayoutProps) => {
                 <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-manga-muted" />
                 <input
                   type="text"
-                  placeholder="Search manga, manhua, or authors..."
+                  placeholder="Search manga, manhwa, or authors..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onFocus={() => setShowResults(true)}
                   className="w-full pl-10 pr-10 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:border-transparent transition-colors"
-                  aria-label="Search for manga, manhua, or authors"
+                  aria-label="Search manga, manhwa, or authors"
                 />
                 {query && (
                   <button
@@ -243,12 +264,12 @@ const Layout = ({ children }: LayoutProps) => {
                 <MagnifyingGlassIcon className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-manga-muted" />
                 <input
                   type="text"
-                  placeholder="Search…"
+                  placeholder="Search manga, manhwa, or authors..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onFocus={() => setShowResults(true)}
                   className="w-full pl-8 pr-8 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:border-transparent transition-colors text-sm"
-                  aria-label="Search"
+                  aria-label="Search manga, manhwa, or authors"
                 />
                 {query && (
                   <button
