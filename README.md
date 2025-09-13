@@ -102,24 +102,24 @@ npm run preview
 
 ```
 src/
-├── components/          # Reusable UI components
-│   ├── Carousel.tsx    # Auto-sliding carousel
-│   ├── Layout.tsx      # Main layout with navigation
-│   ├── SeriesCard.tsx  # Series display component
+├── components/         
+│   ├── Carousel.tsx   
+│   ├── Layout.tsx      
+│   ├── SeriesCard.tsx  
 │   └── SearchFiltersModal.tsx
-├── pages/              # Page components
-│   ├── HomePage.tsx    # Home with carousel and search
-│   ├── SeriesPage.tsx  # Series details and chapters
-│   ├── ReaderPage.tsx  # Manga reader interface
+├── pages/             
+│   ├── HomePage.tsx    
+│   ├── SeriesPage.tsx  
+│   ├── ReaderPage.tsx  
 │   └── BookmarksPage.tsx
-├── services/           # Data and business logic
-│   ├── dataService.ts  # Main data service with localStorage
+├── services/          
+│   ├── dataService.ts  
 │   └── notificationService.ts
-├── types/              # TypeScript type definitions
+├── types/              
 │   └── index.ts
-├── App.tsx             # Main app component
-├── main.tsx           # App entry point
-└── index.css          # Global styles and Tailwind
+├── App.tsx           
+├── main.tsx          
+└── index.css          
 ```
 
 ## Key Features Implementation
