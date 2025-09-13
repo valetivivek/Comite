@@ -101,6 +101,8 @@ const ListItem = ({ series }: ListItemProps) => {
               alt={series.title}
               className="w-full h-full object-cover"
               loading="lazy"
+              width={184}
+              height={246}
             />
           </Link>
         </div>

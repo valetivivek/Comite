@@ -6,6 +6,7 @@ import { Series, User } from '../types';
 import ListItem from '../components/ListItem';
 import Carousel from '../components/Carousel';
 import CommentSection from '../components/CommentSection';
+import { JsonLd } from '../components/JsonLd';
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -52,12 +53,6 @@ const DashboardPage = () => {
   };
 
 
-  const handleSignOut = () => {
-    localStorage.removeItem('manga-reader-user');
-    localStorage.removeItem('manga-reader-user-ratings');
-    setUser(null);
-    navigate('/');
-  };
 
   // Get top series for carousel (highest rated)
   const topSeries = series
@@ -72,8 +67,22 @@ const DashboardPage = () => {
     );
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Comite",
+    "description": "Read comics with a clean, fast, mobile-first UI",
+    "url": "https://comitecomic.vercel.app",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://comitecomic.vercel.app/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  };
+
   return (
     <div className="min-h-screen bg-manga-bg">
+      <JsonLd data={jsonLd} />
       {/* Hero Carousel */}
       <section className="relative h-64 md:h-80 lg:h-96">
         <Carousel series={topSeries} />
@@ -158,20 +167,6 @@ const DashboardPage = () => {
         </div>
       </section>
 
-      {/* Sign Out Button - Only show when user is signed in */}
-      {user && (
-        <section className="px-4 py-6 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto flex justify-center">
-            <button
-              onClick={handleSignOut}
-              className="text-manga-muted hover:text-manga-text transition-colors text-sm"
-              aria-label="Sign out"
-            >
-              Sign out
-            </button>
-          </div>
-        </section>
-      )}
 
     </div>
   );

@@ -3,6 +3,15 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --bg: #0a0a0a;
+    --card: #141414;
+    --text: #fafafa;
+    --muted: #c9c9c9;
+    --accent: #0f766e;
+    --ring: 2px solid rgba(59, 130, 246, 0.8);
+  }
+  
   * {
     @apply border-manga-border;
   }
@@ -18,6 +27,36 @@
   
   html {
     scroll-behavior: smooth;
+  }
+  
+  /* Accessibility: Visible focus styles */
+  *:focus-visible { 
+    outline: var(--ring); 
+    outline-offset: 2px; 
+  }
+  
+  /* Skip link styles */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  
+  .focus\:not-sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0.5rem 0.75rem;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
   }
 }
 

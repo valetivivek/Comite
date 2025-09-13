@@ -118,6 +118,14 @@ const Layout = ({ children }: LayoutProps) => {
     setFlairUpdateKey(prev => prev + 1);
   };
 
+  const handleSignOut = () => {
+    localStorage.removeItem('manga-reader-user');
+    localStorage.removeItem('manga-reader-user-ratings');
+    setUser(null);
+    setIsProfileDrawerOpen(false);
+    navigate('/');
+  };
+
 
   const clearAllNotifications = async () => {
     await dataService.clearAllNotifications();
@@ -311,6 +319,8 @@ const Layout = ({ children }: LayoutProps) => {
                 <button
                   onClick={() => setIsNotificationOpen(!isNotificationOpen)}
                   className="p-2 rounded-lg bg-manga-surface hover:bg-manga-border transition-colors relative"
+                  aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
+                  title={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
                 >
                   <BellIcon className="h-6 w-6 text-manga-text" />
                   {unreadCount > 0 && (
@@ -387,6 +397,8 @@ const Layout = ({ children }: LayoutProps) => {
               <button
                 onClick={() => setIsProfileDrawerOpen(true)}
                 className="p-2 rounded-lg bg-manga-surface hover:bg-manga-border transition-colors"
+                aria-label="Open profile dashboard"
+                title="Open profile dashboard"
               >
                 <UserIcon className="h-6 w-6 text-manga-text" />
               </button>
@@ -425,6 +437,8 @@ const Layout = ({ children }: LayoutProps) => {
                 <button
                   onClick={() => setIsProfileDrawerOpen(false)}
                   className="p-2 rounded-lg hover:bg-manga-surface transition-colors"
+                  aria-label="Close profile dashboard"
+                  title="Close profile dashboard"
                 >
                   <XMarkIcon className="h-6 w-6 text-manga-text" />
                 </button>
@@ -537,6 +551,20 @@ const Layout = ({ children }: LayoutProps) => {
                     {isSurpriseMeRolling ? 'Rolling...' : 'Surprise me'}
                   </button>
                 </div>
+                
+                {/* Sign Out Button - Only for signed-in users */}
+                {user && (
+                  <div className="mt-4 pt-4 border-t border-manga-border">
+                    <button
+                      onClick={handleSignOut}
+                      className="flex items-center px-4 py-3 rounded-lg text-red-500 hover:bg-red-500/10 hover:text-red-400 transition-colors w-full text-left"
+                      aria-label="Sign out"
+                    >
+                      <span className="mr-3 text-lg">🚪</span>
+                      Sign Out
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>
@@ -545,7 +573,7 @@ const Layout = ({ children }: LayoutProps) => {
 
       {/* Main content */}
       <div className="flex flex-col min-h-screen">
-        <main className="flex-1">
+        <main id="main" className="flex-1">
           {children}
         </main>
         <Footer />

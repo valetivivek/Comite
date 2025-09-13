@@ -10,6 +10,7 @@ import { dataService } from '../services/dataService';
 import { Series, User } from '../types';
 import StarRating from '../components/StarRating';
 import CommentSection from '../components/CommentSection';
+import { JsonLd } from '../components/JsonLd';
 
 const SeriesPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -163,8 +164,27 @@ const SeriesPage = () => {
     return `${diffInYears} years ago`;
   };
 
+  const jsonLd = series ? {
+    "@context": "https://schema.org",
+    "@type": "CreativeWorkSeries",
+    "name": series.title,
+    "description": series.description,
+    "url": `https://comitecomic.vercel.app/series/${series.id}`,
+    "author": {
+      "@type": "Person",
+      "name": series.author
+    },
+    "genre": series.genre,
+    "image": series.coverImage,
+    "inLanguage": "en",
+    "numberOfItems": series.chapters.length,
+    "dateCreated": series.createdAt,
+    "dateModified": series.updatedAt
+  } : null;
+
   return (
     <div className="min-h-screen bg-manga-bg">
+      {jsonLd && <JsonLd data={jsonLd} />}
       {/* Hero Section */}
       <section className="relative">
         {/* Background Image */}
@@ -185,6 +205,9 @@ const SeriesPage = () => {
                   src={series.coverImage}
                   alt={series.title}
                   className="w-24 h-36 sm:w-32 sm:h-48 md:w-40 md:h-60 rounded-lg shadow-xl"
+                  loading="lazy"
+                  width={240}
+                  height={360}
                 />
               </div>
 
