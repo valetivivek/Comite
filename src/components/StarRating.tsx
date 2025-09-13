@@ -48,7 +48,7 @@ const StarRating = ({
     }
   };
 
-  const displayRating = hoverRating || (interactive && userRating !== undefined ? userRating : rating);
+  const displayRating = hoverRating || (interactive && userRating !== undefined ? userRating : (rating || 0));
 
   if (showDual && userRating !== undefined) {
     return (
@@ -70,7 +70,7 @@ const StarRating = ({
             })}
           </div>
           <span className="text-xs sm:text-sm text-manga-muted ml-1">
-            {rating.toFixed(1)}
+            {rating > 0 ? rating.toFixed(1) : 'Not rated'}
           </span>
         </div>
 
@@ -152,7 +152,7 @@ const StarRating = ({
       
       {showValue && (
         <span className="text-sm text-manga-muted ml-1">
-          {rating.toFixed(1)}
+          {rating > 0 ? rating.toFixed(1) : 'Not rated'}
         </span>
       )}
     </div>

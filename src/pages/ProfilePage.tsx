@@ -7,7 +7,10 @@ import {
   ClockIcon, 
   StarIcon,
   ArrowLeftIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
+  CameraIcon,
+  PencilIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 import { StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
 import { User, UserRating, ReadingHistory, Bookmark } from '../types';
@@ -19,6 +22,11 @@ const ProfilePage = () => {
   const [readingHistory, setReadingHistory] = useState<ReadingHistory[]>([]);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [profilePicture, setProfilePicture] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [tempPicture, setTempPicture] = useState<string>('');
+  const [tempDescription, setTempDescription] = useState<string>('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,7 +37,10 @@ const ProfilePage = () => {
         const historyData = localStorage.getItem('manga-reader-reading-history');
 
         if (userData) {
-          setUser(JSON.parse(userData));
+          const user = JSON.parse(userData);
+          setUser(user);
+          setProfilePicture(user.avatar || '');
+          setDescription(user.description || '');
         }
 
         if (ratingsData) {
@@ -58,6 +69,44 @@ const ProfilePage = () => {
     localStorage.removeItem('manga-reader-user-ratings');
     localStorage.removeItem('manga-reader-reading-history');
     navigate('/');
+  };
+
+  const handleEditProfile = () => {
+    setTempPicture(profilePicture);
+    setTempDescription(description);
+    setIsEditing(true);
+  };
+
+  const handleSaveProfile = () => {
+    if (user) {
+      const updatedUser = {
+        ...user,
+        avatar: tempPicture,
+        description: tempDescription
+      };
+      setUser(updatedUser);
+      setProfilePicture(tempPicture);
+      setDescription(tempDescription);
+      localStorage.setItem('manga-reader-user', JSON.stringify(updatedUser));
+      setIsEditing(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setTempPicture(profilePicture);
+    setTempDescription(description);
+    setIsEditing(false);
+  };
+
+  const handlePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setTempPicture(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   if (isLoading) {
@@ -122,19 +171,97 @@ const ProfilePage = () => {
             className="card p-6 mb-8"
           >
             <div className="flex items-center gap-6">
-              <div className="w-20 h-20 bg-teal-600 rounded-full flex items-center justify-center">
-                <UserIcon className="h-10 w-10 text-white" />
+              {/* Profile Picture */}
+              <div className="relative">
+                {isEditing ? (
+                  <div className="w-20 h-20 rounded-full overflow-hidden bg-manga-surface border-2 border-manga-border">
+                    {tempPicture ? (
+                      <img
+                        src={tempPicture}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <UserIcon className="h-10 w-10 text-manga-muted" />
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="w-20 h-20 rounded-full overflow-hidden bg-teal-600 flex items-center justify-center">
+                    {profilePicture ? (
+                      <img
+                        src={profilePicture}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <UserIcon className="h-10 w-10 text-white" />
+                    )}
+                  </div>
+                )}
+                
+                {isEditing && (
+                  <label className="absolute -bottom-1 -right-1 w-6 h-6 bg-teal-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-teal-700 transition-colors">
+                    <CameraIcon className="h-3 w-3 text-white" />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePictureChange}
+                      className="hidden"
+                    />
+                  </label>
+                )}
               </div>
+
               <div className="flex-1">
                 <h2 className="text-2xl font-bold text-manga-text mb-1">{user.username}</h2>
                 <p className="text-manga-muted mb-2">{user.email}</p>
-                <p className="text-sm text-manga-muted">
+                <p className="text-sm text-manga-muted mb-3">
                   Member since {new Date(user.createdAt).toLocaleDateString()}
                 </p>
+                
+                {/* Description */}
+                {isEditing ? (
+                  <textarea
+                    value={tempDescription}
+                    onChange={(e) => setTempDescription(e.target.value)}
+                    placeholder="Tell us about yourself..."
+                    className="w-full p-3 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none"
+                    rows={3}
+                  />
+                ) : (
+                  <p className="text-manga-text text-sm">
+                    {description || "No description provided"}
+                  </p>
+                )}
               </div>
-              <button className="p-2 hover:bg-manga-surface rounded-lg transition-colors">
-                <Cog6ToothIcon className="h-5 w-5 text-manga-muted" />
-              </button>
+
+              <div className="flex flex-col gap-2">
+                {isEditing ? (
+                  <>
+                    <button
+                      onClick={handleSaveProfile}
+                      className="p-2 bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors"
+                    >
+                      <PencilIcon className="h-5 w-5 text-white" />
+                    </button>
+                    <button
+                      onClick={handleCancelEdit}
+                      className="p-2 bg-manga-surface hover:bg-manga-border rounded-lg transition-colors"
+                    >
+                      <XMarkIcon className="h-5 w-5 text-manga-muted" />
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={handleEditProfile}
+                    className="p-2 hover:bg-manga-surface rounded-lg transition-colors"
+                  >
+                    <Cog6ToothIcon className="h-5 w-5 text-manga-muted" />
+                  </button>
+                )}
+              </div>
             </div>
           </motion.div>
 

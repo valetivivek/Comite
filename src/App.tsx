@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
+import DashboardPage from './pages/DashboardPage';
 import SeriesPage from './pages/SeriesPage';
 import ReaderPage from './pages/ReaderPage';
 import BookmarksPage from './pages/BookmarksPage';
@@ -29,7 +30,9 @@ function App() {
       <div className="min-h-screen bg-manga-bg" data-signature={SIGNATURE}>
         <Layout>
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<DashboardPage />} />
+            <Route path="/welcome" element={<HomePage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/series/:id" element={<SeriesPage />} />
             <Route path="/series/:seriesId/chapter/:chapterId" element={<ReaderPage />} />
             <Route path="/bookmarks" element={<BookmarksPage />} />

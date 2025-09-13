@@ -1,9 +1,8 @@
-import { ReactNode, useState, useEffect } from 'react';
+import { ReactNode, useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   MagnifyingGlassIcon,
-  FunnelIcon,
   Bars3Icon,
   XMarkIcon,
   UserIcon,
@@ -13,6 +12,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { User, Notification } from '../types';
 import { dataService } from '../services/dataService';
+import { useNavSearch } from '../hooks/useNavSearch';
 import Footer from './Footer';
 
 interface LayoutProps {
@@ -23,11 +23,20 @@ const Layout = ({ children }: LayoutProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDrawerOpen, setIsProfileDrawerOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [user, setUser] = useState<User | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const {
+    query,
+    setQuery,
+    results,
+    isSearching,
+    showResults,
+    setShowResults,
+    clearSearch,
+    handleResultClick
+  } = useNavSearch();
 
   useEffect(() => {
     const userData = localStorage.getItem('manga-reader-user');
@@ -70,19 +79,26 @@ const Layout = ({ children }: LayoutProps) => {
     }
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      // Navigate to home page with search query
-      window.location.href = `/?search=${encodeURIComponent(searchQuery.trim())}`;
-    }
-  };
 
   const clearAllNotifications = async () => {
     await dataService.clearAllNotifications();
     setNotifications([]);
     setUnreadCount(0);
   };
+
+  // Handle click outside search results
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowResults(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [setShowResults]);
 
 
   return (
@@ -99,27 +115,79 @@ const Layout = ({ children }: LayoutProps) => {
               ComiTe
             </Link>
 
-            {/* Search Bar */}
-            <div className="hidden md:flex items-center flex-1 max-w-md mx-4">
-              <form onSubmit={handleSearch} className="relative w-full">
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search series..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-12 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-neon-500 focus:border-transparent transition-colors"
-                  />
-                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-manga-muted" />
+            {/* Search Bar - Desktop */}
+            <div className="hidden lg:flex items-center flex-1 max-w-md mx-4" ref={searchRef}>
+              <div className="relative w-full">
+                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-manga-muted" />
+                <input
+                  type="text"
+                  placeholder="Search manga, manhua, or authors..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onFocus={() => setShowResults(true)}
+                  className="w-full pl-10 pr-10 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors"
+                  aria-label="Search for manga, manhua, or authors"
+                />
+                {query && (
                   <button
-                    type="button"
-                    onClick={() => setIsFilterOpen(!isFilterOpen)}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 hover:bg-manga-border rounded transition-colors"
+                    onClick={clearSearch}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-manga-border rounded transition-colors"
+                    aria-label="Clear search"
                   >
-                    <FunnelIcon className="h-4 w-4 text-manga-muted" />
+                    <XMarkIcon className="h-4 w-4 text-manga-muted" />
                   </button>
-                </div>
-              </form>
+                )}
+                
+                {/* Search Results Dropdown */}
+                <AnimatePresence>
+                  {showResults && (query || results.length > 0) && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="absolute top-full left-0 right-0 mt-1 bg-manga-card border border-manga-border rounded-lg shadow-xl z-50 max-h-80 overflow-y-auto"
+                    >
+                      {isSearching ? (
+                        <div className="p-4 text-center">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-500 mx-auto"></div>
+                          <p className="text-sm text-manga-muted mt-2">Searching...</p>
+                        </div>
+                      ) : results.length > 0 ? (
+                        <div className="py-2">
+                          {results.slice(0, 8).map((series) => (
+                            <Link
+                              key={series.id}
+                              to={`/series/${series.id}`}
+                              onClick={handleResultClick}
+                              className="block px-4 py-3 hover:bg-manga-surface transition-colors"
+                            >
+                              <div className="flex items-center gap-3">
+                                <img
+                                  src={series.coverImage}
+                                  alt={series.title}
+                                  className="w-10 h-14 object-cover rounded"
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="text-sm font-medium text-manga-text truncate">
+                                    {series.title}
+                                  </h4>
+                                  <p className="text-xs text-manga-muted">
+                                    by {series.author}
+                                  </p>
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      ) : query ? (
+                        <div className="p-4 text-center">
+                          <p className="text-sm text-manga-muted">No results found</p>
+                        </div>
+                      ) : null}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
 
             {/* Right Side Icons */}
@@ -214,7 +282,7 @@ const Layout = ({ children }: LayoutProps) => {
       </nav>
 
       {/* Mobile menu button */}
-      <div className="md:hidden fixed top-4 left-4 z-50">
+      <div className="lg:hidden fixed top-4 left-4 z-50">
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="p-2 rounded-lg bg-manga-card shadow-lg border border-manga-border jitter-hover"
@@ -248,7 +316,7 @@ const Layout = ({ children }: LayoutProps) => {
             animate={{ x: 0 }}
             exit={{ x: -300 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="md:hidden fixed left-0 top-0 bottom-0 w-64 bg-manga-card shadow-xl z-50"
+            className="lg:hidden fixed left-0 top-0 bottom-0 w-64 bg-manga-card shadow-xl z-50"
           >
             <div className="p-6">
               <div className="flex items-center justify-between mb-8">
@@ -257,26 +325,81 @@ const Layout = ({ children }: LayoutProps) => {
                 </Link>
               </div>
               {/* Mobile Search */}
-              <div className="mb-6">
-                <form onSubmit={handleSearch} className="relative">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Search series..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-12 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-neon-500 focus:border-transparent transition-colors"
-                    />
-                    <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-manga-muted" />
+              <div className="mb-6" ref={searchRef}>
+                <div className="relative">
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-manga-muted" />
+                  <input
+                    type="text"
+                    placeholder="Search manga, manhua, or authors..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    onFocus={() => setShowResults(true)}
+                    className="w-full pl-10 pr-10 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors"
+                    aria-label="Search for manga, manhua, or authors"
+                  />
+                  {query && (
                     <button
-                      type="button"
-                      onClick={() => setIsFilterOpen(!isFilterOpen)}
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 hover:bg-manga-border rounded transition-colors"
+                      onClick={clearSearch}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-manga-border rounded transition-colors"
+                      aria-label="Clear search"
                     >
-                      <FunnelIcon className="h-4 w-4 text-manga-muted" />
+                      <XMarkIcon className="h-4 w-4 text-manga-muted" />
                     </button>
-                  </div>
-                </form>
+                  )}
+                  
+                  {/* Mobile Search Results */}
+                  <AnimatePresence>
+                    {showResults && (query || results.length > 0) && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="absolute top-full left-0 right-0 mt-1 bg-manga-card border border-manga-border rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto"
+                      >
+                        {isSearching ? (
+                          <div className="p-4 text-center">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-500 mx-auto"></div>
+                            <p className="text-sm text-manga-muted mt-2">Searching...</p>
+                          </div>
+                        ) : results.length > 0 ? (
+                          <div className="py-2">
+                            {results.slice(0, 5).map((series) => (
+                              <Link
+                                key={series.id}
+                                to={`/series/${series.id}`}
+                                onClick={() => {
+                                  handleResultClick();
+                                  setIsMobileMenuOpen(false);
+                                }}
+                                className="block px-4 py-3 hover:bg-manga-surface transition-colors"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <img
+                                    src={series.coverImage}
+                                    alt={series.title}
+                                    className="w-10 h-14 object-cover rounded"
+                                  />
+                                  <div className="flex-1 min-w-0">
+                                    <h4 className="text-sm font-medium text-manga-text truncate">
+                                      {series.title}
+                                    </h4>
+                                    <p className="text-xs text-manga-muted">
+                                      by {series.author}
+                                    </p>
+                                  </div>
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
+                        ) : query ? (
+                          <div className="p-4 text-center">
+                            <p className="text-sm text-manga-muted">No results found</p>
+                          </div>
+                        ) : null}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -333,6 +456,14 @@ const Layout = ({ children }: LayoutProps) => {
                     {/* Dashboard Options */}
                     <div className="space-y-2">
                       <Link
+                        to="/dashboard"
+                        onClick={() => setIsProfileDrawerOpen(false)}
+                        className="flex items-center px-4 py-3 rounded-lg text-manga-text hover:bg-manga-surface transition-colors"
+                      >
+                        <MagnifyingGlassIcon className="mr-3 h-5 w-5" />
+                        Search Library
+                      </Link>
+                      <Link
                         to="/bookmarks"
                         onClick={() => setIsProfileDrawerOpen(false)}
                         className="flex items-center px-4 py-3 rounded-lg text-manga-text hover:bg-manga-surface transition-colors"
@@ -362,6 +493,14 @@ const Layout = ({ children }: LayoutProps) => {
                   <>
                     {/* Guest User Options */}
                     <div className="space-y-2">
+                      <Link
+                        to="/dashboard"
+                        onClick={() => setIsProfileDrawerOpen(false)}
+                        className="flex items-center px-4 py-3 rounded-lg text-manga-text hover:bg-manga-surface transition-colors"
+                      >
+                        <MagnifyingGlassIcon className="mr-3 h-5 w-5" />
+                        Search Library
+                      </Link>
                       <Link
                         to="/login"
                         onClick={() => setIsProfileDrawerOpen(false)}

@@ -1,29 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  MagnifyingGlassIcon, 
-  FunnelIcon
-} from '@heroicons/react/24/outline';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { dataService } from '../services/dataService';
-import { Series, SearchFilters } from '../types';
-import ListItem from '../components/ListItem';
+import { Series } from '../types';
 import Carousel from '../components/Carousel';
-import SearchFiltersModal from '../components/SearchFiltersModal';
 
 const HomePage = () => {
   const [series, setSeries] = useState<Series[]>([]);
-  const [filteredSeries, setFilteredSeries] = useState<Series[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [filters, setFilters] = useState<SearchFilters>({
-    query: '',
-    genre: [],
-    status: [],
-    sortBy: 'lastUpdated',
-    sortOrder: 'desc'
-  });
 
   // Load series data
   useEffect(() => {
@@ -32,7 +16,6 @@ const HomePage = () => {
         setIsLoading(true);
         const data = await dataService.getSeries();
         setSeries(data);
-        setFilteredSeries(data);
       } catch (error) {
         console.error('Error loading series:', error);
       } finally {
@@ -42,50 +25,6 @@ const HomePage = () => {
 
     loadSeries();
   }, []);
-
-  // Search and filter
-  const handleSearch = useCallback(async () => {
-    try {
-      const searchFilters = { ...filters, query: searchQuery };
-      const results = await dataService.searchSeries(searchFilters);
-      setFilteredSeries(results);
-    } catch (error) {
-      console.error('Error searching series:', error);
-    }
-  }, [filters, searchQuery]);
-
-  // Debounced search
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      handleSearch();
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [handleSearch]);
-
-  const handleFilterChange = async (newFilters: SearchFilters) => {
-    setFilters(newFilters);
-    setCurrentPage(1); // Reset to first page when filters change
-    try {
-      const results = await dataService.searchSeries(newFilters);
-      setFilteredSeries(results);
-    } catch (error) {
-      console.error('Error filtering series:', error);
-    }
-  };
-
-
-  // Pagination logic
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(filteredSeries.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedSeries = filteredSeries.slice(startIndex, endIndex);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   // Get top series for carousel (highest rated)
   const topSeries = series
@@ -102,117 +41,101 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-manga-bg">
-      {/* Search and Controls - Responsive */}
-      <section className="sticky top-0 z-40 bg-manga-bg/95 backdrop-blur-sm border-b border-manga-border">
-        <div className="px-4 py-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              {/* Search Bar */}
-              <div className="flex-1 relative">
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-manga-muted" />
-                <input
-                  type="text"
-                  placeholder="Search manga, manhua, or authors..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-3 pl-10 bg-manga-card border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                />
-              </div>
-
-              {/* Filter Button */}
-              <button
-                onClick={() => setShowFilters(true)}
-                className="flex items-center justify-center px-4 py-3 border border-manga-border rounded-lg hover:bg-manga-surface transition-colors jitter-hover min-h-[48px] sm:min-h-0"
+      {/* Hero Section */}
+      <section className="relative h-screen flex items-center justify-center">
+        <div className="absolute inset-0 bg-gradient-to-br from-manga-bg via-manga-bg to-manga-card/50" />
+        
+        {/* Background Carousel */}
+        <div className="absolute inset-0 opacity-30">
+          <Carousel series={topSeries} />
+        </div>
+        
+        {/* Hero Content */}
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-manga-text mb-6">
+              Welcome to <span className="text-teal-500">ComiTe</span>
+            </h1>
+            <p className="text-lg md:text-xl text-manga-muted mb-8 max-w-2xl mx-auto">
+              Discover and read your favorite manga, manhua, and webtoons in one place. 
+              Track your progress, bookmark series, and never miss an update.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                to="/"
+                className="btn-primary text-lg px-8 py-4"
               >
-                <FunnelIcon className="h-5 w-5 mr-2" />
-                <span className="hidden sm:inline">Filters</span>
-              </button>
+                Browse Library
+              </Link>
+              <Link
+                to="/login"
+                className="btn-secondary text-lg px-8 py-4"
+              >
+                Sign In
+              </Link>
             </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-manga-text mb-4">
+              Why Choose ComiTe?
+            </h2>
+            <p className="text-lg text-manga-muted max-w-2xl mx-auto">
+              Experience manga reading like never before with our intuitive platform
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Extensive Library",
+                description: "Access thousands of manga, manhua, and webtoons from various genres and authors.",
+                icon: "📚"
+              },
+              {
+                title: "Smart Search",
+                description: "Find exactly what you're looking for with our advanced search and filtering system.",
+                icon: "🔍"
+              },
+              {
+                title: "Personal Tracking",
+                description: "Keep track of your reading progress, bookmarks, and personal ratings.",
+                icon: "⭐"
+              }
+            ].map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: index * 0.2 }}
+                className="text-center p-6 bg-manga-card rounded-lg border border-manga-border"
+              >
+                <div className="text-4xl mb-4">{feature.icon}</div>
+                <h3 className="text-xl font-semibold text-manga-text mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-manga-muted">
+                  {feature.description}
+                </p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
-
-      {/* Hero Carousel */}
-      <section className="relative h-64 md:h-80 lg:h-96">
-        <Carousel series={topSeries} />
-      </section>
-
-      {/* Series List - Responsive */}
-      <section className="px-4 py-6 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            layout
-            className="space-y-4 sm:space-y-6"
-          >
-            <AnimatePresence mode="popLayout">
-              {paginatedSeries.map((series) => (
-                <motion.div
-                  key={series.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <ListItem series={series} />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
-
-          {paginatedSeries.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-manga-muted text-lg">No series found</p>
-              <p className="text-manga-muted mt-2">Try adjusting your search or filters</p>
-            </div>
-          )}
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center mt-8">
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className="px-3 py-2 rounded-lg border border-manga-border hover:bg-manga-surface disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  Previous
-                </button>
-                
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={`px-3 py-2 rounded-lg transition-colors ${
-                      currentPage === page
-                        ? 'bg-teal-600 text-white'
-                        : 'border border-manga-border hover:bg-manga-surface'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ))}
-                
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className="px-3 py-2 rounded-lg border border-manga-border hover:bg-manga-surface disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Search Filters Modal */}
-      <SearchFiltersModal
-        isOpen={showFilters}
-        onClose={() => setShowFilters(false)}
-        filters={filters}
-        onFiltersChange={handleFilterChange}
-      />
     </div>
   );
 };

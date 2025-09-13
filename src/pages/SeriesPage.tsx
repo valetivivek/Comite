@@ -7,9 +7,8 @@ import {
   ArrowUpIcon
 } from '@heroicons/react/24/outline';
 import { dataService } from '../services/dataService';
-import { Series, User, UserRating } from '../types';
+import { Series, User } from '../types';
 import StarRating from '../components/StarRating';
-import ChapterList from '../components/ChapterList';
 
 const SeriesPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -234,64 +233,117 @@ const SeriesPage = () => {
       <section className="pb-8">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-4xl">
-            {/* Chapter Stats */}
-            <div className="card p-4 mb-6">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <span className="text-sm text-manga-muted">
-                    {readChapters}/{series.totalChapters} chapters read
-                  </span>
-                </div>
+            {/* Chapter List - Fixed Height Scrollable */}
+            <div className="card p-0">
+              <div className="p-4 border-b border-manga-border">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-bold text-manga-text">Chapters</h2>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-manga-muted">
+                      {readChapters}/{series.totalChapters} read
+                    </span>
+                    
+                    {/* Quick Jump */}
+                    <div className="relative">
+                      <button
+                        onClick={() => setShowChapterDropdown(!showChapterDropdown)}
+                        className="flex items-center px-3 py-2 bg-manga-surface border border-manga-border rounded-lg text-sm text-manga-text hover:bg-manga-border transition-colors"
+                      >
+                        Jump to Chapter
+                        <ChevronDownIcon className="ml-2 h-4 w-4" />
+                      </button>
 
-                {/* Quick Jump */}
-                <div className="relative w-full sm:w-auto">
-                  <button
-                    onClick={() => setShowChapterDropdown(!showChapterDropdown)}
-                    className="flex items-center justify-center w-full sm:w-auto px-3 py-2 bg-manga-surface border border-manga-border rounded-lg text-sm text-manga-text hover:bg-manga-border transition-colors"
-                  >
-                    Jump to Chapter
-                    <ChevronDownIcon className="ml-2 h-4 w-4" />
-                  </button>
-
-                  <AnimatePresence>
-                    {showChapterDropdown && (
-                      <>
-                        {/* Backdrop */}
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          className="fixed inset-0 z-40"
-                          onClick={() => setShowChapterDropdown(false)}
-                        />
-                        
-                        {/* Dropdown */}
-                        <motion.div
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          className="absolute top-full right-0 mt-1 w-48 bg-manga-card border border-manga-border rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto scrollbar-hide"
-                        >
-                          {series.chapters.map((chapter) => (
-                            <Link
-                              key={chapter.id}
-                              to={`/series/${series.id}/chapter/${chapter.id}`}
+                      <AnimatePresence>
+                        {showChapterDropdown && (
+                          <>
+                            {/* Backdrop */}
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              className="fixed inset-0 z-40"
                               onClick={() => setShowChapterDropdown(false)}
-                              className="block px-3 py-2 text-sm text-manga-text hover:bg-manga-surface border-b border-manga-border last:border-b-0 transition-colors"
+                            />
+                            
+                            {/* Dropdown */}
+                            <motion.div
+                              initial={{ opacity: 0, y: -10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              className="absolute top-full right-0 mt-1 w-48 bg-manga-card border border-manga-border rounded-lg shadow-xl z-[100] max-h-60 overflow-y-auto scrollbar-hide"
                             >
+                              {series.chapters.map((chapter) => (
+                                <button
+                                  key={chapter.id}
+                                  onClick={() => {
+                                    setShowChapterDropdown(false);
+                                    // Scroll to the chapter
+                                    const chapterElement = document.getElementById(`chapter-${chapter.id}`);
+                                    if (chapterElement) {
+                                      chapterElement.scrollIntoView({ 
+                                        behavior: 'smooth', 
+                                        block: 'center' 
+                                      });
+                                    }
+                                  }}
+                                  className="block w-full px-3 py-2 text-sm text-manga-text hover:bg-manga-surface border-b border-manga-border last:border-b-0 transition-colors text-left"
+                                >
+                                  Chapter {chapter.chapterNumber}
+                                </button>
+                              ))}
+                            </motion.div>
+                          </>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-manga-border scrollbar-track-manga-surface">
+                <div className="space-y-1 p-2">
+                  {series.chapters
+                    .sort((a, b) => b.chapterNumber - a.chapterNumber)
+                    .map((chapter) => (
+                      <Link
+                        key={chapter.id}
+                        id={`chapter-${chapter.id}`}
+                        to={`/series/${series.id}/chapter/${chapter.id}`}
+                        className="block w-full p-3 rounded-lg transition-all duration-200 hover:bg-manga-surface active:bg-manga-border"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1 min-w-0">
+                            <h3 className={`font-medium text-left transition-all duration-200 ${
+                              chapter.isRead 
+                                ? 'text-manga-text' 
+                                : 'text-neon-400 font-semibold'
+                            }`}>
                               Chapter {chapter.chapterNumber}
-                            </Link>
-                          ))}
-                        </motion.div>
-                      </>
-                    )}
-                  </AnimatePresence>
+                            </h3>
+                            <p className="text-sm text-manga-muted text-left">
+                              {new Date(chapter.publishedAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                          
+                          <div className="flex items-center gap-3 ml-4">
+                            {chapter.isRead ? (
+                              <span className="text-xs bg-green-500 text-white px-2 py-1 rounded-full">
+                                Read
+                              </span>
+                            ) : (
+                              <span className="text-xs bg-neon-500 text-white px-2 py-1 rounded-full">
+                                New
+                              </span>
+                            )}
+                            <span className="text-sm text-manga-muted">
+                              {chapter.pages.length} pages
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
                 </div>
               </div>
             </div>
-
-            {/* Chapter List */}
-            <ChapterList chapters={series.chapters} seriesId={series.id} />
           </div>
         </div>
       </section>
