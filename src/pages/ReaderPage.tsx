@@ -5,7 +5,8 @@ import {
   ChevronLeftIcon, 
   ChevronRightIcon, 
   ArrowLeftIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
+  ArrowUpIcon
 } from '@heroicons/react/24/outline';
 import { dataService } from '../services/dataService';
 import { Series, Chapter } from '../types';
@@ -232,7 +233,7 @@ const ReaderPage = () => {
 
       {/* Reader Content */}
       <div className="pt-16">
-        <div className="max-w-4xl mx-auto px-4">
+        <div className="max-w-5xl mx-auto px-2 sm:px-4">
           {/* Chapter Title */}
           <div className="text-center py-6 sm:hidden">
             <h1 className="text-lg font-semibold text-manga-text">{series.title}</h1>
@@ -252,7 +253,7 @@ const ReaderPage = () => {
                 <img
                   src={page}
                   alt={`Page ${index + 1}`}
-                  className="max-w-full h-auto rounded-lg shadow-lg"
+                  className="w-full max-w-2xl sm:max-w-3xl h-auto rounded-lg shadow-lg"
                   loading="lazy"
                   onLoad={() => handlePageChange(index)}
                 />
@@ -260,9 +261,50 @@ const ReaderPage = () => {
             ))}
           </div>
 
-          {/* Chapter Navigation */}
-          <div className="py-8">
-            <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
+          {/* Mobile Navigation - After Last Panel */}
+          <div className="py-6 sm:hidden">
+            <div className="flex justify-between items-center gap-4">
+              <div className="flex-1">
+                {getPreviousChapter() ? (
+                  <button
+                    onClick={goToPreviousChapter}
+                    className="w-full flex items-center justify-center px-4 py-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors jitter-hover"
+                  >
+                    <ChevronLeftIcon className="h-5 w-5 mr-2" />
+                    <span className="text-sm font-medium">Previous</span>
+                  </button>
+                ) : (
+                  <div className="w-full px-4 py-3 text-gray-500 text-center text-sm">
+                    No Previous
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex-1">
+                {getNextChapter() ? (
+                  <button
+                    onClick={goToNextChapter}
+                    className="w-full flex items-center justify-center px-4 py-3 bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors jitter-hover"
+                  >
+                    <span className="text-sm font-medium">Next</span>
+                    <ChevronRightIcon className="h-5 w-5 ml-2" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => navigate(`/series/${seriesId}`)}
+                    className="w-full flex items-center justify-center px-4 py-3 bg-teal-600 hover:bg-teal-700 rounded-lg transition-colors jitter-hover"
+                  >
+                    <span className="text-sm font-medium">Back to Series</span>
+                    <ChevronRightIcon className="h-5 w-5 ml-2" />
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop Chapter Navigation */}
+          <div className="py-8 hidden sm:block">
+            <div className="flex flex-row gap-4 justify-between items-center">
               <div className="flex gap-4">
                 {getPreviousChapter() ? (
                   <button
@@ -278,7 +320,6 @@ const ReaderPage = () => {
                   </div>
                 )}
               </div>
-
 
               <div className="flex gap-4">
                 {getNextChapter() ? (
@@ -313,6 +354,14 @@ const ReaderPage = () => {
         </div>
       </div>
 
+      {/* Scroll to Top Button */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="fixed bottom-6 right-4 z-50 p-3 bg-teal-600 hover:bg-teal-700 text-white rounded-full shadow-lg transition-colors duration-200"
+        aria-label="Scroll to top"
+      >
+        <ArrowUpIcon className="h-5 w-5" />
+      </button>
     </div>
   );
 };
