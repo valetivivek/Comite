@@ -178,8 +178,7 @@ const SeriesPage = () => {
     "image": series.coverImage,
     "inLanguage": "en",
     "numberOfItems": series.chapters.length,
-    "dateCreated": series.createdAt,
-    "dateModified": series.updatedAt
+    "dateModified": series.lastUpdated
   } : null;
 
   return (

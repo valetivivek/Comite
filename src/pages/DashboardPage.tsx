@@ -1,19 +1,16 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { dataService } from '../services/dataService';
-import { Series, User } from '../types';
+import { Series } from '../types';
 import ListItem from '../components/ListItem';
 import Carousel from '../components/Carousel';
 import CommentSection from '../components/CommentSection';
 import { JsonLd } from '../components/JsonLd';
 
 const DashboardPage = () => {
-  const navigate = useNavigate();
   const [series, setSeries] = useState<Series[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [user, setUser] = useState<User | null>(null);
 
   // Load series data
   useEffect(() => {
@@ -32,13 +29,6 @@ const DashboardPage = () => {
     loadSeries();
   }, []);
 
-  // Load user data
-  useEffect(() => {
-    const userData = localStorage.getItem('manga-reader-user');
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
 
   // Pagination logic
   const itemsPerPage = 10;
