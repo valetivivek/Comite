@@ -1,8 +1,10 @@
 {
-  "name": "manga-reader",
+  "name": "comite",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "author": "Vishnu Vivek Valeti",
+  "license": "LicenseRef-ComiTe-Proprietary-1.0",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

@@ -79,6 +79,7 @@ export interface UserPreferences {
   itemsPerPage: number;
   autoMarkAsRead: boolean;
   notifications: boolean;
+  selectedFlairs: string[]; // User's manually selected genre flairs
 }
 
 export interface UserRating {

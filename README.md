@@ -166,11 +166,11 @@ src/
 
 ## License
 
-This project is under the **ComiTe Proprietary License**. 
+ComiTe is licensed under the ComiTe Proprietary License. No reuse of code, templates, or UI without written permission. See LICENSE.txt and /legal pages.
 
 **Important**: This software, including its UI, templates, and design, is proprietary and protected by copyright. You may not reuse, copy, or derive from the UI layout, component structure, or visual template without written permission from Vishnu Vivek Valeti.
 
-For licensing inquiries or commercial use, please contact: licensing@yourdomain.com
+For licensing inquiries or commercial use, please contact: vivekvaleti7053@gmail.com
 
 - [View Full License](/legal/license)
 - [Terms of Use](/legal/terms)

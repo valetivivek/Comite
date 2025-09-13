@@ -1,3 +1,6 @@
+// Copyright © 2025 Vishnu Vivek Valeti. All rights reserved.
+// Licensed under ComiTe Proprietary License 1.0. See LICENSE.txt.
+
 import { ReactNode, useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,6 +17,7 @@ import { dataService } from '../services/dataService';
 import { useNavSearch } from '../hooks/useNavSearch';
 import Footer from './Footer';
 import UserFlairs from './UserFlairs';
+import FlairManager from './FlairManager';
 
 interface LayoutProps {
   children: ReactNode;
@@ -27,6 +31,7 @@ const Layout = ({ children }: LayoutProps) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isSurpriseMeRolling, setIsSurpriseMeRolling] = useState(false);
+  const [flairUpdateKey, setFlairUpdateKey] = useState(0);
   const searchRef = useRef<HTMLDivElement>(null);
   const {
     query,
@@ -107,6 +112,10 @@ const Layout = ({ children }: LayoutProps) => {
     } finally {
       setIsSurpriseMeRolling(false);
     }
+  };
+
+  const handleFlairsUpdated = () => {
+    setFlairUpdateKey(prev => prev + 1);
   };
 
 
@@ -436,7 +445,11 @@ const Layout = ({ children }: LayoutProps) => {
                         </div>
                       </div>
                       {/* Rank and Genre Flairs */}
-                      <UserFlairs userId={user.id} variant="dashboard" />
+                      <UserFlairs 
+                        key={`${user.id}-${flairUpdateKey}`}
+                        userId={user.id} 
+                        variant="dashboard" 
+                      />
                     </div>
 
                     {/* Dashboard Options */}
@@ -497,6 +510,16 @@ const Layout = ({ children }: LayoutProps) => {
                       </Link>
                     </div>
                   </>
+                )}
+                
+                {/* Flair Manager - Only for signed-in users */}
+                {user && (
+                  <div className="mt-4 pt-4 border-t border-manga-border">
+                    <FlairManager 
+                      userId={user.id} 
+                      onFlairsUpdated={handleFlairsUpdated}
+                    />
+                  </div>
                 )}
                 
                 {/* Surprise Me Button - Available for all users */}

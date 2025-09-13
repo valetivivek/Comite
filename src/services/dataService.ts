@@ -1,3 +1,6 @@
+// Copyright © 2025 Vishnu Vivek Valeti. All rights reserved.
+// Licensed under ComiTe Proprietary License 1.0. See LICENSE.txt.
+
 import { Series, Chapter, Bookmark, ReadState, Notification, SearchFilters, UserRating, ReadingHistory } from '../types';
 
 // Mock data generator
@@ -423,6 +426,54 @@ class DataService {
       }
     } catch (error) {
       console.error('Error loading data from storage:', error);
+    }
+  }
+
+  // User flair preferences methods
+  async getUserFlairPreferences(_userId: string): Promise<string[]> {
+    try {
+      const userData = localStorage.getItem('manga-reader-user');
+      if (userData) {
+        const user = JSON.parse(userData);
+        return user.preferences?.selectedFlairs || [];
+      }
+      return [];
+    } catch (error) {
+      console.error('Error loading user flair preferences:', error);
+      return [];
+    }
+  }
+
+  async saveUserFlairPreferences(_userId: string, selectedFlairs: string[]): Promise<boolean> {
+    try {
+      const userData = localStorage.getItem('manga-reader-user');
+      if (userData) {
+        const user = JSON.parse(userData);
+        user.preferences = user.preferences || {};
+        user.preferences.selectedFlairs = selectedFlairs;
+        localStorage.setItem('manga-reader-user', JSON.stringify(user));
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error saving user flair preferences:', error);
+      return false;
+    }
+  }
+
+  async getEligibleGenres(userId: string): Promise<string[]> {
+    try {
+      // Get user's reading stats to find genres they've read
+      const readingStatsService = (await import('./readingStatsService')).readingStatsService;
+      const stats = readingStatsService.getUserStats(userId);
+      
+      if (!stats) return [];
+      
+      // Return genres they have at least 1 read in
+      return Object.keys(stats.genreCounts).filter(genre => stats.genreCounts[genre] > 0);
+    } catch (error) {
+      console.error('Error getting eligible genres:', error);
+      return [];
     }
   }
 

@@ -1,3 +1,6 @@
+// Copyright © 2025 Vishnu Vivek Valeti. All rights reserved.
+// Licensed under ComiTe Proprietary License 1.0. See LICENSE.txt.
+
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';

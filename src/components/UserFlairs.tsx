@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { readingStatsService, ReadingStats } from '../services/readingStatsService';
+import { dataService } from '../services/dataService';
 
 interface UserFlairsProps {
   userId: string;
@@ -11,9 +12,20 @@ const UserFlairs = ({ userId, variant = 'dashboard', className = '' }: UserFlair
   const [flairs, setFlairs] = useState<{ rank: string; genres: string[] } | null>(null);
 
   useEffect(() => {
-    const loadFlairs = () => {
-      const userFlairs = readingStatsService.getUserFlairs(userId);
-      setFlairs(userFlairs);
+    const loadFlairs = async () => {
+      try {
+        // Get user's manual flair selection
+        const manualFlairs = await dataService.getUserFlairPreferences(userId);
+        
+        // Get flairs with manual selection if available
+        const userFlairs = readingStatsService.getUserFlairs(userId, manualFlairs.length > 0 ? manualFlairs : undefined);
+        setFlairs(userFlairs);
+      } catch (error) {
+        console.error('Error loading flairs:', error);
+        // Fallback to auto flairs
+        const userFlairs = readingStatsService.getUserFlairs(userId);
+        setFlairs(userFlairs);
+      }
     };
 
     loadFlairs();

@@ -226,15 +226,22 @@ export class ReadingStatsService {
     return sortedGenres.slice(0, 3);
   }
 
-  // Get all flairs (rank + genres)
-  getUserFlairs(userId: string): { rank: string; genres: string[] } {
+  // Get all flairs (rank + genres) with optional manual selection
+  getUserFlairs(userId: string, manualGenres?: string[]): { rank: string; genres: string[] } {
     const stats = this.getUserStats(userId);
     if (!stats) {
       return { rank: 'Newbie', genres: ['Explorer'] };
     }
 
     const rank = this.getRank(stats.totalChaptersRead);
-    const genres = this.getGenreFlairs(stats.genreCounts);
+    
+    // Use manual selection if provided, otherwise use auto top 3
+    let genres: string[];
+    if (manualGenres && manualGenres.length > 0) {
+      genres = manualGenres.slice(0, 3); // Limit to 3
+    } else {
+      genres = this.getGenreFlairs(stats.genreCounts);
+    }
     
     return {
       rank,

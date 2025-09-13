@@ -22,7 +22,7 @@ const DMCAPage = () => {
 
             <h2 className="text-xl font-semibold text-manga-text mt-6 mb-3">Contact Information</h2>
             <p className="text-manga-text mb-2">
-              <strong>DMCA Agent:</strong> dmca@yourdomain.com
+              <strong>DMCA Agent:</strong> vivekvaleti7053@gmail.com
             </p>
             <p className="text-manga-text mb-4">
               Please allow up to 7 business days for a response to your DMCA notice.

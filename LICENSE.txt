@@ -4,7 +4,7 @@ Version 1.0
 Copyright © 2025 Vishnu Vivek Valeti. All rights reserved.
 
 1. Grant
-You may download and run the Software for personal evaluation or internal development only. Production use, commercial use, redistribution, hosting for others, and reuse of the UI or template require my prior written permission.
+You may download and run the Software for personal evaluation or internal development only. Production use, commercial use, redistribution, hosting for others, and reuse of the UI or template require the Licensor's prior written permission.
 
 2. Restrictions
 Without written permission you may not:
@@ -16,7 +16,7 @@ e) train models or datasets on any part of the Software,
 f) circumvent technical controls.
 
 3. Ownership
-The Software is licensed, not sold. I retain all rights, title, and interest.
+The Software is licensed, not sold. The Licensor retains all rights, title, and interest.
 
 4. Third party code
 Dependencies remain under their own licenses. This license covers ComiTe code and assets only.
@@ -34,4 +34,4 @@ To the maximum extent allowed by law, total liability is limited to 50 USD.
 Florida, United States. Venue in Florida.
 
 9. Commercial license
-For permission or a commercial license contact: licensing@yourdomain.com
+For permission or a commercial license contact: vivekvaleti7053@gmail.com
