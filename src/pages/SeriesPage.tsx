@@ -127,6 +127,44 @@ const SeriesPage = () => {
 
   const readChapters = series.chapters.filter(ch => ch.isRead).length;
 
+  const formatRelativeTime = (timestamp: string | Date) => {
+    if (!timestamp) return null;
+    
+    const now = new Date();
+    const chapterDate = new Date(timestamp);
+    
+    if (isNaN(chapterDate.getTime())) return null;
+    
+    const diffInSeconds = Math.floor((now.getTime() - chapterDate.getTime()) / 1000);
+    
+    if (diffInSeconds < 60) {
+      return `${diffInSeconds}s ago`;
+    }
+    
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) {
+      return `${diffInMinutes} min ago`;
+    }
+    
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) {
+      return `${diffInHours} hr ago`;
+    }
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 30) {
+      return `${diffInDays} days ago`;
+    }
+    
+    const diffInMonths = Math.floor(diffInDays / 30);
+    if (diffInMonths < 12) {
+      return `${diffInMonths} months ago`;
+    }
+    
+    const diffInYears = Math.floor(diffInMonths / 12);
+    return `${diffInYears} years ago`;
+  };
+
   return (
     <div className="min-h-screen bg-manga-bg">
       {/* Hero Section */}
@@ -335,9 +373,14 @@ const SeriesPage = () => {
                                 New
                               </span>
                             )}
-                            <span className="text-sm text-manga-muted">
-                              {chapter.pages.length} pages
-                            </span>
+                            {chapter.publishedAt && formatRelativeTime(chapter.publishedAt) && (
+                              <span 
+                                className="text-sm text-manga-muted"
+                                title={new Date(chapter.publishedAt).toLocaleString()}
+                              >
+                                {formatRelativeTime(chapter.publishedAt)}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </Link>
