@@ -60,12 +60,12 @@ const DashboardPage = () => {
         <Carousel series={topSeries} />
       </section>
 
-      {/* Series List - Responsive */}
+      {/* Series Grid - Responsive */}
       <section className="px-4 py-6 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div
             layout
-            className="space-y-4 sm:space-y-6"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6"
           >
             <AnimatePresence mode="popLayout">
               {paginatedSeries.map((series) => (

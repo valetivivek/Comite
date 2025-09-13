@@ -69,12 +69,22 @@ const ListItem = ({ series }: ListItemProps) => {
 
         {/* Content - Right side details */}
         <div className="flex-1 min-w-0 flex flex-col">
-          <div className="flex justify-between items-start mb-2">
-            <Link to={`/series/${series.id}`} className="flex-1 min-w-0">
-              <h3 className="font-semibold text-manga-text text-lg sm:text-base hover:text-teal-400 transition-colors">
-                {series.title}
-              </h3>
-            </Link>
+          <div className="flex justify-between items-start mb-1">
+            <div className="flex-1 min-w-0">
+              <Link to={`/series/${series.id}`} className="block">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="font-semibold text-manga-text text-xl sm:text-lg hover:text-teal-400 transition-colors">
+                    {series.title}
+                  </h3>
+                  <div className="flex items-center gap-1">
+                    <span className="text-yellow-500 text-lg">★</span>
+                    <span className="text-base text-manga-text" aria-label={`Rating ${series.rating}`}>
+                      {series.rating}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </div>
             
             {/* Bookmark Button - Far Right */}
             <button
@@ -93,41 +103,31 @@ const ListItem = ({ series }: ListItemProps) => {
               )}
             </button>
           </div>
-            
-            {/* Rating */}
-            <div className="mb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-yellow-500">★</span>
-                <span className="text-sm text-manga-text" aria-label={`Rating ${series.rating}`}>
-                  {series.rating}
-                </span>
-              </div>
-            </div>
 
-            {/* Chapter count */}
-            <div className="mb-3">
-              <span className="text-sm text-manga-muted">{series.totalChapters} chapters</span>
-            </div>
+          {/* Chapter count */}
+          <div className="mb-2">
+            <span className="text-base text-manga-muted">{series.totalChapters} chapters</span>
+          </div>
 
-            {/* Recent Chapters - Compact Pills */}
-            <div className="flex flex-wrap gap-1">
-              {recentChapters.map((chapter) => (
-                <Link
-                  key={chapter.id}
-                  to={`/series/${series.id}/chapter/${chapter.id}`}
-                  className={`px-2 py-1 text-xs rounded cursor-pointer transition-colors ${
-                    chapter.isRead 
-                      ? 'bg-manga-surface text-manga-muted hover:bg-manga-border' 
-                      : 'bg-teal-600 text-white hover:bg-teal-700'
-                  }`}
-                  aria-label={`Chapter ${chapter.chapterNumber}`}
-                >
-                  {chapter.chapterNumber}
-                </Link>
-              ))}
-            </div>
+          {/* Recent Chapters - Vertical List */}
+          <div className="space-y-1">
+            {recentChapters.map((chapter) => (
+              <Link
+                key={chapter.id}
+                to={`/series/${series.id}/chapter/${chapter.id}`}
+                className={`block text-sm py-1 px-2 rounded transition-colors hover:underline ${
+                  chapter.isRead 
+                    ? 'text-manga-muted hover:text-manga-text hover:bg-manga-surface' 
+                    : 'text-teal-400 hover:text-manga-text hover:bg-manga-surface'
+                }`}
+                aria-label={`Chapter ${chapter.chapterNumber}`}
+              >
+                Ch. {chapter.chapterNumber}
+              </Link>
+            ))}
           </div>
         </div>
+      </div>
     </motion.div>
   );
 };

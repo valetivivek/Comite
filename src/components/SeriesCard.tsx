@@ -122,20 +122,21 @@ const SeriesCard = ({ series, viewMode }: SeriesCardProps) => {
             <span className="text-sm text-manga-muted">{series.totalChapters} chapters</span>
           </div>
 
-          {/* Recent Chapters - Compact Pills */}
-          <div className="flex flex-wrap gap-1">
+          {/* Recent Chapters - Vertical List */}
+          <div className="space-y-1">
             {recentChapters.map((chapter) => (
-              <span
+              <Link
                 key={chapter.id}
-                className={`px-2 py-1 text-xs rounded ${
+                to={`/series/${series.id}/chapter/${chapter.id}`}
+                className={`block text-xs py-1 px-2 rounded transition-colors ${
                   chapter.isRead 
-                    ? 'bg-manga-surface text-manga-muted' 
-                    : 'bg-neon-500 text-white'
+                    ? 'text-manga-muted hover:text-manga-text hover:bg-manga-surface' 
+                    : 'text-teal-400 hover:text-teal-300 hover:bg-teal-50'
                 }`}
                 aria-label={`Chapter ${chapter.chapterNumber}`}
               >
-                {chapter.chapterNumber}
-              </span>
+                Ch. {chapter.chapterNumber}
+              </Link>
             ))}
           </div>
         </div>
