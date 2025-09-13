@@ -202,7 +202,8 @@ class DataService {
       id: `bookmark-${Date.now()}`,
       seriesId,
       series,
-      lastReadAt: new Date().toISOString()
+      lastReadAt: new Date().toISOString(),
+      isCompleted: false
     });
 
     this.saveToStorage();

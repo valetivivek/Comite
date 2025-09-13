@@ -188,6 +188,81 @@ const Layout = ({ children }: LayoutProps) => {
               </div>
             </div>
 
+            {/* Mobile Search Bar */}
+            <div className="flex lg:hidden items-center flex-1 max-w-xs mx-2" ref={searchRef}>
+              <div className="relative w-full">
+                <MagnifyingGlassIcon className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-manga-muted" />
+                <input
+                  type="text"
+                  placeholder="Search…"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onFocus={() => setShowResults(true)}
+                  className="w-full pl-8 pr-8 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors text-sm"
+                  aria-label="Search"
+                />
+                {query && (
+                  <button
+                    onClick={clearSearch}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 hover:bg-manga-border rounded transition-colors"
+                    aria-label="Clear search"
+                  >
+                    <XMarkIcon className="h-3 w-3 text-manga-muted" />
+                  </button>
+                )}
+                
+                {/* Mobile Search Results Dropdown */}
+                <AnimatePresence>
+                  {showResults && (query || results.length > 0) && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="absolute top-full left-0 right-0 mt-1 bg-manga-card border border-manga-border rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto"
+                    >
+                      {isSearching ? (
+                        <div className="p-3 text-center">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-500 mx-auto"></div>
+                          <p className="text-xs text-manga-muted mt-2">Searching...</p>
+                        </div>
+                      ) : results.length > 0 ? (
+                        <div className="py-1">
+                          {results.slice(0, 5).map((series) => (
+                            <Link
+                              key={series.id}
+                              to={`/series/${series.id}`}
+                              onClick={handleResultClick}
+                              className="block px-3 py-2 hover:bg-manga-surface transition-colors"
+                            >
+                              <div className="flex items-center gap-2">
+                                <img
+                                  src={series.coverImage}
+                                  alt={series.title}
+                                  className="w-8 h-10 object-cover rounded"
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="text-xs font-medium text-manga-text truncate">
+                                    {series.title}
+                                  </h4>
+                                  <p className="text-xs text-manga-muted truncate">
+                                    by {series.author}
+                                  </p>
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      ) : query ? (
+                        <div className="p-3 text-center">
+                          <p className="text-xs text-manga-muted">No results found</p>
+                        </div>
+                      ) : null}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+
             {/* Right Side Icons */}
             <div className="flex items-center space-x-1 sm:space-x-2">
               {/* Notification Icon */}

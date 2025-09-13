@@ -98,6 +98,19 @@ export interface ReadingHistory {
   progress: number; // 0-1
 }
 
+export interface Comment {
+  id: string;
+  text: string;
+  author: string;
+  timestamp: string;
+  avatar?: string;
+  likes: number;
+  likedBy: string[]; // Array of user IDs who liked this comment
+  images?: string[]; // Array of image URLs
+  parentId?: string; // For nested replies
+  replies?: Comment[]; // Nested replies
+}
+
 export interface AppState {
   series: Series[];
   bookmarks: Bookmark[];

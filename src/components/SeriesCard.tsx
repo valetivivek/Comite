@@ -32,21 +32,19 @@ const SeriesCard = ({ series, viewMode }: SeriesCardProps) => {
             {/* Content - Right side details */}
             <div className="flex-1 min-w-0">
               <div className="mb-1">
-                <h3 className="font-semibold text-manga-text truncate">
-                  {series.title}
-                </h3>
-              </div>
-              <p className="text-sm text-manga-muted mb-2">{series.author}</p>
-              
-              {/* Rating */}
-              <div className="mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-yellow-500">★</span>
-                  <span className="text-sm text-manga-text" aria-label={`Rating ${series.rating}`}>
-                    {series.rating}
-                  </span>
+                <div className="flex items-center justify-between gap-2">
+                  <h3 className="font-semibold text-manga-text truncate flex-1">
+                    {series.title}
+                  </h3>
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <span className="text-yellow-500">★</span>
+                    <span className="text-sm text-manga-text" aria-label={`Rating ${series.rating}`}>
+                      {series.rating}
+                    </span>
+                  </div>
                 </div>
               </div>
+              <p className="text-sm text-manga-muted mb-2">{series.author}</p>
 
               {/* Chapter count */}
               <div className="mb-3">
@@ -105,21 +103,19 @@ const SeriesCard = ({ series, viewMode }: SeriesCardProps) => {
         {/* Content */}
         <div className="p-3">
           <div className="mb-1">
-            <h3 className="font-semibold text-manga-text text-sm line-clamp-2">
-              {series.title}
-            </h3>
-          </div>
-          <p className="text-xs text-manga-muted mb-2 truncate">{series.author}</p>
-          
-          {/* Rating */}
-          <div className="mb-2">
-            <div className="flex items-center gap-2">
-              <span className="text-yellow-500">★</span>
-              <span className="text-sm text-manga-text" aria-label={`Rating ${series.rating}`}>
-                {series.rating}
-              </span>
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="font-semibold text-manga-text text-sm line-clamp-2 flex-1">
+                {series.title}
+              </h3>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <span className="text-yellow-500">★</span>
+                <span className="text-sm text-manga-text" aria-label={`Rating ${series.rating}`}>
+                  {series.rating}
+                </span>
+              </div>
             </div>
           </div>
+          <p className="text-xs text-manga-muted mb-2 truncate">{series.author}</p>
 
           {/* Chapter count */}
           <div className="mb-3">

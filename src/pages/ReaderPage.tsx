@@ -5,8 +5,7 @@ import {
   ChevronLeftIcon, 
   ChevronRightIcon, 
   ArrowLeftIcon,
-  ChevronDownIcon,
-  XMarkIcon
+  ChevronDownIcon
 } from '@heroicons/react/24/outline';
 import { dataService } from '../services/dataService';
 import { Series, Chapter } from '../types';
@@ -22,7 +21,7 @@ const ReaderPage = () => {
   const [showChapterList, setShowChapterList] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [isMarkingAsRead, setIsMarkingAsRead] = useState(false);
-  const toolbarTimeoutRef = useRef<NodeJS.Timeout>();
+  const toolbarTimeoutRef = useRef<number>();
 
   useEffect(() => {
     const loadData = async () => {

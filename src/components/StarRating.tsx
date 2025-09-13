@@ -58,9 +58,6 @@ const StarRating = ({
           <span className="text-xs sm:text-sm text-manga-muted">Average:</span>
           <div className="flex">
             {Array.from({ length: 5 }, (_, i) => {
-              const starValue = i + 1;
-              const isFilled = starValue <= rating;
-              
               return (
                 <StarSolidIcon 
                   key={i}

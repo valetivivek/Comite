@@ -154,7 +154,13 @@ const SeriesPage = () => {
 
               {/* Series Info */}
               <div className="flex-1 text-white text-center sm:text-left">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">{series.title}</h1>
+                <div className="flex items-center gap-4 mb-2 justify-center sm:justify-start flex-wrap">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">{series.title}</h1>
+                  <div className="flex items-center gap-1">
+                    <span className="text-yellow-400 text-xl sm:text-2xl">★</span>
+                    <span className="text-white font-medium text-lg sm:text-xl">{series.rating}</span>
+                  </div>
+                </div>
                 <p className="text-base sm:text-lg md:text-xl text-gray-200 mb-4">by {series.author}</p>
                 
                 <div className="flex flex-wrap gap-2 mb-4 justify-center sm:justify-start">
@@ -169,10 +175,6 @@ const SeriesPage = () => {
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-6 mb-4">
-                  <div className="flex items-center">
-                    <span className="text-yellow-400 text-base sm:text-lg">★</span>
-                    <span className="text-white ml-1 font-medium text-sm sm:text-base">{series.rating}</span>
-                  </div>
                   <span className="text-gray-200 text-sm sm:text-base">{series.totalChapters} chapters</span>
                   <span className="text-gray-200 capitalize text-sm sm:text-base">{series.status}</span>
                 </div>

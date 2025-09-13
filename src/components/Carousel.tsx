@@ -75,14 +75,22 @@ const Carousel = ({ series }: CarouselProps) => {
                 <div className="relative h-full flex items-center">
                   <div className="container mx-auto px-4 lg:px-8">
                     <div className="max-w-2xl">
-                      <motion.h2 
+                      <motion.div 
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.2 }}
-                        className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4"
+                        className="flex items-center gap-4 mb-4 flex-wrap"
                       >
-                        {series[currentIndex].title}
-                      </motion.h2>
+                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">
+                          {series[currentIndex].title}
+                        </h2>
+                        <div className="flex items-center gap-1">
+                          <span className="text-yellow-400 text-2xl md:text-3xl">★</span>
+                          <span className="text-white text-xl md:text-2xl font-medium">
+                            {series[currentIndex].rating}
+                          </span>
+                        </div>
+                      </motion.div>
                       
                       <motion.p 
                         initial={{ y: 20, opacity: 0 }}
@@ -115,12 +123,6 @@ const Carousel = ({ series }: CarouselProps) => {
                         transition={{ delay: 0.5 }}
                         className="flex items-center gap-4"
                       >
-                        <div className="flex items-center">
-                          <span className="text-yellow-400 text-lg">★</span>
-                          <span className="text-white ml-1 font-medium">
-                            {series[currentIndex].rating}
-                          </span>
-                        </div>
                         <span className="text-teal-200">
                           {series[currentIndex].totalChapters} chapters
                         </span>
@@ -137,12 +139,12 @@ const Carousel = ({ series }: CarouselProps) => {
         </AnimatePresence>
       </div>
 
-      {/* Navigation Arrows */}
+      {/* Navigation Arrows - Hidden on mobile */}
       {series.length > 1 && (
         <>
           <button
             onClick={goToPrevious}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full transition-all duration-200 jitter-hover"
+            className="hidden md:block absolute left-4 top-1/2 transform -translate-y-1/2 p-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full transition-all duration-200 jitter-hover"
             aria-label="Previous slide"
           >
             <ChevronLeftIcon className="h-6 w-6 text-white" />
@@ -150,7 +152,7 @@ const Carousel = ({ series }: CarouselProps) => {
           
           <button
             onClick={goToNext}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full transition-all duration-200 jitter-hover"
+            className="hidden md:block absolute right-4 top-1/2 transform -translate-y-1/2 p-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full transition-all duration-200 jitter-hover"
             aria-label="Next slide"
           >
             <ChevronRightIcon className="h-6 w-6 text-white" />

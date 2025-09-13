@@ -54,46 +54,45 @@ const ListItem = ({ series }: ListItemProps) => {
       whileTap={{ scale: 0.98 }}
       className="card hover:shadow-lg transition-shadow duration-200 relative"
     >
-      <Link to={`/series/${series.id}`} className="block">
-        <div className="flex p-4">
-          {/* Cover Image - Left aligned */}
-          <div className="relative flex-shrink-0 w-16 h-24 rounded-lg overflow-hidden mr-4">
+      <div className="flex p-4">
+        {/* Cover Image - Left aligned */}
+        <div className="relative flex-shrink-0 w-16 h-24 rounded-lg overflow-hidden mr-4">
+          <Link to={`/series/${series.id}`} className="block">
             <img
               src={series.coverImage}
               alt={series.title}
               className="w-full h-full object-cover"
               loading="lazy"
             />
-          </div>
+          </Link>
+        </div>
 
-          {/* Content - Right side details */}
-          <div className="flex-1 min-w-0 flex flex-col">
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="font-semibold text-manga-text text-lg sm:text-base hover:text-teal-400 transition-colors flex-1 min-w-0">
+        {/* Content - Right side details */}
+        <div className="flex-1 min-w-0 flex flex-col">
+          <div className="flex justify-between items-start mb-2">
+            <Link to={`/series/${series.id}`} className="flex-1 min-w-0">
+              <h3 className="font-semibold text-manga-text text-lg sm:text-base hover:text-teal-400 transition-colors">
                 {series.title}
               </h3>
-              
-              {/* Bookmark Button - Far Right */}
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleBookmark(e);
-                }}
-                disabled={isLoading}
-                className={`ml-4 p-2 rounded-lg bg-manga-surface hover:bg-manga-border transition-colors flex-shrink-0 ${
-                  isBookmarked ? 'text-yellow-500' : 'text-manga-muted'
-                }`}
-                aria-pressed={isBookmarked}
-                aria-label={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
-              >
-                {isBookmarked ? (
-                  <BookmarkSolidIcon className="h-5 w-5" />
-                ) : (
-                  <BookmarkIcon className="h-5 w-5" />
-                )}
-              </button>
-            </div>
+            </Link>
+            
+            {/* Bookmark Button - Far Right */}
+            <button
+              onClick={handleBookmark}
+              disabled={isLoading}
+              className={`ml-4 p-2 rounded-lg bg-manga-surface hover:bg-manga-border transition-colors flex-shrink-0 ${
+                isBookmarked ? 'text-yellow-500' : 'text-manga-muted'
+              }`}
+              aria-pressed={isBookmarked}
+              aria-label={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
+            >
+              {isBookmarked ? (
+                <BookmarkSolidIcon className="h-5 w-5" />
+              ) : (
+                <BookmarkIcon className="h-5 w-5" />
+              )}
+            </button>
+          </div>
             
             {/* Rating */}
             <div className="mb-2">
@@ -113,13 +112,9 @@ const ListItem = ({ series }: ListItemProps) => {
             {/* Recent Chapters - Compact Pills */}
             <div className="flex flex-wrap gap-1">
               {recentChapters.map((chapter) => (
-                <span
+                <Link
                   key={chapter.id}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.location.href = `/series/${series.id}/chapter/${chapter.id}`;
-                  }}
+                  to={`/series/${series.id}/chapter/${chapter.id}`}
                   className={`px-2 py-1 text-xs rounded cursor-pointer transition-colors ${
                     chapter.isRead 
                       ? 'bg-manga-surface text-manga-muted hover:bg-manga-border' 
@@ -128,12 +123,11 @@ const ListItem = ({ series }: ListItemProps) => {
                   aria-label={`Chapter ${chapter.chapterNumber}`}
                 >
                   {chapter.chapterNumber}
-                </span>
+                </Link>
               ))}
             </div>
           </div>
         </div>
-      </Link>
     </motion.div>
   );
 };
