@@ -145,6 +145,50 @@ class DataService {
     return topCandidates[randomIndex].series;
   }
 
+  async getPopularSeries(): Promise<Series[]> {
+    // Calculate popularity based on reading history and engagement
+    const seriesWithPopularity = this.series.map(series => {
+      const seriesHistory = this.readingHistory.filter(h => h.seriesId === series.id);
+      
+      // Calculate popularity metrics
+      const uniqueReaders = new Set(seriesHistory.map(h => h.userId)).size;
+      const totalProgress = seriesHistory.reduce((sum, h) => sum + (h.progress || 0), 0);
+      
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const recentActivity = seriesHistory.filter(h => 
+        new Date(h.readAt) > thirtyDaysAgo
+      ).length;
+      
+      // Weighted popularity score
+      const popularityScore = 
+        (uniqueReaders * 2) +           // More readers = more popular
+        (totalProgress * 0.5) +         // More reading = more popular
+        (recentActivity * 1.5) +        // Recent activity = more popular
+        (series.rating * 0.3);          // Higher rating = more popular
+      
+      return {
+        ...series,
+        popularityScore,
+        uniqueReaders,
+        totalProgress,
+        recentActivity
+      };
+    });
+    
+    // Filter to only show series with significant engagement
+    const engagedSeries = seriesWithPopularity.filter(series => 
+      series.uniqueReaders > 0 &&           // Must have at least 1 reader
+      series.totalProgress > 0.5 &&         // Must have significant reading progress
+      series.popularityScore > 1            // Must have meaningful popularity score
+    );
+    
+    // Sort by popularity score (descending) and return only engaged series
+    return engagedSeries
+      .sort((a, b) => b.popularityScore - a.popularityScore)
+      .map(({ popularityScore, uniqueReaders, totalProgress, recentActivity, ...series }) => series);
+  }
+
   async searchSeries(filters: SearchFilters): Promise<Series[]> {
     let filtered = [...this.series];
 

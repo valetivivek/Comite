@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { dataService } from '../services/dataService';
 import { Series } from '../types';
@@ -59,10 +59,13 @@ const DashboardPage = () => {
 
 
 
-  // Get top series for carousel (highest rated)
-  const topSeries = series
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 5);
+  // Get top series for carousel (highest rated) - memoized for performance
+  const topSeries = useMemo(() => 
+    series
+      .sort((a, b) => b.rating - a.rating)
+      .slice(0, 5),
+    [series]
+  );
 
   const jsonLd = {
     "@context": "https://schema.org",

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { BookmarkIcon } from '@heroicons/react/24/outline';
@@ -23,6 +23,7 @@ const ListItem = ({ series }: ListItemProps) => {
 
     checkBookmark();
   }, [series.id]);
+
 
   const handleBookmark = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -101,6 +102,9 @@ const ListItem = ({ series }: ListItemProps) => {
               alt={series.title}
               className="w-full h-full object-cover"
               loading="lazy"
+              decoding="async"
+              width={110}
+              height={140}
             />
           </Link>
         </div>
@@ -200,4 +204,4 @@ const ListItem = ({ series }: ListItemProps) => {
   );
 };
 
-export default ListItem;
+export default memo(ListItem);

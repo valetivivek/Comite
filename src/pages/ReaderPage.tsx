@@ -19,12 +19,10 @@ const ReaderPage = () => {
   const [series, setSeries] = useState<Series | null>(null);
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [showToolbar, setShowToolbar] = useState(true);
   const [showChapterList, setShowChapterList] = useState(false);
   const [, setCurrentPage] = useState(0);
   const [isMarkingAsRead, setIsMarkingAsRead] = useState(false);
   const [isTrackingRead, setIsTrackingRead] = useState(false);
-  const toolbarTimeoutRef = useRef<number>();
   const scrollDepthRef = useRef<number>(0);
   const imageObserverRef = useRef<IntersectionObserver | null>(null);
   const imagesSeenRef = useRef<Set<string>>(new Set());
@@ -41,9 +39,12 @@ const ReaderPage = () => {
         ]);
 
         if (seriesData && chapterData) {
+          console.log('Loaded chapter data:', chapterData);
+          console.log('Chapter pages:', chapterData.pages);
           setSeries(seriesData);
           setChapter(chapterData);
         } else {
+          console.error('Failed to load series or chapter data');
           navigate('/');
         }
       } catch (error) {
@@ -150,39 +151,6 @@ const ReaderPage = () => {
     };
   }, [chapter, series, seriesId, chapterId, isTrackingRead]);
 
-  useEffect(() => {
-    // Auto-hide toolbar
-    const handleMouseMove = () => {
-      setShowToolbar(true);
-      if (toolbarTimeoutRef.current) {
-        clearTimeout(toolbarTimeoutRef.current);
-      }
-      toolbarTimeoutRef.current = setTimeout(() => {
-        setShowToolbar(false);
-      }, 3000);
-    };
-
-    const handleScroll = () => {
-      setShowToolbar(true);
-      if (toolbarTimeoutRef.current) {
-        clearTimeout(toolbarTimeoutRef.current);
-      }
-      toolbarTimeoutRef.current = setTimeout(() => {
-        setShowToolbar(false);
-      }, 3000);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
-      if (toolbarTimeoutRef.current) {
-        clearTimeout(toolbarTimeoutRef.current);
-      }
-    };
-  }, []);
 
 
   const getPreviousChapter = () => {
@@ -216,6 +184,70 @@ const ReaderPage = () => {
       navigate(`/series/${seriesId}`);
     }
   };
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Prevent shortcuts when typing in inputs
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      switch (e.key) {
+        case 'ArrowLeft':
+        case 'a':
+        case 'A':
+          e.preventDefault();
+          goToPreviousChapter();
+          break;
+        case 'ArrowRight':
+        case 'd':
+        case 'D':
+          e.preventDefault();
+          goToNextChapter();
+          break;
+        case 'ArrowUp':
+        case 'w':
+        case 'W':
+          e.preventDefault();
+          window.scrollBy({ top: -window.innerHeight * 0.8, behavior: 'smooth' });
+          break;
+        case 'ArrowDown':
+        case 's':
+        case 'S':
+        case ' ':
+          e.preventDefault();
+          window.scrollBy({ top: window.innerHeight * 0.8, behavior: 'smooth' });
+          break;
+        case 'b':
+        case 'B':
+          e.preventDefault();
+          // Toggle bookmark functionality
+          if (series) {
+            dataService.isBookmarked(series.id).then(isBookmarked => {
+              if (isBookmarked) {
+                dataService.removeBookmark(series.id);
+              } else {
+                dataService.addBookmark(series.id);
+              }
+            });
+          }
+          break;
+        case 'f':
+        case 'F':
+          e.preventDefault();
+          setShowChapterList(!showChapterList);
+          break;
+        case 'Escape':
+          e.preventDefault();
+          setShowChapterList(false);
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showChapterList, series, goToPreviousChapter, goToNextChapter]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -289,93 +321,71 @@ const ReaderPage = () => {
 
   return (
     <div className="min-h-screen bg-manga-bg text-manga-text">
-      {/* Top Toolbar */}
-      <AnimatePresence>
-        {showToolbar && (
-          <motion.div
-            initial={{ y: -100 }}
-            animate={{ y: 0 }}
-            exit={{ y: -100 }}
-            className="fixed top-0 left-0 right-0 z-50 bg-manga-bg bg-opacity-95 backdrop-blur-sm border-b border-manga-border"
-          >
-            <div className="flex items-center justify-between p-4">
-              <div className="flex items-center gap-4">
-                <Link
-                  to={`/series/${seriesId}`}
-                  className="flex items-center text-manga-text hover:text-midnight-primary-400 transition-colors jitter-hover"
+      {/* Reader Content */}
+      <div className="pt-4">
+        <div className="max-w-5xl mx-auto px-2 sm:px-4">
+          {/* Chapter Title and Navigation */}
+          <div className="text-center py-6">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <Link
+                to={`/series/${seriesId}`}
+                className="flex items-center text-manga-text hover:text-midnight-primary-400 transition-colors"
+              >
+                <ArrowLeftIcon className="h-5 w-5 mr-2" />
+                Back to Series
+              </Link>
+              
+              {/* Chapter Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowChapterList(!showChapterList)}
+                  className="flex items-center px-4 py-2 bg-manga-card rounded-lg hover:bg-manga-surface transition-colors border border-manga-border"
                 >
-                  <ArrowLeftIcon className="h-5 w-5 mr-2" />
-                  Back to Series
-                </Link>
-                
-                <div className="hidden sm:block">
-                  <h1 className="text-lg font-semibold text-manga-text">{series.title}</h1>
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm text-manga-muted">Chapter {chapter.chapterNumber}</p>
-                    {chapter.publishedAt && formatRelativeTime(chapter.publishedAt) && (
-                      <span 
-                        className="text-xs text-manga-muted"
-                        title={new Date(chapter.publishedAt).toLocaleString()}
-                      >
-                        • {formatRelativeTime(chapter.publishedAt)}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
+                  <span className="mr-2">
+                    Chapter {chapter.chapterNumber}
+                  </span>
+                  <ChevronDownIcon className="h-4 w-4" />
+                </button>
 
-              <div className="flex items-center gap-4">
-                {/* Chapter Dropdown */}
-                <div className="relative">
-                  <button
-                    onClick={() => setShowChapterList(!showChapterList)}
-                    className="flex items-center px-3 py-2 bg-manga-card rounded-lg hover:bg-manga-surface transition-colors"
-                  >
-                    <span className="hidden sm:inline mr-2">
-                      {chapter ? `Chapter ${chapter.chapterNumber}` : 'Chapter'}
-                    </span>
-                    <ChevronDownIcon className="h-4 w-4" />
-                  </button>
-
-                  <AnimatePresence>
-                    {showChapterList && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="absolute top-full right-0 mt-2 w-64 bg-manga-card rounded-lg shadow-xl z-20 max-h-80 overflow-y-auto"
-                      >
-                        <div className="p-2">
-                          {series.chapters.map((ch) => (
-                            <Link
-                              key={ch.id}
-                              to={`/series/${seriesId}/chapter/${ch.id}`}
-                              onClick={() => setShowChapterList(false)}
-                              className={`block px-3 py-2 text-sm rounded hover:bg-manga-surface transition-colors ${
-                                ch.id === chapter.id ? 'bg-midnight-primary-600 text-white' : 'text-manga-text'
-                              }`}
-                            >
-                              <div className="flex items-center justify-between">
-                                <span>Chapter {ch.chapterNumber}</span>
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+                <AnimatePresence>
+                  {showChapterList && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="absolute top-full left-0 mt-2 w-64 bg-manga-card rounded-lg shadow-xl z-20 max-h-80 overflow-y-auto border border-manga-border"
+                      style={{ minWidth: '200px', maxWidth: '300px' }}
+                    >
+                      <div className="p-2">
+                        {series.chapters
+                          .sort((a, b) => {
+                            // Current chapter first
+                            if (a.id === chapter.id) return -1;
+                            if (b.id === chapter.id) return 1;
+                            // Then sort by chapter number descending (newest first)
+                            return b.chapterNumber - a.chapterNumber;
+                          })
+                          .map((ch) => (
+                          <Link
+                            key={ch.id}
+                            to={`/series/${seriesId}/chapter/${ch.id}`}
+                            onClick={() => setShowChapterList(false)}
+                            className={`block px-3 py-2 text-sm rounded hover:bg-manga-surface transition-colors ${
+                              ch.id === chapter.id ? 'bg-midnight-primary-600 text-white' : 'text-manga-text'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span>Chapter {ch.chapterNumber}</span>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Reader Content */}
-      <div className="pt-16">
-        <div className="max-w-5xl mx-auto px-2 sm:px-4">
-          {/* Chapter Title */}
-          <div className="text-center py-6 sm:hidden">
+            
             <h1 className="text-lg font-semibold text-manga-text">{series.title}</h1>
             <div className="flex items-center justify-center gap-2">
               <p className="text-sm text-manga-muted">Chapter {chapter.chapterNumber}</p>
@@ -392,7 +402,8 @@ const ReaderPage = () => {
 
           {/* Pages */}
           <div className="space-y-4">
-            {chapter.pages.map((page, index) => (
+            {chapter.pages && chapter.pages.length > 0 ? (
+              chapter.pages.map((page, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
@@ -407,9 +418,19 @@ const ReaderPage = () => {
                   loading="lazy"
                   data-image-id={`${chapterId}-${index}`}
                   onLoad={() => handlePageChange(index)}
+                  onError={(e) => {
+                    console.error(`Failed to load page ${index + 1}:`, page);
+                    e.currentTarget.style.display = 'none';
+                  }}
                 />
               </motion.div>
-            ))}
+              ))
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-manga-muted text-lg">No pages available for this chapter.</p>
+                <p className="text-manga-muted text-sm mt-2">The chapter may be under maintenance or the pages are not yet uploaded.</p>
+              </div>
+            )}
           </div>
 
           {/* Mobile Navigation - After Last Panel */}
