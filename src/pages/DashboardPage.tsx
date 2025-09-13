@@ -4,6 +4,7 @@ import { dataService } from '../services/dataService';
 import { Series } from '../types';
 import ListItem from '../components/ListItem';
 import Carousel from '../components/Carousel';
+import CommentSection from '../components/CommentSection';
 
 const DashboardPage = () => {
   const [series, setSeries] = useState<Series[]>([]);
@@ -124,6 +125,17 @@ const DashboardPage = () => {
               </div>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Global Comments Section */}
+      <section className="px-4 py-6 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <CommentSection 
+            contextId="global" 
+            contextType="global" 
+            title="Community Discussion"
+          />
         </div>
       </section>
 

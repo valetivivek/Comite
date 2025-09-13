@@ -10,6 +10,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { dataService } from '../services/dataService';
 import { Series, Chapter } from '../types';
+import CommentSection from '../components/CommentSection';
 
 const ReaderPage = () => {
   const { seriesId, chapterId } = useParams<{ seriesId: string; chapterId: string }>();
@@ -334,6 +335,15 @@ const ReaderPage = () => {
                 )}
               </div>
             </div>
+          </div>
+
+          {/* Comments Section */}
+          <div className="py-8">
+            <CommentSection 
+              contextId={`${series.id}-${chapter.id}`} 
+              contextType="chapter" 
+              title={`Comments for Chapter ${chapter.chapterNumber}`}
+            />
           </div>
         </div>
       </div>

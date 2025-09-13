@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { EyeIcon } from '@heroicons/react/24/outline';
 import { Series } from '../types';
 
 interface SeriesCardProps {
@@ -9,9 +8,6 @@ interface SeriesCardProps {
 }
 
 const SeriesCard = ({ series, viewMode }: SeriesCardProps) => {
-
-  const latestChapter = series.chapters[0];
-  const readChapters = series.chapters.filter(ch => ch.isRead).length;
   const recentChapters = series.chapters.slice(0, 5);
 
   if (viewMode === 'list') {
@@ -23,8 +19,8 @@ const SeriesCard = ({ series, viewMode }: SeriesCardProps) => {
       >
         <Link to={`/series/${series.id}`} className="block">
           <div className="flex p-4">
-            {/* Cover Image */}
-            <div className="relative flex-shrink-0 w-20 h-28 rounded-lg overflow-hidden">
+            {/* Cover Image - Left aligned */}
+            <div className="relative flex-shrink-0 w-16 h-24 rounded-lg overflow-hidden mr-4">
               <img
                 src={series.coverImage}
                 alt={series.title}
@@ -33,71 +29,46 @@ const SeriesCard = ({ series, viewMode }: SeriesCardProps) => {
               />
             </div>
 
-            {/* Content */}
-            <div className="flex-1 ml-4 min-w-0">
-              <div className="flex items-center justify-between mb-1">
+            {/* Content - Right side details */}
+            <div className="flex-1 min-w-0">
+              <div className="mb-1">
                 <h3 className="font-semibold text-manga-text truncate">
                   {series.title}
                 </h3>
-                <span className={`px-2 py-1 text-xs rounded-full ml-2 flex-shrink-0 ${
-                  series.status === 'ongoing' 
-                    ? 'bg-green-500 text-white' 
-                    : series.status === 'completed'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-orange-500 text-white'
-                }`}>
-                  {series.status}
-                </span>
               </div>
               <p className="text-sm text-manga-muted mb-2">{series.author}</p>
               
-              <div className="flex items-center gap-2 mb-2">
-                <div className="flex items-center">
-                  <span className="text-yellow-500 text-sm">★</span>
-                  <span className="text-sm text-manga-muted ml-1">{series.rating}</span>
+              {/* Rating */}
+              <div className="mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-yellow-500">★</span>
+                  <span className="text-sm text-manga-text" aria-label={`Rating ${series.rating}`}>
+                    {series.rating}
+                  </span>
                 </div>
-                <span className="text-sm text-manga-muted">•</span>
-                <span className="text-sm text-manga-muted">{series.totalChapters} ch</span>
-                <span className="text-sm text-manga-muted">•</span>
-                <span className="text-sm text-manga-muted capitalize">{series.status}</span>
               </div>
 
-              <div className="flex flex-wrap gap-1 mb-2">
-                {series.tags.slice(0, 2).map((tag) => (
+              {/* Chapter count */}
+              <div className="mb-3">
+                <span className="text-sm text-manga-muted">{series.totalChapters} chapters</span>
+              </div>
+
+              {/* Recent Chapters - Compact Pills */}
+              <div className="flex flex-wrap gap-1">
+                {recentChapters.map((chapter) => (
                   <span
-                    key={tag}
-                    className="px-2 py-1 bg-neon-500 text-white text-xs rounded-full"
+                    key={chapter.id}
+                    className={`px-2 py-1 text-xs rounded ${
+                      chapter.isRead 
+                        ? 'bg-manga-surface text-manga-muted' 
+                        : 'bg-neon-500 text-white'
+                    }`}
+                    aria-label={`Chapter ${chapter.chapterNumber}`}
                   >
-                    {tag}
+                    {chapter.chapterNumber}
                   </span>
                 ))}
               </div>
-
-              {/* Recent Chapters */}
-              <div className="mb-2">
-                <p className="text-xs text-manga-muted mb-1">Recent chapters:</p>
-                <div className="flex flex-wrap gap-1">
-                  {recentChapters.map((chapter) => (
-                    <span
-                      key={chapter.id}
-                      className={`px-2 py-1 text-xs rounded ${
-                        chapter.isRead 
-                          ? 'bg-manga-surface text-manga-muted' 
-                          : 'bg-neon-500 text-white'
-                      }`}
-                    >
-                      Ch {chapter.chapterNumber}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {readChapters > 0 && (
-                <div className="flex items-center text-sm text-manga-muted">
-                  <EyeIcon className="h-4 w-4 mr-1" />
-                  {readChapters}/{series.totalChapters} read
-                </div>
-              )}
             </div>
           </div>
         </Link>
@@ -133,39 +104,44 @@ const SeriesCard = ({ series, viewMode }: SeriesCardProps) => {
 
         {/* Content */}
         <div className="p-3">
-          <div className="flex items-center justify-between mb-1">
-            <h3 className="font-semibold text-manga-text text-sm line-clamp-2 flex-1">
+          <div className="mb-1">
+            <h3 className="font-semibold text-manga-text text-sm line-clamp-2">
               {series.title}
             </h3>
-            <span className={`px-2 py-1 text-xs rounded-full ml-2 flex-shrink-0 ${
-              series.status === 'ongoing' 
-                ? 'bg-green-500 text-white' 
-                : series.status === 'completed'
-                ? 'bg-blue-500 text-white'
-                : 'bg-orange-500 text-white'
-            }`}>
-              {series.status}
-            </span>
           </div>
           <p className="text-xs text-manga-muted mb-2 truncate">{series.author}</p>
           
-          <div className="flex items-center justify-between text-xs text-manga-muted">
-            <span>{series.totalChapters} ch</span>
-            {readChapters > 0 && (
-              <div className="flex items-center">
-                <EyeIcon className="h-3 w-3 mr-1" />
-                {readChapters}
-              </div>
-            )}
-          </div>
-
-          {latestChapter && (
-            <div className="mt-2">
-              <span className="text-xs text-manga-muted">
-                Latest: Ch {latestChapter.chapterNumber}
+          {/* Rating */}
+          <div className="mb-2">
+            <div className="flex items-center gap-2">
+              <span className="text-yellow-500">★</span>
+              <span className="text-sm text-manga-text" aria-label={`Rating ${series.rating}`}>
+                {series.rating}
               </span>
             </div>
-          )}
+          </div>
+
+          {/* Chapter count */}
+          <div className="mb-3">
+            <span className="text-sm text-manga-muted">{series.totalChapters} chapters</span>
+          </div>
+
+          {/* Recent Chapters - Compact Pills */}
+          <div className="flex flex-wrap gap-1">
+            {recentChapters.map((chapter) => (
+              <span
+                key={chapter.id}
+                className={`px-2 py-1 text-xs rounded ${
+                  chapter.isRead 
+                    ? 'bg-manga-surface text-manga-muted' 
+                    : 'bg-neon-500 text-white'
+                }`}
+                aria-label={`Chapter ${chapter.chapterNumber}`}
+              >
+                {chapter.chapterNumber}
+              </span>
+            ))}
+          </div>
         </div>
       </Link>
     </motion.div>

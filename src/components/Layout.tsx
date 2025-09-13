@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   MagnifyingGlassIcon,
-  Bars3Icon,
   XMarkIcon,
   UserIcon,
   ClockIcon,
@@ -20,7 +19,6 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDrawerOpen, setIsProfileDrawerOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
@@ -281,130 +279,7 @@ const Layout = ({ children }: LayoutProps) => {
         </div>
       </nav>
 
-      {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 rounded-lg bg-manga-card shadow-lg border border-manga-border jitter-hover"
-        >
-          {isMobileMenuOpen ? (
-            <XMarkIcon className="h-6 w-6 text-manga-text" />
-          ) : (
-            <Bars3Icon className="h-6 w-6 text-manga-text" />
-          )}
-        </button>
-      </div>
 
-      {/* Mobile menu overlay */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="md:hidden fixed inset-0 z-40 bg-black bg-opacity-50"
-            onClick={() => setIsMobileMenuOpen(false)}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ x: -300 }}
-            animate={{ x: 0 }}
-            exit={{ x: -300 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="lg:hidden fixed left-0 top-0 bottom-0 w-64 bg-manga-card shadow-xl z-50"
-          >
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-8">
-                <Link to="/" className="text-xl font-bold text-neon-500 hover:text-neon-400 transition-colors">
-                  ComiTe
-                </Link>
-              </div>
-              {/* Mobile Search */}
-              <div className="mb-6" ref={searchRef}>
-                <div className="relative">
-                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-manga-muted" />
-                  <input
-                    type="text"
-                    placeholder="Search manga, manhua, or authors..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    onFocus={() => setShowResults(true)}
-                    className="w-full pl-10 pr-10 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors"
-                    aria-label="Search for manga, manhua, or authors"
-                  />
-                  {query && (
-                    <button
-                      onClick={clearSearch}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-manga-border rounded transition-colors"
-                      aria-label="Clear search"
-                    >
-                      <XMarkIcon className="h-4 w-4 text-manga-muted" />
-                    </button>
-                  )}
-                  
-                  {/* Mobile Search Results */}
-                  <AnimatePresence>
-                    {showResults && (query || results.length > 0) && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="absolute top-full left-0 right-0 mt-1 bg-manga-card border border-manga-border rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto"
-                      >
-                        {isSearching ? (
-                          <div className="p-4 text-center">
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-500 mx-auto"></div>
-                            <p className="text-sm text-manga-muted mt-2">Searching...</p>
-                          </div>
-                        ) : results.length > 0 ? (
-                          <div className="py-2">
-                            {results.slice(0, 5).map((series) => (
-                              <Link
-                                key={series.id}
-                                to={`/series/${series.id}`}
-                                onClick={() => {
-                                  handleResultClick();
-                                  setIsMobileMenuOpen(false);
-                                }}
-                                className="block px-4 py-3 hover:bg-manga-surface transition-colors"
-                              >
-                                <div className="flex items-center gap-3">
-                                  <img
-                                    src={series.coverImage}
-                                    alt={series.title}
-                                    className="w-10 h-14 object-cover rounded"
-                                  />
-                                  <div className="flex-1 min-w-0">
-                                    <h4 className="text-sm font-medium text-manga-text truncate">
-                                      {series.title}
-                                    </h4>
-                                    <p className="text-xs text-manga-muted">
-                                      by {series.author}
-                                    </p>
-                                  </div>
-                                </div>
-                              </Link>
-                            ))}
-                          </div>
-                        ) : query ? (
-                          <div className="p-4 text-center">
-                            <p className="text-sm text-manga-muted">No results found</p>
-                          </div>
-                        ) : null}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Profile Dashboard Drawer */}
       <AnimatePresence>
@@ -456,14 +331,6 @@ const Layout = ({ children }: LayoutProps) => {
                     {/* Dashboard Options */}
                     <div className="space-y-2">
                       <Link
-                        to="/dashboard"
-                        onClick={() => setIsProfileDrawerOpen(false)}
-                        className="flex items-center px-4 py-3 rounded-lg text-manga-text hover:bg-manga-surface transition-colors"
-                      >
-                        <MagnifyingGlassIcon className="mr-3 h-5 w-5" />
-                        Search Library
-                      </Link>
-                      <Link
                         to="/bookmarks"
                         onClick={() => setIsProfileDrawerOpen(false)}
                         className="flex items-center px-4 py-3 rounded-lg text-manga-text hover:bg-manga-surface transition-colors"
@@ -493,14 +360,6 @@ const Layout = ({ children }: LayoutProps) => {
                   <>
                     {/* Guest User Options */}
                     <div className="space-y-2">
-                      <Link
-                        to="/dashboard"
-                        onClick={() => setIsProfileDrawerOpen(false)}
-                        className="flex items-center px-4 py-3 rounded-lg text-manga-text hover:bg-manga-surface transition-colors"
-                      >
-                        <MagnifyingGlassIcon className="mr-3 h-5 w-5" />
-                        Search Library
-                      </Link>
                       <Link
                         to="/login"
                         onClick={() => setIsProfileDrawerOpen(false)}

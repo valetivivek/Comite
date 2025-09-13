@@ -9,6 +9,7 @@ import {
 import { dataService } from '../services/dataService';
 import { Series, User } from '../types';
 import StarRating from '../components/StarRating';
+import CommentSection from '../components/CommentSection';
 
 const SeriesPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -347,6 +348,19 @@ const SeriesPage = () => {
           </div>
         </div>
       </section>
+
+      {/* Comments Section */}
+      {series && (
+        <div className="px-4 py-6 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <CommentSection 
+              contextId={series.id} 
+              contextType="series" 
+              title={`Comments for ${series.title}`}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Scroll to Top Button */}
       <AnimatePresence>
