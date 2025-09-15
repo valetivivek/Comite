@@ -1,5 +1,6 @@
 // Copyright © 2025 Vishnu Vivek Valeti. All rights reserved.
 // Licensed under ComiTe Proprietary License 1.0. See LICENSE.txt.
+// Fixed TypeScript build errors - removed unused roleMap state
 
 import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
 
