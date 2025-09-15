@@ -35,7 +35,7 @@ const UploadAdminPage = () => {
           headers: {
             'Content-Type': 'application/json',
             'x-comite-role': user?.role || 'user',
-            'x-comite-secret': import.meta.env.VITE_ADMIN_SHARED_SECRET || ''
+            'x-comite-secret': (import.meta as any).env?.VITE_ADMIN_SHARED_SECRET || ''
           },
           body: JSON.stringify({ contentType: file.type, objectKey, contentLength: file.size })
         });
