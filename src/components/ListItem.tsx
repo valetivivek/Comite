@@ -121,9 +121,9 @@ const ListItem = ({ series }: ListItemProps) => {
                   >
                     {series.title.length > 15 ? `${series.title.substring(0, 15)}...` : series.title}
                   </h3>
-                  <div className="flex items-center gap-1 bg-manga-accent/20 px-1.5 py-0.5 rounded-full border border-manga-accent/30 flex-shrink-0">
-                    <span className="text-white text-xs drop-shadow-sm">★</span>
-                    <span className="text-white text-xs font-semibold" aria-label={`Rating ${series.rating}`}>
+                  <div className="flex items-center gap-1 bg-manga-surface px-1.5 py-0.5 rounded-full border border-manga-border flex-shrink-0">
+                    <span className="text-manga-warning text-xs">★</span>
+                    <span className="text-manga-text text-xs font-semibold" aria-label={`Rating ${series.rating}`}>
                       {series.rating}
                     </span>
                   </div>
@@ -179,7 +179,7 @@ const ListItem = ({ series }: ListItemProps) => {
                 to={`/series/${series.id}/chapter/${chapter.id}`}
                 className={`block text-xs py-1 px-1.5 rounded transition-all duration-200 hover:bg-manga-surface hover:scale-[1.02] min-h-[24px] flex items-center justify-between group/chapter ${
                   chapter.isRead 
-                    ? 'text-manga-muted hover:text-manga-text' 
+                    ? 'text-manga-text-secondary hover:text-manga-text' 
                     : 'text-manga-accent hover:text-manga-text font-medium'
                 }`}
                 aria-label={`Chapter ${chapter.chapterNumber}`}

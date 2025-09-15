@@ -413,7 +413,7 @@ const SeriesPage = () => {
                           <div className="flex items-center gap-2 min-w-0">
                             <h3 className={`font-semibold text-left transition-all duration-200 text-sm ${
                               chapter.isRead 
-                                ? 'text-manga-text' 
+                                ? 'text-manga-text-secondary' 
                                 : 'text-manga-accent'
                             }`}>
                               Ch. {chapter.chapterNumber}
@@ -426,7 +426,7 @@ const SeriesPage = () => {
                             
                             {/* Status badges */}
                             {chapter.isRead ? (
-                              <span className="text-xs bg-manga-success text-white px-2 py-1 rounded-full font-medium flex-shrink-0" aria-label="read">
+                              <span className="text-xs bg-manga-surface text-manga-text-secondary border border-manga-border px-2 py-1 rounded-full font-medium flex-shrink-0" aria-label="read">
                                 Read
                               </span>
                             ) : isChapterNew(chapter.publishedAt) ? (
@@ -454,7 +454,7 @@ const SeriesPage = () => {
                           <div className="flex items-center gap-2 mb-1">
                             <h3 className={`font-semibold text-left transition-all duration-200 text-sm ${
                               chapter.isRead 
-                                ? 'text-manga-text' 
+                                ? 'text-manga-text-secondary' 
                                 : 'text-manga-accent'
                             }`}>
                               Ch. {chapter.chapterNumber}
@@ -467,7 +467,7 @@ const SeriesPage = () => {
                             
                             {/* Status badges */}
                             {chapter.isRead ? (
-                              <span className="text-xs bg-manga-success text-white px-2 py-1 rounded-full font-medium flex-shrink-0" aria-label="read">
+                              <span className="text-xs bg-manga-surface text-manga-text-secondary border border-manga-border px-2 py-1 rounded-full font-medium flex-shrink-0" aria-label="read">
                                 Read
                               </span>
                             ) : isChapterNew(chapter.publishedAt) ? (

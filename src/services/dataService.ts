@@ -39,6 +39,10 @@ const generateMockSeries = (): Series[] => {
       });
     }
     
+    // Derive start dates: earliest chapter publishedAt, and uploadedAt within last 14 days randomly
+    const earliestChapter = chapters.reduce((min, c) => new Date(c.publishedAt) < new Date(min.publishedAt) ? c : min, chapters[0]);
+    const uploadedAt = new Date(Date.now() - Math.floor(Math.random() * 14) * 24 * 60 * 60 * 1000).toISOString();
+
     series.push({
       id: `series-${i}`,
       title: titles[i % titles.length],
@@ -52,6 +56,8 @@ const generateMockSeries = (): Series[] => {
       rating: Math.round((Math.random() * 2 + 3) * 10) / 10,
       totalChapters: chapterCount,
       lastUpdated: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+      firstChapterPublishedAt: earliestChapter.publishedAt,
+      uploadedAt,
       chapters: chapters.sort((a, b) => b.chapterNumber - a.chapterNumber)
     });
   }

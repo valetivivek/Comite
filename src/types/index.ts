@@ -11,6 +11,9 @@ export interface Series {
   rating: number;
   totalChapters: number;
   lastUpdated: string;
+  // Start date fields for New Releases logic
+  firstChapterPublishedAt?: string; // earliest chapter publishedAt
+  uploadedAt?: string; // when series was uploaded/added
   chapters: Chapter[];
 }
 
