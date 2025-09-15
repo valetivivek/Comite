@@ -3,7 +3,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
 
-export type AuthRole = 'user' | 'admin';
+export type AuthRole = 'owner' | 'admin' | 'editor' | 'moderator' | 'user' | 'banned';
 
 export interface AuthUser {
   id: string;
@@ -28,29 +28,36 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [adminEmails, setAdminEmails] = useState<string[]>([]);
+  const [roleMap, setRoleMap] = useState<Record<string, AuthRole>>({});
   const OWNER_EMAIL = 'ultimategamervivek@gmail.com';
 
   useEffect(() => {
-    // Seed admin allowlist with owner if empty
+    // Seed role map with single owner if empty
     try {
-      const storedAdmins = localStorage.getItem('comite-admin-emails');
-      if (storedAdmins) {
-        const parsed = JSON.parse(storedAdmins);
-        setAdminEmails(parsed);
+      const storedMap = localStorage.getItem('comite-role-map');
+      if (storedMap) {
+        const parsed = JSON.parse(storedMap) as Record<string, AuthRole>;
+        // Ensure owner email exists and is 'owner'
+        if (!parsed[OWNER_EMAIL] || parsed[OWNER_EMAIL] !== 'owner') {
+          parsed[OWNER_EMAIL] = 'owner';
+          localStorage.setItem('comite-role-map', JSON.stringify(parsed));
+        }
+        setRoleMap(parsed);
       } else {
-        localStorage.setItem('comite-admin-emails', JSON.stringify([OWNER_EMAIL]));
-        setAdminEmails([OWNER_EMAIL]);
+        const initial: Record<string, AuthRole> = { [OWNER_EMAIL]: 'owner' };
+        localStorage.setItem('comite-role-map', JSON.stringify(initial));
+        setRoleMap(initial);
       }
     } catch {}
 
+    // Hydrate user and compute role strictly from roleMap
     try {
       const stored = localStorage.getItem('manga-reader-user');
       if (stored) {
         const parsed = JSON.parse(stored);
         const email: string = parsed.email || '';
-        const isAdminEmail = (adminEmails.length ? adminEmails : [OWNER_EMAIL]).includes(email);
-        const role: AuthRole = isAdminEmail || parsed.role === 'admin' ? 'admin' : 'user';
+        const mappedRole: AuthRole = (JSON.parse(localStorage.getItem('comite-role-map') || '{}') as Record<string, AuthRole>)[email] || 'user';
+        const role: AuthRole = email === OWNER_EMAIL ? 'owner' : mappedRole;
         setUser({
           id: parsed.id || 'user-unknown',
           email: parsed.email || '',
@@ -62,26 +69,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         });
       }
     } catch {}
-  }, [adminEmails.length]);
+  }, []);
 
   const value = useMemo<AuthContextValue>(() => ({
     user,
     isAuthenticated: !!user,
-    isAdmin: user?.role === 'admin',
-    isOwner: !!user && user.email === 'ultimategamervivek@gmail.com',
+    isAdmin: user?.role === 'admin' || user?.role === 'owner',
+    isOwner: user?.role === 'owner',
     login: (u: AuthUser) => {
-      // Ensure role alignment with allowlist
+      // Compute role strictly from role map and owner email
       try {
-        const storedAdmins = localStorage.getItem('comite-admin-emails');
-        const list = storedAdmins ? (JSON.parse(storedAdmins) as string[]) : [OWNER_EMAIL];
-        const effectiveRole: AuthRole = list.includes(u.email) ? 'admin' : u.role;
+        const storedMap = localStorage.getItem('comite-role-map');
+        const map = storedMap ? (JSON.parse(storedMap) as Record<string, AuthRole>) : { [OWNER_EMAIL]: 'owner' };
+        const effectiveRole: AuthRole = u.email === OWNER_EMAIL ? 'owner' : (map[u.email] || 'user');
         const merged = { ...u, role: effectiveRole };
         setUser(merged);
         const existing = localStorage.getItem('manga-reader-user');
         const parsed = existing ? JSON.parse(existing) : {};
         localStorage.setItem('manga-reader-user', JSON.stringify({ ...parsed, ...merged }));
       } catch {
-        setUser(u);
+        setUser({ ...u, role: u.email === OWNER_EMAIL ? 'owner' : 'user' });
       }
     },
     logout: () => {
