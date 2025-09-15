@@ -172,7 +172,7 @@ const DashboardPage = () => {
                     onClick={() => handlePageChange(page)}
                     className={`px-3 py-2 rounded-lg transition-colors ${
                       currentPage === page
-                        ? 'bg-midnight-primary-600 text-white'
+                        ? 'bg-manga-accent text-white'
                         : 'border border-manga-border hover:bg-manga-surface'
                     }`}
                   >

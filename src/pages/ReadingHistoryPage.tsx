@@ -42,7 +42,7 @@ const ReadingHistoryPage = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-midnight-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-manga-accent"></div>
       </div>
     );
   }
@@ -65,7 +65,7 @@ const ReadingHistoryPage = () => {
               <p className="text-manga-muted mb-6">Start reading some chapters to see your history here</p>
               <Link
                 to="/"
-                className="inline-flex items-center px-4 py-2 bg-midnight-primary-600 hover:bg-midnight-primary-700 text-white rounded-lg transition-colors"
+                className="inline-flex items-center px-4 py-2 bg-manga-accent hover:brightness-95 text-white rounded-lg transition-colors"
               >
                 Browse Series
               </Link>
@@ -106,7 +106,7 @@ const ReadingHistoryPage = () => {
                               to={`/series/${seriesData.id}`}
                               className="block"
                             >
-                              <h3 className="font-semibold text-manga-text truncate mb-1 hover:text-midnight-primary-400 transition-colors">
+                              <h3 className="font-semibold text-manga-text truncate mb-1 hover:text-manga-accent transition-colors">
                                 {seriesData.title}
                               </h3>
                             </Link>
@@ -128,7 +128,7 @@ const ReadingHistoryPage = () => {
                           <div className="flex flex-col gap-2 ml-4">
                             <Link
                               to={`/series/${seriesData.id}/chapter/${chapterData.id}`}
-                              className="inline-flex items-center px-3 py-1 bg-midnight-primary-600 hover:bg-midnight-primary-700 text-white text-sm rounded-lg transition-colors"
+                              className="inline-flex items-center px-3 py-1 bg-manga-accent hover:brightness-95 text-white text-sm rounded-lg transition-colors"
                             >
                               <EyeIcon className="h-4 w-4 mr-1" />
                               Continue Reading

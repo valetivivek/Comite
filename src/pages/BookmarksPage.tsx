@@ -43,7 +43,7 @@ const BookmarksPage = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-midnight-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-manga-accent"></div>
       </div>
     );
   }
@@ -67,7 +67,7 @@ const BookmarksPage = () => {
             <p className="text-manga-muted mb-6">
               Start bookmarking your favorite series to see them here
             </p>
-            <Link to="/" className="inline-flex items-center px-4 py-2 bg-midnight-primary-600 hover:bg-midnight-primary-700 text-white rounded-lg transition-colors">
+            <Link to="/" className="inline-flex items-center px-4 py-2 bg-manga-accent hover:brightness-95 text-white rounded-lg transition-colors">
               Browse Series
             </Link>
           </div>
@@ -164,7 +164,7 @@ const BookmarksPage = () => {
                             {latestChapter && (
                               <Link
                                 to={`/series/${series.id}/chapter/${latestChapter.id}`}
-                                className="inline-flex items-center px-4 py-2 bg-midnight-primary-600 hover:bg-midnight-primary-700 text-white text-sm rounded-lg transition-colors"
+                                className="inline-flex items-center px-4 py-2 bg-manga-accent hover:brightness-95 text-white text-sm rounded-lg transition-colors"
                               >
                                 {readChapters > 0 ? 'Continue Reading' : 'Start Reading'}
                                 <ChevronRightIcon className="h-4 w-4 ml-1" />

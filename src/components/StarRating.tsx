@@ -94,9 +94,11 @@ const StarRating = ({
                   }`}
                   whileHover={interactive ? { scale: 1.1 } : {}}
                   whileTap={interactive ? { scale: 0.95 } : {}}
+                  aria-label={`Rate ${starValue} star${starValue !== 1 ? 's' : ''}`}
+                  aria-pressed={isFilled}
                 >
                   {isFilled ? (
-                    <StarSolidIcon className={`${sizeClasses[size]} text-midnight-primary-400`} />
+                    <StarSolidIcon className={`${sizeClasses[size]} text-manga-accent`} />
                   ) : (
                     <StarIcon className={`${sizeClasses[size]} text-manga-muted`} />
                   )}
@@ -115,8 +117,9 @@ const StarRating = ({
   }
 
   return (
-    <div className="flex items-center gap-1">
-      <div className="flex">
+    <fieldset className="flex items-center gap-1">
+      <legend className="sr-only">Rating: {rating > 0 ? rating.toFixed(1) : 'Not rated'}</legend>
+      <div className="flex" role="radiogroup" aria-label={`Rating: ${rating > 0 ? rating.toFixed(1) : 'Not rated'}`}>
         {Array.from({ length: 5 }, (_, i) => {
           const starValue = i + 1;
           const isFilled = starValue <= displayRating;
@@ -136,9 +139,11 @@ const StarRating = ({
               }`}
               whileHover={interactive ? { scale: 1.1 } : {}}
               whileTap={interactive ? { scale: 0.95 } : {}}
+              aria-label={`Rate ${starValue} star${starValue !== 1 ? 's' : ''}`}
+              aria-pressed={isFilled}
             >
               {isFilled ? (
-                <StarSolidIcon className={`${sizeClasses[size]} text-yellow-400`} />
+                    <StarSolidIcon className={`${sizeClasses[size]} text-manga-warning`} />
               ) : (
                 <StarIcon className={`${sizeClasses[size]} text-manga-muted`} />
               )}
@@ -152,7 +157,7 @@ const StarRating = ({
           {rating > 0 ? rating.toFixed(1) : 'Not rated'}
         </span>
       )}
-    </div>
+    </fieldset>
   );
 };
 

@@ -120,7 +120,7 @@ const SearchFiltersModal = ({
                             ...prev,
                             sortBy: e.target.value as any
                           }))}
-                          className="mr-2 text-midnight-primary-600 focus:ring-midnight-primary-500"
+                          className="mr-2 text-manga-accent focus:ring-manga-accent"
                         />
                         <span className="text-sm text-manga-text">{option.label}</span>
                       </label>
@@ -138,7 +138,7 @@ const SearchFiltersModal = ({
                           ...prev,
                           sortOrder: e.target.value as 'asc' | 'desc'
                         }))}
-                        className="mr-2 text-midnight-primary-600 focus:ring-midnight-primary-500"
+                        className="mr-2 text-manga-accent focus:ring-manga-accent"
                       />
                       <span className="text-sm text-manga-text">Ascending</span>
                     </label>
@@ -152,7 +152,7 @@ const SearchFiltersModal = ({
                           ...prev,
                           sortOrder: e.target.value as 'asc' | 'desc'
                         }))}
-                        className="mr-2 text-midnight-primary-600 focus:ring-midnight-primary-500"
+                        className="mr-2 text-manga-accent focus:ring-manga-accent"
                       />
                       <span className="text-sm text-manga-text">Descending</span>
                     </label>
@@ -169,7 +169,7 @@ const SearchFiltersModal = ({
                         onClick={() => handleGenreToggle(genre)}
                         className={`px-3 py-1.5 text-sm rounded-full transition-colors ${
                           localFilters.genre.includes(genre)
-                            ? 'bg-midnight-primary-600 text-white'
+                            ? 'bg-manga-accent text-white'
                             : 'bg-manga-surface text-manga-text hover:bg-manga-border'
                         }`}
                       >
@@ -189,7 +189,7 @@ const SearchFiltersModal = ({
                         onClick={() => handleStatusToggle(status.value)}
                         className={`px-3 py-1.5 text-sm rounded-full transition-colors ${
                           localFilters.status.includes(status.value)
-                            ? 'bg-midnight-primary-600 text-white'
+                            ? 'bg-manga-accent text-white'
                             : 'bg-manga-surface text-manga-text hover:bg-manga-border'
                         }`}
                       >

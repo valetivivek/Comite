@@ -80,15 +80,23 @@ export default {
             950: '#020617',
           }
         },
-        // Legacy support - map to new colors
+        // Theme-aware colors using CSS variables
         manga: {
-          bg: '#0f172a',        // Background
-          surface: '#1e293b',   // Secondary
-          card: '#1e293b',      // Secondary
-          border: '#334155',    // Secondary 700
-          text: '#f8fafc',      // Secondary 50
-          muted: '#64748b',     // Neutral
-          accent: '#6366f1',    // Primary
+          bg: 'var(--bg)',           // Background
+          surface: 'var(--surface)', // Secondary Surface
+          card: 'var(--card)',       // Surface/Cards
+          border: 'var(--border)',   // Primary Border
+          text: 'var(--text)',       // Primary Text
+          'text-secondary': 'var(--text-secondary)', // Secondary Text
+          muted: 'var(--muted)',     // Muted Text
+          'muted-light': 'var(--muted-light)', // Light muted text
+          accent: 'var(--accent)',   // Primary Accent
+          'accent-hover': 'var(--accent-hover)', // Accent Hover
+          'accent-light': 'var(--accent-light)', // Light accent
+          'accent-secondary': 'var(--accent-secondary)', // Secondary Accent
+          success: 'var(--success)', // Success/Positive
+          warning: 'var(--warning)', // Warning
+          'border-subtle': 'var(--border-subtle)', // Subtle Border
         },
         // Keep neon for compatibility but update to primary
         neon: {

@@ -19,6 +19,7 @@ import PrivacyPage from './pages/legal/PrivacyPage';
 import DMCAPage from './pages/legal/DMCAPage';
 import Layout from './components/Layout';
 import { notificationService } from './services/notificationService';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 const SIGNATURE = "cricky";
 
@@ -34,29 +35,31 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <div className="min-h-screen bg-manga-bg" data-signature={SIGNATURE}>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/welcome" element={<HomePage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/series/:id" element={<SeriesPage />} />
-            <Route path="/series/:seriesId/chapter/:chapterId" element={<ReaderPage />} />
-            <Route path="/bookmarks" element={<BookmarksPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/history" element={<ReadingHistoryPage />} />
-            <Route path="/popular" element={<PopularPage />} />
-            <Route path="/legal/license" element={<LicensePage />} />
-            <Route path="/legal/terms" element={<TermsPage />} />
-            <Route path="/legal/privacy" element={<PrivacyPage />} />
-            <Route path="/legal/dmca" element={<DMCAPage />} />
-          </Routes>
-        </Layout>
-      </div>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <div className="min-h-screen bg-manga-bg" data-signature={SIGNATURE}>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<DashboardPage />} />
+              <Route path="/welcome" element={<HomePage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/series/:id" element={<SeriesPage />} />
+              <Route path="/series/:seriesId/chapter/:chapterId" element={<ReaderPage />} />
+              <Route path="/bookmarks" element={<BookmarksPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/history" element={<ReadingHistoryPage />} />
+              <Route path="/popular" element={<PopularPage />} />
+              <Route path="/legal/license" element={<LicensePage />} />
+              <Route path="/legal/terms" element={<TermsPage />} />
+              <Route path="/legal/privacy" element={<PrivacyPage />} />
+              <Route path="/legal/dmca" element={<DMCAPage />} />
+            </Routes>
+          </Layout>
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 

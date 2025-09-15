@@ -18,6 +18,8 @@ import { useNavSearch } from '../hooks/useNavSearch';
 import Footer from './Footer';
 import UserFlairs from './UserFlairs';
 import FlairManager from './FlairManager';
+import LazyImage from './LazyImage';
+import ThemeToggle from './ThemeToggle';
 
 interface LayoutProps {
   children: ReactNode;
@@ -151,34 +153,34 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <div className="min-h-screen bg-manga-bg">
       {/* Top Navigation Bar */}
-      <nav className="sticky top-0 z-50 bg-manga-card/95 backdrop-blur-sm border-b border-manga-border">
+      <nav className="static z-50 bg-manga-card border-b border-manga-border">
         <div className="mobile-container py-3 sm:py-4">
           <div className="flex items-center justify-between gap-4">
             {/* Logo with enhanced contrast and tagline */}
             <div className="flex flex-col">
               <Link 
                 to="/" 
-                className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white hover:text-midnight-primary-300 transition-all duration-200 transform hover:scale-105 bg-gradient-to-r from-midnight-primary-500 to-midnight-primary-600 bg-clip-text text-transparent drop-shadow-lg"
+                className="text-2xl sm:text-3xl lg:text-4xl font-bold text-manga-text hover:text-manga-accent transition-all duration-200 transform hover:scale-105 bg-gradient-to-r from-manga-accent to-manga-accent-secondary bg-clip-text text-transparent drop-shadow-lg"
               >
                 ComiTe
               </Link>
-              <p className="text-xs sm:text-sm text-midnight-secondary-300 hidden sm:block">
+              <p className="text-xs sm:text-sm text-manga-text-secondary hidden sm:block">
                 Read thousands of manga, manhwa & comics online
               </p>
             </div>
 
             {/* Primary Navigation - Desktop */}
             <div className="hidden lg:flex items-center space-x-6">
-              <Link to="/" className="text-manga-text hover:text-midnight-primary-400 transition-colors font-medium">
+              <Link to="/" className="text-manga-text hover:text-manga-accent transition-colors font-medium">
                 Browse
               </Link>
-              <Link to="/popular" className="text-manga-text hover:text-midnight-primary-400 transition-colors font-medium">
+              <Link to="/popular" className="text-manga-text hover:text-manga-accent transition-colors font-medium">
                 Popular
               </Link>
-              <Link to="/new-releases" className="text-manga-text hover:text-midnight-primary-400 transition-colors font-medium">
+              <Link to="/new-releases" className="text-manga-text hover:text-manga-accent transition-colors font-medium">
                 New Releases
               </Link>
-              <Link to="/anime-adaptation" className="text-manga-text hover:text-midnight-primary-400 transition-colors font-medium">
+              <Link to="/anime-adaptation" className="text-manga-text hover:text-manga-accent transition-colors font-medium">
                 Anime Adaptation
               </Link>
             </div>
@@ -193,7 +195,7 @@ const Layout = ({ children }: LayoutProps) => {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onFocus={() => setShowResults(true)}
-                  className="w-full pl-10 pr-10 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:border-transparent transition-colors"
+                  className="w-full pl-10 pr-10 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-manga-accent focus:border-transparent transition-colors"
                   aria-label="Search manga, manhwa, or authors"
                 />
                 {query && (
@@ -217,7 +219,7 @@ const Layout = ({ children }: LayoutProps) => {
                     >
                       {isSearching ? (
                         <div className="p-4 text-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-midnight-primary-500 mx-auto"></div>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-manga-accent mx-auto"></div>
                           <p className="text-sm text-manga-muted mt-2">Searching...</p>
                         </div>
                       ) : results.length > 0 ? (
@@ -230,10 +232,10 @@ const Layout = ({ children }: LayoutProps) => {
                               className="block px-4 py-3 hover:bg-manga-surface transition-colors"
                             >
                               <div className="flex items-center gap-3">
-                                <img
+                                <LazyImage
                                   src={series.coverImage}
                                   alt={series.title}
-                                  className="w-10 h-14 object-cover rounded"
+                                  className="w-10 h-14 rounded"
                                 />
                                 <div className="flex-1 min-w-0">
                                   <h4 className="text-sm font-medium text-manga-text truncate">
@@ -268,7 +270,7 @@ const Layout = ({ children }: LayoutProps) => {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onFocus={() => setShowResults(true)}
-                  className="w-full pl-8 pr-8 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:border-transparent transition-colors text-sm"
+                  className="w-full pl-8 pr-8 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-manga-accent focus:border-transparent transition-colors text-sm"
                   aria-label="Search manga, manhwa, or authors"
                 />
                 {query && (
@@ -292,7 +294,7 @@ const Layout = ({ children }: LayoutProps) => {
                     >
                       {isSearching ? (
                         <div className="p-3 text-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-midnight-primary-500 mx-auto"></div>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-manga-accent mx-auto"></div>
                           <p className="text-xs text-manga-muted mt-2">Searching...</p>
                         </div>
                       ) : results.length > 0 ? (
@@ -305,10 +307,10 @@ const Layout = ({ children }: LayoutProps) => {
                               className="block px-3 py-2 hover:bg-manga-surface transition-colors"
                             >
                               <div className="flex items-center gap-2">
-                                <img
+                                <LazyImage
                                   src={series.coverImage}
                                   alt={series.title}
-                                  className="w-8 h-10 object-cover rounded"
+                                  className="w-8 h-10 rounded"
                                 />
                                 <div className="flex-1 min-w-0">
                                   <h4 className="text-xs font-medium text-manga-text truncate">
@@ -335,6 +337,9 @@ const Layout = ({ children }: LayoutProps) => {
 
             {/* Right Side Icons */}
             <div className="flex items-center space-x-1 sm:space-x-2">
+              {/* Theme Toggle */}
+              <ThemeToggle size="md" />
+              
               {/* Notification Icon */}
               <div className="relative">
                 <button
@@ -392,7 +397,7 @@ const Layout = ({ children }: LayoutProps) => {
                                 className={`w-full text-left p-3 rounded-lg transition-colors ${
                                   notification.isRead 
                                     ? 'bg-manga-surface hover:bg-manga-border' 
-                                    : 'bg-midnight-primary-50 hover:bg-midnight-primary-100'
+                                    : 'bg-manga-accent/10 hover:bg-manga-accent/20'
                                 }`}
                               >
                                 <p className="text-sm font-medium text-manga-text mb-1">
@@ -471,7 +476,7 @@ const Layout = ({ children }: LayoutProps) => {
                     {/* User Profile Section */}
                     <div className="p-4 bg-manga-surface rounded-lg">
                       <div className="flex items-center space-x-3 mb-3">
-                        <div className="w-12 h-12 bg-midnight-primary-500 rounded-full flex items-center justify-center">
+                        <div className="w-12 h-12 bg-manga-accent rounded-full flex items-center justify-center">
                           <UserIcon className="h-6 w-6 text-white" />
                         </div>
                         <div>
@@ -578,7 +583,7 @@ const Layout = ({ children }: LayoutProps) => {
                   <div className="mt-4 pt-4 border-t border-manga-border">
                     <button
                       onClick={handleSignOut}
-                      className="flex items-center px-4 py-3 rounded-lg text-midnight-accent-500 hover:bg-midnight-accent-500/10 hover:text-midnight-accent-400 transition-colors w-full text-left"
+                      className="flex items-center px-4 py-3 rounded-lg theme-accent-text-hover hover:bg-manga-accent/10 transition-colors w-full text-left text-manga-accent"
                       aria-label="Sign out"
                     >
                       <span className="mr-3 text-lg">🚪</span>

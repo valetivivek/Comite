@@ -209,7 +209,7 @@ const SignupPage = () => {
           <div className="mt-6 text-center">
             <p className="text-manga-muted text-sm">
               Already have an account?{' '}
-              <Link to="/login" className="text-midnight-primary-500 hover:text-midnight-primary-400 transition-colors">
+              <Link to="/login" className="text-manga-accent hover:brightness-110 transition-colors">
                 Sign in
               </Link>
             </p>

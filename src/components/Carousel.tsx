@@ -38,7 +38,7 @@ const Carousel = ({ series }: CarouselProps) => {
 
   if (series.length === 0) {
     return (
-      <div className="h-full bg-gradient-to-r from-midnight-primary-500 to-midnight-primary-600 flex items-center justify-center">
+      <div className="h-full bg-gradient-to-r from-manga-accent to-manga-accent-secondary flex items-center justify-center">
         <p className="text-white text-xl">No series available</p>
       </div>
     );
@@ -72,7 +72,7 @@ const Carousel = ({ series }: CarouselProps) => {
             className="absolute inset-0"
           >
             <Link to={`/series/${series[currentIndex].id}`}>
-              <div className="relative h-full bg-gradient-to-r from-midnight-primary-600 to-midnight-primary-700">
+              <div className="relative h-full bg-gradient-to-r from-manga-accent to-manga-accent-secondary">
                 {/* Background Image */}
                 <div 
                   className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
@@ -107,7 +107,7 @@ const Carousel = ({ series }: CarouselProps) => {
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.3 }}
-                        className="text-lg md:text-xl text-midnight-primary-100 mb-4"
+                        className="text-lg md:text-xl text-white/80 mb-4"
                       >
                         by {series[currentIndex].author}
                       </motion.p>
@@ -126,6 +126,11 @@ const Carousel = ({ series }: CarouselProps) => {
                             {tag}
                           </span>
                         ))}
+                        {series[currentIndex].tags.length > 3 && (
+                          <span className="px-3 py-1 bg-white bg-opacity-10 text-white text-sm rounded-full backdrop-blur-sm">
+                            +{series[currentIndex].tags.length - 3} more
+                          </span>
+                        )}
                       </motion.div>
                       
                       <motion.div 
@@ -134,10 +139,10 @@ const Carousel = ({ series }: CarouselProps) => {
                         transition={{ delay: 0.5 }}
                         className="flex items-center gap-4"
                       >
-                        <span className="text-midnight-primary-200">
+                        <span className="text-white/80">
                           {series[currentIndex].totalChapters} chapters
                         </span>
-                        <span className="text-midnight-primary-200 capitalize">
+                        <span className="text-white/80 capitalize">
                           {series[currentIndex].status}
                         </span>
                       </motion.div>

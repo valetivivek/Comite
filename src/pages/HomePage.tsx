@@ -34,7 +34,7 @@ const HomePage = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-midnight-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-manga-accent"></div>
       </div>
     );
   }
@@ -58,7 +58,7 @@ const HomePage = () => {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-manga-text mb-6">
-              Welcome to <span className="text-midnight-primary-500">ComiTe</span>
+              Welcome to <span className="text-manga-accent">ComiTe</span>
             </h1>
             <p className="text-lg md:text-xl text-manga-muted mb-8 max-w-2xl mx-auto">
               Discover and read your favorite manga, manhua, and webtoons in one place. 

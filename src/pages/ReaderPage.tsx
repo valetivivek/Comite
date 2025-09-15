@@ -12,6 +12,7 @@ import { dataService } from '../services/dataService';
 import { readingStatsService } from '../services/readingStatsService';
 import { Series, Chapter } from '../types';
 import CommentSection from '../components/CommentSection';
+import Breadcrumb from '../components/Breadcrumb';
 
 const ReaderPage = () => {
   const { seriesId, chapterId } = useParams<{ seriesId: string; chapterId: string }>();
@@ -299,7 +300,7 @@ const ReaderPage = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-manga-bg">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-midnight-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-manga-accent"></div>
       </div>
     );
   }
@@ -321,6 +322,18 @@ const ReaderPage = () => {
 
   return (
     <div className="min-h-screen bg-manga-bg text-manga-text">
+      {/* Breadcrumb Navigation */}
+      <div className="container mx-auto px-4 lg:px-8 pt-4">
+        <Breadcrumb 
+          items={series && chapter ? [
+            { label: 'Home', href: '/' },
+            { label: 'Browse', href: '/' },
+            { label: series.title, href: `/series/${series.id}` },
+            { label: `Chapter ${chapter.chapterNumber}`, href: `/series/${series.id}/chapter/${chapter.id}` }
+          ] : undefined}
+        />
+      </div>
+
       {/* Reader Content */}
       <div className="pt-4">
         <div className="max-w-5xl mx-auto px-2 sm:px-4">
@@ -329,7 +342,7 @@ const ReaderPage = () => {
             <div className="flex items-center justify-center gap-4 mb-4">
               <Link
                 to={`/series/${seriesId}`}
-                className="flex items-center text-manga-text hover:text-midnight-primary-400 transition-colors"
+                className="flex items-center text-manga-text hover:text-manga-accent transition-colors"
               >
                 <ArrowLeftIcon className="h-5 w-5 mr-2" />
                 Back to Series
@@ -371,7 +384,7 @@ const ReaderPage = () => {
                             to={`/series/${seriesId}/chapter/${ch.id}`}
                             onClick={() => setShowChapterList(false)}
                             className={`block px-3 py-2 text-sm rounded hover:bg-manga-surface transition-colors ${
-                              ch.id === chapter.id ? 'bg-midnight-primary-600 text-white' : 'text-manga-text'
+                              ch.id === chapter.id ? 'bg-manga-accent text-white' : 'text-manga-text'
                             }`}
                           >
                             <div className="flex items-center justify-between">
@@ -456,7 +469,7 @@ const ReaderPage = () => {
                 {getNextChapter() ? (
                   <button
                     onClick={goToNextChapter}
-                    className="w-full flex items-center justify-center px-4 py-3 bg-midnight-primary-600 hover:bg-midnight-primary-700 rounded-lg transition-colors jitter-hover"
+                    className="w-full flex items-center justify-center px-4 py-3 bg-manga-accent hover:brightness-95 rounded-lg transition-colors jitter-hover text-white"
                   >
                     <span className="text-sm font-medium">Next</span>
                     <ChevronRightIcon className="h-5 w-5 ml-2" />
@@ -464,7 +477,7 @@ const ReaderPage = () => {
                 ) : (
                   <button
                     onClick={() => navigate(`/series/${seriesId}`)}
-                    className="w-full flex items-center justify-center px-4 py-3 bg-midnight-primary-600 hover:bg-midnight-primary-700 rounded-lg transition-colors jitter-hover"
+                    className="w-full flex items-center justify-center px-4 py-3 bg-manga-accent hover:brightness-95 rounded-lg transition-colors jitter-hover text-white"
                   >
                     <span className="text-sm font-medium">Back to Series</span>
                     <ChevronRightIcon className="h-5 w-5 ml-2" />
@@ -497,7 +510,7 @@ const ReaderPage = () => {
                 {getNextChapter() ? (
                   <button
                     onClick={goToNextChapter}
-                    className="flex items-center px-4 py-2 bg-midnight-primary-600 hover:bg-midnight-primary-700 rounded-lg transition-colors jitter-hover"
+                    className="flex items-center px-4 py-2 bg-manga-accent hover:brightness-95 rounded-lg transition-colors jitter-hover text-white"
                   >
                     Next Chapter
                     <ChevronRightIcon className="h-4 w-4 ml-2" />
@@ -505,7 +518,7 @@ const ReaderPage = () => {
                 ) : (
                   <button
                     onClick={() => navigate(`/series/${seriesId}`)}
-                    className="flex items-center px-4 py-2 bg-midnight-primary-600 hover:bg-midnight-primary-700 rounded-lg transition-colors jitter-hover"
+                    className="flex items-center px-4 py-2 bg-manga-accent hover:brightness-95 rounded-lg transition-colors jitter-hover text-white"
                   >
                     Back to Series
                     <ChevronRightIcon className="h-4 w-4 ml-2" />
@@ -529,7 +542,7 @@ const ReaderPage = () => {
       {/* Scroll to Top Button */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-6 right-4 z-50 p-3 bg-midnight-primary-600 hover:bg-midnight-primary-700 text-white rounded-full shadow-lg transition-colors duration-200"
+        className="fixed bottom-6 right-4 z-50 p-3 bg-manga-accent hover:brightness-95 text-white rounded-full shadow-lg transition-colors duration-200"
         aria-label="Scroll to top"
       >
         <ArrowUpIcon className="h-5 w-5" />

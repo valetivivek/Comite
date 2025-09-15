@@ -56,7 +56,7 @@ const UserFlairs = ({ userId, variant = 'dashboard', className = '' }: UserFlair
 
   const getGenreColor = (index: number): string => {
     const colors = [
-      'bg-midnight-primary-500 text-white',
+      'bg-manga-accent text-white',
       'bg-orange-500 text-white',
       'bg-pink-500 text-white'
     ];
