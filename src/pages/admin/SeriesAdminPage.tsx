@@ -52,7 +52,7 @@ const SeriesAdminPage = () => {
           title: form.title,
           author: form.author || 'Unknown',
           description: form.description,
-          coverImage: form.coverImage || `https://picsum.photos/300/400?random=${Date.now()}`,
+          coverImage: form.coverImage || '',
           bannerImage: '',
           tags: [],
           status: form.status || 'ongoing',

@@ -28,7 +28,6 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [roleMap, setRoleMap] = useState<Record<string, AuthRole>>({});
   const OWNER_EMAIL = 'ultimategamervivek@gmail.com';
 
   useEffect(() => {
@@ -37,16 +36,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const storedMap = localStorage.getItem('comite-role-map');
       if (storedMap) {
         const parsed = JSON.parse(storedMap) as Record<string, AuthRole>;
-        // Ensure owner email exists and is 'owner'
         if (!parsed[OWNER_EMAIL] || parsed[OWNER_EMAIL] !== 'owner') {
           parsed[OWNER_EMAIL] = 'owner';
           localStorage.setItem('comite-role-map', JSON.stringify(parsed));
         }
-        setRoleMap(parsed);
       } else {
         const initial: Record<string, AuthRole> = { [OWNER_EMAIL]: 'owner' };
         localStorage.setItem('comite-role-map', JSON.stringify(initial));
-        setRoleMap(initial);
       }
     } catch {}
 
@@ -80,8 +76,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Compute role strictly from role map and owner email
       try {
         const storedMap = localStorage.getItem('comite-role-map');
-        const map = storedMap ? (JSON.parse(storedMap) as Record<string, AuthRole>) : { [OWNER_EMAIL]: 'owner' };
-        const effectiveRole: AuthRole = u.email === OWNER_EMAIL ? 'owner' : (map[u.email] || 'user');
+        const map: Record<string, AuthRole> = storedMap
+          ? (JSON.parse(storedMap) as Record<string, AuthRole>)
+          : { [OWNER_EMAIL]: 'owner' };
+        const effectiveRole: AuthRole = u.email === OWNER_EMAIL ? 'owner' : (map[u.email] ?? 'user');
         const merged = { ...u, role: effectiveRole };
         setUser(merged);
         const existing = localStorage.getItem('manga-reader-user');

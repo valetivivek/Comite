@@ -182,3 +182,32 @@ For licensing inquiries or commercial use, please contact: vivekvaleti7053@gmail
 - [Terms of Use](/legal/terms)
 - [Privacy Policy](/legal/privacy)
 - [DMCA Notice](/legal/dmca)
+
+## Cloudflare + R2 + Vercel ($0 tiers)
+
+- DNS on Cloudflare Free. App remains hosted on Vercel Hobby. Images are served from Cloudflare R2 via `cdn.comite.xyz`.
+- Signed uploads: admins/editors request a short-lived signed URL from `/api/sign-upload` and upload directly to R2. No server proxy for image reads.
+
+### Environment Variables (Vercel Project Settings)
+
+Set these in Vercel → Project → Settings → Environment Variables:
+
+- R2_ACCOUNT_ID: Cloudflare account ID
+- R2_ACCESS_KEY_ID: R2 access key ID (scoped)
+- R2_SECRET_ACCESS_KEY: R2 secret
+- R2_BUCKET: R2 bucket name (public)
+- PUBLIC_CDN_BASE_URL: https://cdn.comite.xyz
+- ADMIN_SHARED_SECRET: short random string used by admin/editor clients
+- CORS_ALLOW_ORIGIN: https://comite.vercel.app, https://www.comite.xyz (comma-separated)
+- VITE_ADMIN_SHARED_SECRET: same value as ADMIN_SHARED_SECRET (Client build-time)
+
+### Upload Flow (Admins/Editors)
+
+1) Admin goes to Admin → Upload Assets.
+2) Select files; client requests a signed URL from `/api/sign-upload` with role header and secret.
+3) Client PUTs file to signed URL; UI shows resulting `PUBLIC_CDN_BASE_URL/{key}`.
+
+### Free-tier notes
+
+- R2 public objects are cached aggressively with `Cache-Control: public, max-age=31536000, immutable`.
+- Do not cache HTML on Cloudflare. Keep DNS-only for app host. Proxy/cdn allowed for `cdn.comite.xyz`.

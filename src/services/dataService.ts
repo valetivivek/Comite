@@ -3,75 +3,6 @@
 
 import { Series, Chapter, Bookmark, ReadState, Notification, SearchFilters, UserRating, ReadingHistory } from '../types';
 
-// Mock data generator
-const generateMockSeries = (): Series[] => {
-  const series: Series[] = [];
-  const titles = [
-    'Solo Leveling', 'Tower of God', 'The Beginning After The End', 'Omniscient Reader',
-    'Martial Peak', 'Cultivation Chat Group', 'Reverend Insanity', 'A Will Eternal',
-    'I Shall Seal the Heavens', 'Desolate Era', 'Perfect World', 'Battle Through the Heavens'
-  ];
-  
-  const authors = [
-    'Chugong', 'SIU', 'TurtleMe', 'Sing Shong', 'Mo Xiang Tong Xiu', 'Er Gen',
-    'I Eat Tomatoes', 'Tian Can Tu Dou', 'Meng Xi Shi', 'Feng Nian Qin Ge'
-  ];
-  
-  const genres = ['Action', 'Adventure', 'Fantasy', 'Romance', 'Comedy', 'Drama', 'Supernatural', 'School Life'];
-  const statuses: ('ongoing' | 'completed' | 'hiatus')[] = ['ongoing', 'completed', 'hiatus'];
-  
-  for (let i = 0; i < 20; i++) {
-    const chapterCount = Math.floor(Math.random() * 200) + 10;
-    const chapters: Chapter[] = [];
-    
-    for (let j = 1; j <= chapterCount; j++) {
-      chapters.push({
-        id: `series-${i}-chapter-${j}`,
-        seriesId: `series-${i}`,
-        title: `Chapter ${j}`,
-        chapterNumber: j,
-        pages: Array.from({ length: Math.floor(Math.random() * 20) + 10 }, (_, k) => 
-          `https://picsum.photos/400/600?random=${i}-${j}-${k}`
-        ),
-        publishedAt: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString(),
-        isRead: Math.random() > 0.7,
-        readAt: Math.random() > 0.7 ? new Date().toISOString() : undefined
-      });
-    }
-    
-    // Derive start dates: earliest chapter publishedAt, and uploadedAt within last 14 days randomly
-    const earliestChapter = chapters.reduce((min, c) => new Date(c.publishedAt) < new Date(min.publishedAt) ? c : min, chapters[0]);
-    const uploadedAt = new Date(Date.now() - Math.floor(Math.random() * 14) * 24 * 60 * 60 * 1000).toISOString();
-
-    // Prefer real covers for known titles if available
-    const knownCovers: Record<string, string> = {
-      'Solo Leveling': 'https://images.cdn.comite/solo-leveling-cover.jpg',
-      'Tower of God': 'https://images.cdn.comite/tower-of-god-cover.jpg',
-      'The Beginning After The End': 'https://images.cdn.comite/tbate-cover.jpg'
-    };
-
-    series.push({
-      id: `series-${i}`,
-      title: titles[i % titles.length],
-      author: authors[i % authors.length],
-      description: `This is a compelling story about ${titles[i % titles.length].toLowerCase()}. Follow the protagonist as they embark on an incredible journey filled with adventure, mystery, and growth. The story features intricate world-building, complex characters, and plot twists that will keep you engaged from start to finish.`,
-      coverImage: knownCovers[titles[i % titles.length]] || `https://picsum.photos/300/400?random=${i}`,
-      bannerImage: `https://picsum.photos/800/200?random=${i}`,
-      tags: genres.slice(0, Math.floor(Math.random() * 3) + 2),
-      status: statuses[Math.floor(Math.random() * statuses.length)],
-      genre: genres.slice(0, Math.floor(Math.random() * 4) + 1),
-      rating: Math.round((Math.random() * 2 + 3) * 10) / 10,
-      totalChapters: chapterCount,
-      lastUpdated: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-      firstChapterPublishedAt: earliestChapter.publishedAt,
-      uploadedAt,
-      chapters: chapters.sort((a, b) => b.chapterNumber - a.chapterNumber)
-    });
-  }
-  
-  return series;
-};
-
 class DataService {
   private series: Series[] = [];
   private bookmarks: Bookmark[] = [];
@@ -82,8 +13,14 @@ class DataService {
 
   constructor() {
     this.loadFromStorage();
-    if (this.series.length === 0) {
-      this.series = generateMockSeries();
+    // Cleanup any previously seeded demo/sample content
+    if (this.containsDemoContent(this.series)) {
+      this.series = [];
+      this.bookmarks = [];
+      this.readStates = [];
+      this.notifications = [];
+      this.userRatings = [];
+      this.readingHistory = [];
       this.saveToStorage();
     }
   }
@@ -558,6 +495,23 @@ class DataService {
       localStorage.setItem('manga-reader-reading-history', JSON.stringify(this.readingHistory));
     } catch (error) {
       console.error('Error saving data to storage:', error);
+    }
+  }
+
+  // Detects demo/sample content by checking for known placeholder domains/patterns
+  private containsDemoContent(seriesList: Series[]): boolean {
+    try {
+      if (!Array.isArray(seriesList) || seriesList.length === 0) return false;
+      const placeholderDomains = ['picsum.photos', 'images.cdn.comite'];
+      const hasPlaceholder = seriesList.some(s => {
+        const images = [s.coverImage, s.bannerImage, ...(s.chapters?.flatMap(c => c.pages) || [])];
+        return images.filter(Boolean).some(url => placeholderDomains.some(d => String(url).includes(d)));
+      });
+      // Also consider auto-generated IDs pattern from previous mock seed
+      const looksMockId = seriesList.some(s => /^series-\d+$/.test(s.id));
+      return hasPlaceholder || looksMockId;
+    } catch {
+      return false;
     }
   }
 }
