@@ -43,12 +43,19 @@ const generateMockSeries = (): Series[] => {
     const earliestChapter = chapters.reduce((min, c) => new Date(c.publishedAt) < new Date(min.publishedAt) ? c : min, chapters[0]);
     const uploadedAt = new Date(Date.now() - Math.floor(Math.random() * 14) * 24 * 60 * 60 * 1000).toISOString();
 
+    // Prefer real covers for known titles if available
+    const knownCovers: Record<string, string> = {
+      'Solo Leveling': 'https://images.cdn.comite/solo-leveling-cover.jpg',
+      'Tower of God': 'https://images.cdn.comite/tower-of-god-cover.jpg',
+      'The Beginning After The End': 'https://images.cdn.comite/tbate-cover.jpg'
+    };
+
     series.push({
       id: `series-${i}`,
       title: titles[i % titles.length],
       author: authors[i % authors.length],
       description: `This is a compelling story about ${titles[i % titles.length].toLowerCase()}. Follow the protagonist as they embark on an incredible journey filled with adventure, mystery, and growth. The story features intricate world-building, complex characters, and plot twists that will keep you engaged from start to finish.`,
-      coverImage: `https://picsum.photos/300/400?random=${i}`,
+      coverImage: knownCovers[titles[i % titles.length]] || `https://picsum.photos/300/400?random=${i}`,
       bannerImage: `https://picsum.photos/800/200?random=${i}`,
       tags: genres.slice(0, Math.floor(Math.random() * 3) + 2),
       status: statuses[Math.floor(Math.random() * statuses.length)],

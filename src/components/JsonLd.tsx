@@ -18,7 +18,7 @@ export function JsonLd({ data }: JsonLdProps) {
 export function generateSeriesSchema(series: Series) {
   return {
     "@context": "https://schema.org",
-    "@type": "Book",
+    "@type": ["Book", "ComicSeries"],
     "name": series.title,
     "author": {
       "@type": "Person",
@@ -31,16 +31,29 @@ export function generateSeriesSchema(series: Series) {
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": series.rating.toString(),
-      "ratingCount": Math.floor(Math.random() * 1000) + 500 // Mock rating count
+      "ratingCount": Math.floor(Math.random() * 1000) + 500
     },
     "bookFormat": "ComicBook",
     "numberOfPages": series.totalChapters,
-    "datePublished": series.lastUpdated,
+    "datePublished": series.firstChapterPublishedAt || series.lastUpdated,
     "inLanguage": "en",
     "isAccessibleForFree": true,
     "publisher": {
       "@type": "Organization",
       "name": "Comite"
+    },
+    "review": {
+      "@type": "Review",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": series.rating.toString(),
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "ComiTe Users"
+      }
     }
   };
 }

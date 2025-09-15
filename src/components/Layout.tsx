@@ -10,7 +10,9 @@ import {
   UserIcon,
   ClockIcon,
   BellIcon,
-  BookmarkIcon
+  BookmarkIcon,
+  BookOpenIcon,
+  CheckCircleIcon
 } from '@heroicons/react/24/outline';
 import { User, Notification } from '../types';
 import { dataService } from '../services/dataService';
@@ -85,6 +87,15 @@ const Layout = ({ children }: LayoutProps) => {
     } else {
       window.location.href = `/series/${notification.seriesId}`;
     }
+  };
+
+  const markAllNotificationsAsRead = async () => {
+    // Mark all unread notifications as read in service and state
+    const unread = notifications.filter(n => !n.isRead);
+    if (unread.length === 0) return;
+    await Promise.all(unread.map(n => dataService.markNotificationAsRead(n.id)));
+    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+    setUnreadCount(0);
   };
 
   const handleSurpriseMe = async () => {
@@ -363,55 +374,82 @@ const Layout = ({ children }: LayoutProps) => {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 top-full mt-2 w-72 sm:w-80 bg-manga-card border border-manga-border rounded-lg shadow-xl z-50"
+                      className="absolute right-0 top-full mt-2 w-80 bg-manga-card border border-manga-border rounded-lg shadow-xl z-50"
                     >
-                      <div className="p-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <h3 className="font-semibold text-manga-text">Notifications</h3>
-                          <div className="flex items-center space-x-2">
+                      <div className="p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-sm font-semibold text-manga-text">Notifications</h3>
+                          <div className="flex items-center space-x-1">
                             {notifications.length > 0 && (
-                              <button
-                                onClick={clearAllNotifications}
-                                className="text-xs text-manga-muted hover:text-manga-text px-2 py-1 rounded hover:bg-manga-surface transition-colors"
-                              >
-                                Clear All
-                              </button>
+                              <>
+                                <button
+                                  onClick={markAllNotificationsAsRead}
+                                  className="text-xs text-manga-muted hover:text-manga-text px-2 py-1 rounded hover:bg-manga-surface transition-colors"
+                                  title="Mark all as read"
+                                >
+                                  Mark all read
+                                </button>
+                                <button
+                                  onClick={clearAllNotifications}
+                                  className="text-xs text-manga-muted hover:text-manga-text px-2 py-1 rounded hover:bg-manga-surface transition-colors"
+                                >
+                                  Clear All
+                                </button>
+                              </>
                             )}
                             <button
                               onClick={() => setIsNotificationOpen(false)}
-                              className="text-manga-muted hover:text-manga-text"
+                              className="text-manga-muted hover:text-manga-text p-1 rounded hover:bg-manga-surface"
+                              aria-label="Close notifications"
                             >
                               <XMarkIcon className="h-4 w-4" />
                             </button>
                           </div>
                         </div>
-                        
+
                         {notifications.length === 0 ? (
                           <p className="text-manga-muted text-sm text-center py-4">No notifications</p>
                         ) : (
-                          <div className="space-y-2 max-h-64 overflow-y-auto">
-                            {notifications.slice(0, 5).map((notification) => (
-                              <button
-                                key={notification.id}
-                                onClick={() => handleNotificationClick(notification)}
-                                className={`w-full text-left p-3 rounded-lg transition-colors ${
-                                  notification.isRead 
-                                    ? 'bg-manga-surface hover:bg-manga-border' 
-                                    : 'bg-manga-accent/10 hover:bg-manga-accent/20'
-                                }`}
-                              >
-                                <p className="text-sm font-medium text-manga-text mb-1">
-                                  {notification.seriesTitle}
-                                </p>
-                                <p className="text-xs text-manga-muted">
-                                  {notification.message}
-                                </p>
-                                <p className="text-xs text-manga-muted mt-1">
-                                  {new Date(notification.createdAt).toLocaleDateString()}
-                                </p>
-                              </button>
-                            ))}
-                          </div>
+                          <ul className="space-y-2 max-h-72 overflow-y-auto">
+                            <AnimatePresence initial={false}>
+                              {notifications.slice(0, 8).map((notification) => (
+                                <motion.li
+                                  key={notification.id}
+                                  initial={{ opacity: 0, y: -6 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: -6 }}
+                                >
+                                  <button
+                                    onClick={() => handleNotificationClick(notification)}
+                                    className={`w-full text-left p-3 rounded-lg border transition-colors flex items-start gap-3 ${
+                                      notification.isRead 
+                                        ? 'bg-manga-surface hover:bg-manga-border border-manga-border' 
+                                        : 'bg-manga-accent/10 hover:bg-manga-accent/20 border-manga-accent/30'
+                                    } active:scale-[0.99]`}
+                                  >
+                                    <div className={`mt-0.5 h-8 w-8 flex items-center justify-center rounded-lg flex-shrink-0 ${notification.isRead ? 'bg-manga-surface border border-manga-border' : 'bg-manga-accent text-white'} `}>
+                                      {notification.type === 'new_chapter' ? (
+                                        <BookOpenIcon className={`h-5 w-5 ${notification.isRead ? 'text-manga-accent' : 'text-white'}`} />
+                                      ) : (
+                                        <CheckCircleIcon className={`h-5 w-5 ${notification.isRead ? 'text-manga-accent' : 'text-white'}`} />
+                                      )}
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                      <p className="text-sm font-semibold text-manga-text truncate">
+                                        {notification.seriesTitle}
+                                      </p>
+                                      <p className="text-xs text-manga-text-secondary line-clamp-2">
+                                        {notification.message}
+                                      </p>
+                                      <p className="text-[11px] text-manga-muted mt-1">
+                                        {new Date(notification.createdAt).toLocaleString()}
+                                      </p>
+                                    </div>
+                                  </button>
+                                </motion.li>
+                              ))}
+                            </AnimatePresence>
+                          </ul>
                         )}
                       </div>
                     </motion.div>

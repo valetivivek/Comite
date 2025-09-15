@@ -72,7 +72,7 @@ const LazyImage = ({
           {/* Placeholder */}
           <motion.img
             src={placeholder}
-            alt=""
+            alt={alt || 'Image placeholder'}
             className="absolute inset-0 w-full h-full object-cover"
             animate={{ opacity: isLoaded ? 0 : 1 }}
             transition={{ duration: 0.3 }}
