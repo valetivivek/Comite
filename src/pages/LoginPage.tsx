@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
@@ -12,6 +12,17 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // If already signed in, redirect to dashboard
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('manga-reader-user');
+    if (stored) {
+      const params = new URLSearchParams(location.search);
+      const returnTo = params.get('returnTo');
+      navigate(returnTo ? decodeURIComponent(returnTo) : '/dashboard', { replace: true });
+    }
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -47,6 +58,7 @@ const LoginPage = () => {
         id: 'user-1',
         username: formData.email.split('@')[0],
         email: formData.email,
+        role: 'user',
         createdAt: new Date().toISOString(),
         preferences: {
           theme: 'dark' as const,
@@ -58,7 +70,17 @@ const LoginPage = () => {
       };
 
       localStorage.setItem('manga-reader-user', JSON.stringify(mockUser));
-      navigate('/');
+      // Elevate to admin if email is in allowlist
+      try {
+        const allow = localStorage.getItem('comite-admin-emails');
+        const list = allow ? (JSON.parse(allow) as string[]) : ['ultimategamervivek@gmail.com'];
+        if (list.includes(mockUser.email)) {
+          localStorage.setItem('manga-reader-user', JSON.stringify({ ...mockUser, role: 'admin' }));
+        }
+      } catch {}
+      const params = new URLSearchParams(location.search);
+      const returnTo = params.get('returnTo');
+      navigate(returnTo ? decodeURIComponent(returnTo) : '/');
     } catch (err) {
       setError('Invalid email or password');
     } finally {

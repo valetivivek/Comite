@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { dataService } from '../services/dataService';
 import { Series } from '../types';
@@ -11,7 +12,11 @@ import { JsonLd } from '../components/JsonLd';
 const DashboardPage = () => {
   const [series, setSeries] = useState<Series[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const searchParams = new URLSearchParams(location.search);
+  const initialPage = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+  const [currentPage, setCurrentPage] = useState(initialPage);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Load series data
@@ -53,9 +58,28 @@ const DashboardPage = () => {
   const paginatedSeries = series.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    const next = Math.max(1, Math.min(page, totalPages));
+    setCurrentPage(next);
+    const params = new URLSearchParams(location.search);
+    if (next === 1) {
+      params.delete('page');
+    } else {
+      params.set('page', String(next));
+    }
+    navigate({ pathname: '/', search: params.toString() ? `?${params.toString()}` : '' }, { replace: true });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // Reset to page=1 if navigation state requests it or when landing via /?page=1
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const pageParam = parseInt(params.get('page') || '1', 10);
+    if (!params.get('page') && currentPage !== 1) {
+      setCurrentPage(1);
+    } else if (pageParam !== currentPage) {
+      setCurrentPage(Math.max(1, pageParam || 1));
+    }
+  }, [location.search]);
 
 
 

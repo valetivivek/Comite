@@ -77,7 +77,6 @@ const NewReleasesPage = () => {
       <div className="container mx-auto px-4 lg:px-8 py-6">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold text-manga-text">New Releases</h1>
-          <span className="text-sm text-manga-muted">Last 7 days • 10-15 chapters</span>
         </div>
 
         {isLoading ? (

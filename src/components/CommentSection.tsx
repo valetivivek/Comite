@@ -12,6 +12,7 @@ import {
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 import { Comment } from '../types';
 import UserFlairs from './UserFlairs';
+import { useAuth } from '../contexts/AuthContext';
 
 // Emoji picker data
 const EMOJIS = ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇', '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '😋', '😛', '😝', '😜', '🤪', '🤨', '🧐', '🤓', '😎', '🤩', '🥳', '😏', '😒', '😞', '😔', '😟', '😕', '🙁', '☹️', '😣', '😖', '😫', '😩', '🥺', '😢', '😭', '😤', '😠', '😡', '🤬', '🤯', '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓', '🤗', '🤔', '🤭', '🤫', '🤥', '😶', '😐', '😑', '😬', '🙄', '😯', '😦', '😧', '😮', '😲', '🥱', '😴', '🤤', '😪', '😵', '🤐', '🥴', '🤢', '🤮', '🤧', '😷', '🤒', '🤕', '🤑', '🤠', '😈', '👿', '👹', '👺', '🤡', '💩', '👻', '💀', '☠️', '👽', '👾', '🤖', '🎃', '😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾'];
@@ -371,6 +372,7 @@ interface CommentItemProps {
 
 const CommentItem = ({ comment, onLike, onReply, formatTimestamp }: CommentItemProps) => {
   const isLiked = comment.likedBy.includes('current-user'); // In real app, use actual user ID
+  const { isAdmin, isOwner } = useAuth();
 
   return (
     <motion.div
@@ -393,7 +395,16 @@ const CommentItem = ({ comment, onLike, onReply, formatTimestamp }: CommentItemP
             <span className="font-medium text-manga-text text-sm">
               {comment.author}
             </span>
-            <UserFlairs userId="current-user" variant="comment" />
+            {isAdmin ? (
+              <div className="flex items-center gap-1" aria-label="Admin badges">
+                {isOwner && (
+                  <span className="px-1.5 py-0.5 rounded bg-purple-600/20 text-purple-300 text-[10px] border border-purple-600/30">Owner</span>
+                )}
+                <span className="px-1.5 py-0.5 rounded bg-red-600/20 text-red-300 text-[10px] border border-red-600/30">Admin</span>
+              </div>
+            ) : (
+              <UserFlairs userId="current-user" variant="comment" />
+            )}
             <span className="text-xs text-manga-muted">
               {formatTimestamp(comment.timestamp)}
             </span>

@@ -15,6 +15,7 @@ import {
   CheckCircleIcon
 } from '@heroicons/react/24/outline';
 import { User, Notification } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 import { dataService } from '../services/dataService';
 import { useNavSearch } from '../hooks/useNavSearch';
 import Footer from './Footer';
@@ -31,6 +32,7 @@ const Layout = ({ children }: LayoutProps) => {
   const navigate = useNavigate();
   const [isProfileDrawerOpen, setIsProfileDrawerOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const { user: authUser, isAdmin, isOwner, logout } = useAuth();
   const [user, setUser] = useState<User | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -52,8 +54,10 @@ const Layout = ({ children }: LayoutProps) => {
     const userData = localStorage.getItem('manga-reader-user');
     if (userData) {
       setUser(JSON.parse(userData));
+    } else {
+      setUser(null);
     }
-  }, []);
+  }, [authUser]);
 
   // Load notifications
   useEffect(() => {
@@ -134,6 +138,7 @@ const Layout = ({ children }: LayoutProps) => {
   const handleSignOut = () => {
     localStorage.removeItem('manga-reader-user');
     localStorage.removeItem('manga-reader-user-ratings');
+    logout();
     setUser(null);
     setIsProfileDrawerOpen(false);
     navigate('/');
@@ -171,6 +176,7 @@ const Layout = ({ children }: LayoutProps) => {
             <div className="flex flex-col">
               <Link 
                 to="/" 
+                onClick={(e) => { e.preventDefault(); navigate('/?page=1', { replace: true, state: { resetHome: true } }); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-manga-text hover:text-manga-accent transition-all duration-200 transform hover:scale-105 bg-gradient-to-r from-manga-accent to-manga-accent-secondary bg-clip-text text-transparent drop-shadow-lg"
               >
                 ComiTe
@@ -522,16 +528,35 @@ const Layout = ({ children }: LayoutProps) => {
                           <p className="text-sm text-manga-muted">{user.email}</p>
                         </div>
                       </div>
-                      {/* Rank and Genre Flairs */}
-                      <UserFlairs 
-                        key={`${user.id}-${flairUpdateKey}`}
-                        userId={user.id} 
-                        variant="dashboard" 
-                      />
+                      {/* Admin/Owner badges or user flairs */}
+                      {isAdmin ? (
+                        <div className="flex items-center gap-2 mt-2" aria-label="Admin badges">
+                          {isOwner && (
+                            <span className="px-2 py-1 rounded bg-purple-600/20 text-purple-300 text-xs border border-purple-600/30">Owner</span>
+                          )}
+                          <span className="px-2 py-1 rounded bg-red-600/20 text-red-300 text-xs border border-red-600/30">Admin</span>
+                        </div>
+                      ) : (
+                        <UserFlairs 
+                          key={`${user.id}-${flairUpdateKey}`}
+                          userId={user.id} 
+                          variant="dashboard" 
+                        />
+                      )}
                     </div>
 
                     {/* Dashboard Options */}
                     <div className="space-y-2">
+                      {isAdmin && (
+                        <Link
+                          to="/admin"
+                          onClick={() => setIsProfileDrawerOpen(false)}
+                          className="flex items-center px-4 py-3 rounded-lg text-manga-text hover:bg-manga-surface transition-colors"
+                        >
+                          <UserIcon className="mr-3 h-5 w-5" />
+                          Admin Dashboard
+                        </Link>
+                      )}
                       <Link
                         to="/bookmarks"
                         onClick={() => setIsProfileDrawerOpen(false)}
@@ -547,6 +572,14 @@ const Layout = ({ children }: LayoutProps) => {
                       >
                         <UserIcon className="mr-3 h-5 w-5" />
                         Profile Settings
+                      </Link>
+                      <Link
+                        to="/settings"
+                        onClick={() => setIsProfileDrawerOpen(false)}
+                        className="flex items-center px-4 py-3 rounded-lg text-manga-text hover:bg-manga-surface transition-colors"
+                      >
+                        <UserIcon className="mr-3 h-5 w-5" />
+                        App Settings
                       </Link>
                       <Link
                         to="/history"
@@ -590,8 +623,8 @@ const Layout = ({ children }: LayoutProps) => {
                   </>
                 )}
                 
-                {/* Flair Manager - Only for signed-in users */}
-                {user && (
+                {/* Flair Manager - hide for admin/owner */}
+                {user && !isAdmin && !isOwner && (
                   <div className="mt-4 pt-4 border-t border-manga-border">
                     <FlairManager 
                       userId={user.id} 
@@ -629,6 +662,7 @@ const Layout = ({ children }: LayoutProps) => {
                     </button>
                   </div>
                 )}
+                
               </div>
             </div>
           </motion.div>

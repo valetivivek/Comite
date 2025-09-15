@@ -93,6 +93,20 @@ class DataService {
     return [...this.series];
   }
 
+  async addSeries(newSeries: Series): Promise<Series> {
+    this.series.unshift(newSeries);
+    this.saveToStorage();
+    return newSeries;
+  }
+
+  async updateSeries(updated: Series): Promise<Series | null> {
+    const index = this.series.findIndex(s => s.id === updated.id);
+    if (index === -1) return null;
+    this.series[index] = { ...this.series[index], ...updated, lastUpdated: new Date().toISOString() };
+    this.saveToStorage();
+    return this.series[index];
+  }
+
   async getSeriesById(id: string): Promise<Series | null> {
     return this.series.find(s => s.id === id) || null;
   }
