@@ -38,6 +38,7 @@ const Layout = ({ children }: LayoutProps) => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [isSurpriseMeRolling, setIsSurpriseMeRolling] = useState(false);
   const [flairUpdateKey, setFlairUpdateKey] = useState(0);
+  const [showEasterGif, setShowEasterGif] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const {
     query,
@@ -104,6 +105,16 @@ const Layout = ({ children }: LayoutProps) => {
 
   const handleSurpriseMe = async () => {
     if (isSurpriseMeRolling) return;
+    // Easter egg for admins/owner
+    if (isAdmin || isOwner) {
+      if (Math.random() < 0.5) {
+        // Show Rickroll GIF inline to avoid autoplay restrictions
+        setShowEasterGif(true);
+      } else {
+        alert("Why don't you search it up yourself? 😉");
+      }
+      return;
+    }
     
     setIsSurpriseMeRolling(true);
     
@@ -676,6 +687,38 @@ const Layout = ({ children }: LayoutProps) => {
         </main>
         <Footer />
       </div>
+
+      {/* Admin/Owner Easter GIF Overlay */}
+      <AnimatePresence>
+        {showEasterGif && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4"
+            onClick={() => setShowEasterGif(false)}
+            role="dialog"
+            aria-label="Never Gonna Give You Up"
+          >
+            <div className="max-w-[600px] w-full">
+              <div className="relative">
+                <button
+                  className="absolute -top-3 -right-3 bg-manga-card border border-manga-border rounded-full p-2"
+                  onClick={() => setShowEasterGif(false)}
+                  aria-label="Close"
+                >
+                  <XMarkIcon className="h-5 w-5 text-manga-text" />
+                </button>
+                <img
+                  src="https://media.giphy.com/media/Vuw9m5wXviFIQ/giphy.gif"
+                  alt="Rick Astley dancing"
+                  className="w-full h-auto rounded-lg border border-manga-border shadow-xl"
+                />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {/* Dice rolling animation styles */}
       <style dangerouslySetInnerHTML={{
