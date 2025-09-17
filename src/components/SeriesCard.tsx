@@ -75,7 +75,7 @@ const SeriesCard = ({ series, viewMode }: SeriesCardProps) => {
                     {series.title}
                   </h3>
                   <div className="flex items-center gap-1 flex-shrink-0">
-                    <span className="text-manga-warning">★</span>
+                    <span className="text-yellow-500">★</span>
                     <span className="text-sm text-manga-text" aria-label={`Rating ${series.rating}`}>
                       {series.rating}
                     </span>
@@ -97,7 +97,7 @@ const SeriesCard = ({ series, viewMode }: SeriesCardProps) => {
                     className={`text-xs py-1 px-2 rounded ${
                       chapter.isRead 
                     ? 'bg-manga-surface text-manga-muted' 
-                    : 'bg-manga-accent text-white'
+                    : 'bg-midnight-primary-500 text-white'
                     }`}
                     aria-label={`Chapter ${chapter.chapterNumber}`}
                   >
@@ -142,7 +142,7 @@ const SeriesCard = ({ series, viewMode }: SeriesCardProps) => {
 
           {/* Rating */}
           <div className="absolute bottom-2 left-2 flex items-center bg-black bg-opacity-50 rounded px-2 py-1">
-            <span className="text-manga-warning text-sm">★</span>
+            <span className="text-yellow-400 text-sm">★</span>
             <span className="text-white text-sm ml-1">{series.rating}</span>
           </div>
         </div>
@@ -178,7 +178,7 @@ const SeriesCard = ({ series, viewMode }: SeriesCardProps) => {
                 className={`block text-xs py-1 px-2 rounded transition-colors ${
                   chapter.isRead 
                     ? 'text-manga-muted hover:text-manga-text hover:bg-manga-surface' 
-                    : 'text-manga-accent hover:text-manga-accent-hover hover:bg-manga-accent/10'
+                    : 'text-midnight-primary-400 hover:text-midnight-primary-300 hover:bg-midnight-primary-50'
                 }`}
                 aria-label={`Chapter ${chapter.chapterNumber}`}
               >

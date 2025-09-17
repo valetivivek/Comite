@@ -188,27 +188,27 @@ const Layout = ({ children }: LayoutProps) => {
               <Link 
                 to="/" 
                 onClick={(e) => { e.preventDefault(); navigate('/?page=1', { replace: true, state: { resetHome: true } }); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                className="text-2xl sm:text-3xl lg:text-4xl font-bold text-manga-text hover:text-manga-accent transition-all duration-200 transform hover:scale-105 bg-gradient-to-r from-manga-accent to-manga-accent-secondary bg-clip-text text-transparent drop-shadow-lg"
+                className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white hover:text-midnight-primary-300 transition-all duration-200 transform hover:scale-105 bg-gradient-to-r from-midnight-primary-500 to-midnight-primary-600 bg-clip-text text-transparent drop-shadow-lg"
               >
                 ComiTe
               </Link>
-              <p className="text-xs sm:text-sm text-manga-text-secondary hidden sm:block">
+              <p className="text-xs sm:text-sm text-midnight-secondary-300 hidden sm:block">
                 Read thousands of manga, manhwa & comics online
               </p>
             </div>
 
             {/* Primary Navigation - Desktop */}
             <div className="hidden lg:flex items-center space-x-6">
-              <Link to="/" className="text-manga-text hover:text-manga-accent transition-colors font-medium">
+              <Link to="/" className="text-manga-text hover:text-midnight-primary-400 transition-colors font-medium">
                 Browse
               </Link>
-              <Link to="/popular" className="text-manga-text hover:text-manga-accent transition-colors font-medium">
+              <Link to="/popular" className="text-manga-text hover:text-midnight-primary-400 transition-colors font-medium">
                 Popular
               </Link>
-              <Link to="/new-releases" className="text-manga-text hover:text-manga-accent transition-colors font-medium">
+              <Link to="/new-releases" className="text-manga-text hover:text-midnight-primary-400 transition-colors font-medium">
                 New Releases
               </Link>
-              <Link to="/anime-adaptation" className="text-manga-text hover:text-manga-accent transition-colors font-medium">
+              <Link to="/anime-adaptation" className="text-manga-text hover:text-midnight-primary-400 transition-colors font-medium">
                 Anime Adaptation
               </Link>
             </div>
@@ -223,7 +223,7 @@ const Layout = ({ children }: LayoutProps) => {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onFocus={() => setShowResults(true)}
-                  className="w-full pl-10 pr-10 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-manga-accent focus:border-transparent transition-colors"
+                  className="w-full pl-10 pr-10 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:border-transparent transition-colors"
                   aria-label="Search manga, manhwa, or authors"
                 />
                 {query && (
@@ -247,7 +247,7 @@ const Layout = ({ children }: LayoutProps) => {
                     >
                       {isSearching ? (
                         <div className="p-4 text-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-manga-accent mx-auto"></div>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-midnight-primary-500 mx-auto"></div>
                           <p className="text-sm text-manga-muted mt-2">Searching...</p>
                         </div>
                       ) : results.length > 0 ? (
@@ -298,7 +298,7 @@ const Layout = ({ children }: LayoutProps) => {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onFocus={() => setShowResults(true)}
-                  className="w-full pl-8 pr-8 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-manga-accent focus:border-transparent transition-colors text-sm"
+                  className="w-full pl-8 pr-8 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:border-transparent transition-colors text-sm"
                   aria-label="Search manga, manhwa, or authors"
                 />
                 {query && (
@@ -322,7 +322,7 @@ const Layout = ({ children }: LayoutProps) => {
                     >
                       {isSearching ? (
                         <div className="p-3 text-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-manga-accent mx-auto"></div>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-midnight-primary-500 mx-auto"></div>
                           <p className="text-xs text-manga-muted mt-2">Searching...</p>
                         </div>
                       ) : results.length > 0 ? (
@@ -441,7 +441,7 @@ const Layout = ({ children }: LayoutProps) => {
                                     className={`w-full text-left p-3 rounded-lg border transition-colors flex items-start gap-3 ${
                                       notification.isRead 
                                         ? 'bg-manga-surface hover:bg-manga-border border-manga-border' 
-                                        : 'bg-manga-accent/10 hover:bg-manga-accent/20 border-manga-accent/30'
+                                        : 'bg-midnight-primary-50 hover:bg-midnight-primary-100 border-midnight-primary-200'
                                     } active:scale-[0.99]`}
                                   >
                                     <div className={`mt-0.5 h-8 w-8 flex items-center justify-center rounded-lg flex-shrink-0 ${notification.isRead ? 'bg-manga-surface border border-manga-border' : 'bg-manga-accent text-white'} `}>
@@ -665,7 +665,7 @@ const Layout = ({ children }: LayoutProps) => {
                   <div className="mt-4 pt-4 border-t border-manga-border">
                     <button
                       onClick={handleSignOut}
-                      className="flex items-center px-4 py-3 rounded-lg theme-accent-text-hover hover:bg-manga-accent/10 transition-colors w-full text-left text-manga-accent"
+                      className="flex items-center px-4 py-3 rounded-lg text-midnight-accent-500 hover:bg-midnight-accent-500/10 hover:text-midnight-accent-400 transition-colors w-full text-left"
                       aria-label="Sign out"
                     >
                       <span className="mr-3 text-lg">🚪</span>

@@ -13,14 +13,9 @@ class DataService {
 
   constructor() {
     this.loadFromStorage();
-    // Cleanup any previously seeded demo/sample content
-    if (this.containsDemoContent(this.series)) {
-      this.series = [];
-      this.bookmarks = [];
-      this.readStates = [];
-      this.notifications = [];
-      this.userRatings = [];
-      this.readingHistory = [];
+    // If no data present, seed demo/sample content
+    if (!Array.isArray(this.series) || this.series.length === 0) {
+      this.seedDemoData();
       this.saveToStorage();
     }
   }
@@ -498,21 +493,122 @@ class DataService {
     }
   }
 
-  // Detects demo/sample content by checking for known placeholder domains/patterns
-  private containsDemoContent(seriesList: Series[]): boolean {
-    try {
-      if (!Array.isArray(seriesList) || seriesList.length === 0) return false;
-      const placeholderDomains = ['picsum.photos', 'images.cdn.comite'];
-      const hasPlaceholder = seriesList.some(s => {
-        const images = [s.coverImage, s.bannerImage, ...(s.chapters?.flatMap(c => c.pages) || [])];
-        return images.filter(Boolean).some(url => placeholderDomains.some(d => String(url).includes(d)));
-      });
-      // Also consider auto-generated IDs pattern from previous mock seed
-      const looksMockId = seriesList.some(s => /^series-\d+$/.test(s.id));
-      return hasPlaceholder || looksMockId;
-    } catch {
-      return false;
-    }
+  // Provide demo/sample content with placeholder images
+  private seedDemoData(): void {
+    const now = new Date();
+    const iso = (d: Date) => d.toISOString();
+    const daysAgo = (n: number) => {
+      const d = new Date(now);
+      d.setDate(d.getDate() - n);
+      return d;
+    };
+
+    const makePages = (count: number, seed: number) =>
+      Array.from({ length: count }, (_, i) => `https://picsum.photos/seed/comite-${seed}-${i}/1024/1536`);
+
+    const demo: Series[] = [
+      {
+        id: 'series-1',
+        title: 'Crimson Blade',
+        author: 'A. Nakamura',
+        description: 'A wandering swordsman battles ancient spirits across feudal lands.',
+        coverImage: 'https://picsum.photos/seed/comite-cover-1/600/900',
+        bannerImage: 'https://picsum.photos/seed/comite-banner-1/1600/900',
+        tags: ['Action', 'Adventure', 'Supernatural'],
+        status: 'ongoing',
+        genre: ['Action', 'Fantasy'],
+        rating: 4.6,
+        totalChapters: 12,
+        lastUpdated: iso(daysAgo(2)),
+        uploadedAt: iso(daysAgo(30)),
+        firstChapterPublishedAt: iso(daysAgo(28)),
+        chapters: [
+          {
+            id: 'ch-1-12',
+            seriesId: 'series-1',
+            title: 'Whispers of Steel',
+            chapterNumber: 12,
+            pages: makePages(12, 112),
+            publishedAt: iso(daysAgo(2)),
+            isRead: false
+          },
+          {
+            id: 'ch-1-11',
+            seriesId: 'series-1',
+            title: 'Ash and Echoes',
+            chapterNumber: 11,
+            pages: makePages(12, 111),
+            publishedAt: iso(daysAgo(7)),
+            isRead: false
+          }
+        ]
+      },
+      {
+        id: 'series-2',
+        title: 'Skybound Academy',
+        author: 'L. Park',
+        description: 'Students learn to harness the wind above floating islands.',
+        coverImage: 'https://picsum.photos/seed/comite-cover-2/600/900',
+        bannerImage: 'https://picsum.photos/seed/comite-banner-2/1600/900',
+        tags: ['School', 'Fantasy', 'Comedy'],
+        status: 'ongoing',
+        genre: ['Fantasy', 'Slice of Life'],
+        rating: 4.3,
+        totalChapters: 24,
+        lastUpdated: iso(daysAgo(5)),
+        uploadedAt: iso(daysAgo(60)),
+        firstChapterPublishedAt: iso(daysAgo(58)),
+        chapters: [
+          {
+            id: 'ch-2-24',
+            seriesId: 'series-2',
+            title: 'Trade Winds',
+            chapterNumber: 24,
+            pages: makePages(10, 224),
+            publishedAt: iso(daysAgo(5)),
+            isRead: false
+          },
+          {
+            id: 'ch-2-23',
+            seriesId: 'series-2',
+            title: 'Thermals',
+            chapterNumber: 23,
+            pages: makePages(10, 223),
+            publishedAt: iso(daysAgo(12)),
+            isRead: false
+          }
+        ]
+      },
+      {
+        id: 'series-3',
+        title: 'Neon Circuit',
+        author: 'K. Rao',
+        description: 'A courier deciphers encrypted messages in a neon-drenched megacity.',
+        coverImage: 'https://picsum.photos/seed/comite-cover-3/600/900',
+        bannerImage: 'https://picsum.photos/seed/comite-banner-3/1600/900',
+        tags: ['Sci-Fi', 'Thriller'],
+        status: 'hiatus',
+        genre: ['Sci-Fi'],
+        rating: 4.1,
+        totalChapters: 8,
+        lastUpdated: iso(daysAgo(20)),
+        uploadedAt: iso(daysAgo(120)),
+        firstChapterPublishedAt: iso(daysAgo(119)),
+        chapters: [
+          {
+            id: 'ch-3-8',
+            seriesId: 'series-3',
+            title: 'Checksum',
+            chapterNumber: 8,
+            pages: makePages(9, 308),
+            publishedAt: iso(daysAgo(20)),
+            isRead: false
+          }
+        ]
+      }
+    ];
+
+    this.series = demo;
   }
 }
 

@@ -157,7 +157,7 @@ const ChapterList = ({ chapters, seriesId }: ChapterListProps) => {
             >
               <Link
                 to={`/series/${seriesId}/chapter/${chapter.id}`}
-                className="block w-full p-3 rounded-lg transition-all duration-200 hover:bg-manga-surface active:bg-manga-border min-h-[40px] focus:outline-none focus:ring-2 focus:ring-manga-accent focus:ring-offset-2 focus:ring-offset-manga-bg"
+                className="block w-full p-3 rounded-lg transition-all duration-200 hover:bg-manga-surface active:bg-manga-border min-h-[40px] focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:ring-offset-2 focus:ring-offset-manga-bg"
                 aria-label={`Open chapter ${chapter.chapterNumber}${chapter.publishedAt ? `, updated ${formatRelativeTime(chapter.publishedAt)}` : ''}`}
               >
                 <div className="flex items-center justify-between">
@@ -167,7 +167,7 @@ const ChapterList = ({ chapters, seriesId }: ChapterListProps) => {
                       <h3 className={`font-semibold text-left transition-all duration-200 text-sm sm:text-base ${
                         chapter.isRead 
                           ? 'text-manga-text' 
-                          : 'text-manga-accent'
+                          : 'text-midnight-primary-400'
                       }`}>
                         Ch. {chapter.chapterNumber}
                         {chapter.title && (
@@ -204,7 +204,7 @@ const ChapterList = ({ chapters, seriesId }: ChapterListProps) => {
                         Read
                       </span>
                     ) : (
-                      <span className="text-xs bg-manga-accent/20 text-manga-accent px-2 py-1 rounded-full border border-manga-accent/30">
+                      <span className="text-xs bg-midnight-primary-500/20 text-midnight-primary-400 px-2 py-1 rounded-full border border-midnight-primary-500/30">
                         New
                       </span>
                     )}
@@ -212,7 +212,7 @@ const ChapterList = ({ chapters, seriesId }: ChapterListProps) => {
                       {chapter.pages.length} pages
                     </span>
                     {!chapter.isRead && (
-                      <span className="text-xs bg-manga-accent/20 text-manga-accent px-2 py-1 rounded-full border border-manga-accent/30">
+                      <span className="text-xs bg-midnight-primary-500/20 text-midnight-primary-400 px-2 py-1 rounded-full border border-midnight-primary-500/30">
                         Continue Reading
                       </span>
                     )}
@@ -229,7 +229,7 @@ const ChapterList = ({ chapters, seriesId }: ChapterListProps) => {
         <div ref={loadMoreRef} className="flex justify-center pt-4">
           {isLoading ? (
             <div className="flex items-center gap-2 px-6 py-3 text-manga-muted">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-manga-accent"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-midnight-primary-500"></div>
               Loading more chapters...
             </div>
           ) : (

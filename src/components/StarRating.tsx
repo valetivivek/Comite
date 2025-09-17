@@ -98,7 +98,7 @@ const StarRating = ({
                   aria-pressed={isFilled}
                 >
                   {isFilled ? (
-                    <StarSolidIcon className={`${sizeClasses[size]} text-manga-accent`} />
+                    <StarSolidIcon className={`${sizeClasses[size]} text-midnight-primary-400`} />
                   ) : (
                     <StarIcon className={`${sizeClasses[size]} text-manga-muted`} />
                   )}
@@ -143,7 +143,7 @@ const StarRating = ({
               aria-pressed={isFilled}
             >
               {isFilled ? (
-                    <StarSolidIcon className={`${sizeClasses[size]} text-manga-warning`} />
+                    <StarSolidIcon className={`${sizeClasses[size]} text-yellow-400`} />
               ) : (
                 <StarIcon className={`${sizeClasses[size]} text-manga-muted`} />
               )}
