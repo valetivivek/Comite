@@ -280,7 +280,7 @@ const CommentSection = ({ contextId, contextType, title = 'Comments' }: CommentS
                     <button
                       type="button"
                       onClick={() => setSelectedImages(prev => prev.filter((_, i) => i !== index))}
-                      className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                      className="absolute -top-1 -right-1 rounded-full bg-manga-danger p-1 text-manga-on-danger transition-opacity hover:opacity-90"
                       aria-label="Remove image"
                     >
                       <XMarkIcon className="h-3 w-3" />
@@ -323,11 +323,11 @@ const CommentSection = ({ contextId, contextType, title = 'Comments' }: CommentS
             <button
               type="submit"
               disabled={!newComment.trim() || isSubmitting}
-              className="flex items-center px-4 py-2 bg-manga-accent text-white rounded-lg hover:brightness-95 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center rounded-lg bg-manga-accent px-4 py-2 text-manga-on-accent transition-colors hover:bg-manga-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
               aria-label="Submit comment"
             >
               {isSubmitting ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-manga-on-accent"></div>
               ) : (
                 <PaperAirplaneIcon className="h-4 w-4 mr-2" />
               )}
@@ -385,7 +385,7 @@ const CommentItem = ({ comment, onLike, onReply, formatTimestamp }: CommentItemP
         {/* Avatar */}
         <div className="flex-shrink-0">
           <div className="w-8 h-8 bg-manga-accent rounded-full flex items-center justify-center">
-            <UserIcon className="h-5 w-5 text-white" />
+            <UserIcon className="h-5 w-5 text-manga-on-accent" />
           </div>
         </div>
         
@@ -398,9 +398,9 @@ const CommentItem = ({ comment, onLike, onReply, formatTimestamp }: CommentItemP
             {isAdmin ? (
               <div className="flex items-center gap-1" aria-label="Admin badges">
                 {isOwner && (
-                  <span className="px-1.5 py-0.5 rounded bg-purple-600/20 text-purple-300 text-[10px] border border-purple-600/30">Owner</span>
+                  <span className="theme-chip theme-chip-info px-1.5 py-0.5 text-[10px]">Owner</span>
                 )}
-                <span className="px-1.5 py-0.5 rounded bg-red-600/20 text-red-300 text-[10px] border border-red-600/30">Admin</span>
+                <span className="theme-chip theme-chip-danger px-1.5 py-0.5 text-[10px]">Admin</span>
               </div>
             ) : (
               <UserFlairs userId="current-user" variant="comment" />
@@ -433,7 +433,7 @@ const CommentItem = ({ comment, onLike, onReply, formatTimestamp }: CommentItemP
             <button
               onClick={() => onLike(comment.id)}
               className={`flex items-center space-x-1 text-sm transition-colors ${
-                isLiked ? 'text-red-500' : 'text-manga-muted hover:text-red-500'
+                isLiked ? 'text-manga-danger' : 'text-manga-muted hover:text-manga-danger'
               }`}
               aria-label={isLiked ? 'Unlike comment' : 'Like comment'}
             >

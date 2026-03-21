@@ -115,7 +115,7 @@ const FlairManager = ({ userId, onFlairsUpdated }: FlairManagerProps) => {
       <h3 className="text-manga-text font-semibold mb-3">Manage Flairs</h3>
       
       {error && (
-        <div className="mb-3 p-2 bg-red-100 border border-red-300 rounded text-red-700 text-sm">
+        <div className="theme-danger-surface theme-danger-border mb-3 rounded border p-2 text-sm">
           {error}
         </div>
       )}
@@ -133,10 +133,10 @@ const FlairManager = ({ userId, onFlairsUpdated }: FlairManagerProps) => {
               disabled={!selectedFlairs.includes(genre) && selectedFlairs.length >= 3}
               className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 selectedFlairs.includes(genre)
-                  ? 'bg-manga-accent text-white'
+                  ? 'bg-manga-accent text-manga-on-accent'
                   : selectedFlairs.length >= 3
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  ? 'cursor-not-allowed border border-manga-border bg-manga-surface text-manga-muted'
+                  : 'border border-manga-border bg-manga-card text-manga-text hover:bg-manga-border'
               }`}
               aria-pressed={selectedFlairs.includes(genre)}
               aria-label={`${selectedFlairs.includes(genre) ? 'Remove' : 'Add'} ${genre} flair`}
@@ -155,7 +155,7 @@ const FlairManager = ({ userId, onFlairsUpdated }: FlairManagerProps) => {
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="px-4 py-2 bg-manga-accent text-white rounded-lg text-sm font-medium hover:brightness-95 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-2 rounded-lg bg-manga-accent text-sm font-medium text-manga-on-accent transition-colors hover:bg-manga-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
           aria-label="Save flair selection"
         >
           {isSaving ? 'Saving...' : 'Save'}
@@ -164,7 +164,7 @@ const FlairManager = ({ userId, onFlairsUpdated }: FlairManagerProps) => {
         <button
           onClick={handleResetToAuto}
           disabled={isSaving}
-          className="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-2 rounded-lg border border-manga-border bg-manga-card text-sm font-medium text-manga-text transition-colors hover:bg-manga-border disabled:cursor-not-allowed disabled:opacity-50"
           aria-label="Reset to automatic flair selection"
         >
           Reset to Auto

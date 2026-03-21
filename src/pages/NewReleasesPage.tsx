@@ -105,7 +105,7 @@ const NewReleasesPage = () => {
                       <p className="text-sm text-manga-muted truncate">by {s.author}</p>
                       <div className="mt-1 flex items-center gap-2">
                         <span className="text-xs text-manga-muted">{s.totalChapters} ch</span>
-                        <span className="px-2 py-0.5 text-xs rounded-full bg-manga-accent/20 text-manga-accent border border-manga-accent/30">New</span>
+                        <span className="theme-chip theme-chip-accent-soft px-2 py-0.5 text-xs">New</span>
                       </div>
                     </div>
                   </div>
@@ -123,7 +123,7 @@ const NewReleasesPage = () => {
                     <button
                       key={p}
                       onClick={() => setPage(p)}
-                      className={`px-3 py-2 rounded-lg text-sm transition-colors ${isActive ? 'bg-manga-accent text-white' : 'border border-manga-border hover:bg-manga-surface text-manga-text'}`}
+                      className={`px-3 py-2 rounded-lg text-sm transition-colors ${isActive ? 'bg-manga-accent text-manga-on-accent' : 'border border-manga-border hover:bg-manga-surface text-manga-text'}`}
                     >
                       {p}
                     </button>

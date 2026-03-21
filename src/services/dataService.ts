@@ -2,6 +2,7 @@
 // Licensed under ComiTe Proprietary License 1.0. See LICENSE.txt.
 
 import { Series, Chapter, Bookmark, ReadState, Notification, SearchFilters, UserRating, ReadingHistory } from '../types';
+import { readingStatsService } from './readingStatsService';
 
 class DataService {
   private series: Series[] = [];
@@ -145,7 +146,23 @@ class DataService {
     // Sort by popularity score (descending) and return only engaged series
     return engagedSeries
       .sort((a, b) => b.popularityScore - a.popularityScore)
-      .map(({ popularityScore, uniqueReaders, totalProgress, recentActivity, ...series }) => series);
+      .map((series) => ({
+        id: series.id,
+        title: series.title,
+        author: series.author,
+        description: series.description,
+        coverImage: series.coverImage,
+        bannerImage: series.bannerImage,
+        tags: series.tags,
+        status: series.status,
+        genre: series.genre,
+        rating: series.rating,
+        totalChapters: series.totalChapters,
+        lastUpdated: series.lastUpdated,
+        firstChapterPublishedAt: series.firstChapterPublishedAt,
+        uploadedAt: series.uploadedAt,
+        chapters: series.chapters,
+      }));
   }
 
   async searchSeries(filters: SearchFilters): Promise<Series[]> {
@@ -174,7 +191,8 @@ class DataService {
 
     // Sort
     filtered.sort((a, b) => {
-      let aValue: any, bValue: any;
+      let aValue: string | number | Date;
+      let bValue: string | number | Date;
       
       switch (filters.sortBy) {
         case 'title':
@@ -467,7 +485,6 @@ class DataService {
   async getEligibleGenres(userId: string): Promise<string[]> {
     try {
       // Get user's reading stats to find genres they've read
-      const readingStatsService = (await import('./readingStatsService')).readingStatsService;
       const stats = readingStatsService.getUserStats(userId);
       
       if (!stats) return [];

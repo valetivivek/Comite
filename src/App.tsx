@@ -34,6 +34,7 @@ import UploadAdminPage from './pages/admin/UploadAdminPage';
 import SettingsPage from './pages/SettingsPage';
 import NotificationsPage from './pages/NotificationsPage';
 import LibraryPage from './pages/LibraryPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 const SIGNATURE = "cricky";
 
@@ -84,6 +85,7 @@ function App() {
                 <Route path="/admin/users" element={<AdminRoute><UsersAdminPage /></AdminRoute>} />
                 <Route path="/admin/tools" element={<AdminRoute><ToolsAdminPage /></AdminRoute>} />
                 <Route path="/admin/upload" element={<AdminRoute><UploadAdminPage /></AdminRoute>} />
+                <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Layout>
           </div>

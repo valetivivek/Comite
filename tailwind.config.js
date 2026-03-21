@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Midnight Reader Color Palette
+        // Legacy color families kept for compatibility with older classes
         midnight: {
           // Primary: #6366F1 (Indigo)
           primary: {
@@ -94,9 +94,19 @@ export default {
           'accent-hover': 'var(--accent-hover)', // Accent Hover
           'accent-light': 'var(--accent-light)', // Light accent
           'accent-secondary': 'var(--accent-secondary)', // Secondary Accent
+          'on-accent': 'var(--on-accent)', // Foreground on accent surfaces
           success: 'var(--success)', // Success/Positive
+          'on-success': 'var(--on-success)', // Foreground on success surfaces
           warning: 'var(--warning)', // Warning
+          danger: 'var(--danger)', // Destructive/Error
+          'on-danger': 'var(--on-danger)', // Foreground on destructive surfaces
           'border-subtle': 'var(--border-subtle)', // Subtle Border
+          overlay: 'var(--overlay)', // On-image scrim
+          'overlay-strong': 'var(--overlay-strong)', // Heavy on-image scrim
+          'overlay-soft': 'var(--overlay-soft)', // Surface over imagery
+          'overlay-border': 'var(--overlay-border)', // Border over imagery
+          'overlay-text': 'var(--overlay-text)', // Foreground over imagery
+          'overlay-text-secondary': 'var(--overlay-text-secondary)', // Secondary foreground over imagery
         },
         // Keep neon for compatibility but update to primary
         neon: {
@@ -114,7 +124,9 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Oxanium', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        heading: ['Merriweather', 'ui-serif', 'Georgia', 'serif'],
+        mono: ['"Fira Code"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       fontSize: {
         'xs': ['0.75rem', { lineHeight: '1rem' }],

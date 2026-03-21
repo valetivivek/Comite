@@ -5,66 +5,78 @@
 @layer base {
   :root,
   [data-theme="dark"] {
-    /* Dark theme variables - Midnight Reader Color Palette */
-    /* Background Colors */
-    --bg: #0f172a;           /* Primary Background */
-    --card: #1e293b;         /* Surface/Cards */
-    --surface: #334155;      /* Secondary Surface */
-    
-    /* Text Colors */
-    --text: #f8fafc;         /* Primary Text - 12.63:1 contrast ratio */
-    --text-secondary: #e2e8f0; /* Secondary Text - 8.35:1 contrast ratio */
-    --muted: #94a3b8;        /* Muted Text - 4.74:1 contrast ratio */
-    --muted-light: #cbd5e1;  /* Light muted text - 6.84:1 contrast ratio */
-    
-    /* Accent Colors */
-    --accent: #6366f1;       /* Primary Accent */
-    --accent-hover: #4f46e5; /* Primary Accent Hover */
-    --accent-light: #a5b4fc; /* Light accent */
-    --accent-secondary: #3B82F6; /* Secondary Accent */
-    --success: #10B981;      /* Success/Positive */
-    --warning: #f59e0b;      /* Warning */
-    
-    /* Borders & Dividers */
-    --border: #475569;       /* Primary Border */
-    --border-subtle: #334155; /* Subtle Border */
-    
-    /* Focus indicators for better accessibility */
-    --focus-ring: 2px solid #6366f1;
+    /* Dark theme variables - Warm editorial night palette */
+    --bg: #1c1917;
+    --card: #292524;
+    --surface: #57534e;
+
+    --text: #f5f5f4;
+    --text-secondary: #e7e5e4;
+    --muted: #a8a29e;
+    --muted-light: #d6d3d1;
+
+    --accent: #f97316;
+    --accent-hover: #ea580c;
+    --accent-light: #fdba74;
+    --accent-secondary: #0ea5e9;
+    --on-accent: #ffffff;
+    --success: #9baa72;
+    --on-success: #1c1917;
+    --warning: #eab308;
+    --danger: #dc2626;
+    --on-danger: #ffffff;
+
+    --overlay: rgba(28, 25, 23, 0.74);
+    --overlay-strong: rgba(28, 25, 23, 0.86);
+    --overlay-soft: rgba(245, 245, 244, 0.14);
+    --overlay-border: rgba(231, 229, 228, 0.18);
+    --overlay-text: #f5f5f4;
+    --overlay-text-secondary: #d6d3d1;
+
+    --border: #44403c;
+    --border-subtle: #3a342f;
+
+    --focus-ring: 2px solid #f97316;
     --focus-offset: 2px;
-    --ring: 2px solid rgba(99, 102, 241, 0.8);
+    --ring: 2px solid rgba(249, 115, 22, 0.82);
   }
 
-  /* Light theme variables - Recommended palette */
+  /* Light theme variables - Warm editorial day palette */
   .light,
   [data-theme="light"] {
-    /* Background Colors */
-    --bg: #FEFEFE;           /* Primary Background */
-    --card: #F8F9FA;         /* Surface/Cards */
-    --surface: #F1F3F4;      /* Secondary Surface */
-    
-    /* Text Colors */
-    --text: #1A1D23;         /* Primary Text */
-    --text-secondary: #64748B; /* Secondary Text */
-    --muted: #94A3B8;        /* Muted Text */
-    --muted-light: #CBD5E1;  /* Light muted text */
-    
-    /* Accent Colors */
-    --accent: #3B82F6;       /* Primary Accent */
-    --accent-hover: #2563EB; /* Primary Accent Hover */
-    --accent-light: #93C5FD; /* Light accent */
-    --accent-secondary: #6366F1; /* Secondary Accent */
-    --success: #10B981;      /* Success/Positive */
-    --warning: #F59E0B;      /* Warning */
-    
-    /* Borders & Dividers */
-    --border: #E2E8F0;       /* Primary Border */
-    --border-subtle: #F1F5F9; /* Subtle Border */
-    
-    /* Focus indicators */
-    --focus-ring: 2px solid #3B82F6;
+    --bg: #fdfbf7;
+    --card: #f8f4ee;
+    --surface: #f1e9da;
+
+    --text: #4a3b33;
+    --text-secondary: #57534e;
+    --muted: #78716c;
+    --muted-light: #a8a29e;
+
+    --accent: #b45309;
+    --accent-hover: #92400e;
+    --accent-light: #f2daba;
+    --accent-secondary: #e4c090;
+    --on-accent: #ffffff;
+    --success: #7c8c52;
+    --on-success: #fdfbf7;
+    --warning: #ca8a04;
+    --danger: #991b1b;
+    --on-danger: #ffffff;
+
+    --overlay: rgba(74, 59, 51, 0.68);
+    --overlay-strong: rgba(74, 59, 51, 0.8);
+    --overlay-soft: rgba(248, 244, 238, 0.18);
+    --overlay-border: rgba(248, 244, 238, 0.24);
+    --overlay-text: #f8f4ee;
+    --overlay-text-secondary: #f1e9da;
+
+    --border: #e4d9bc;
+    --border-subtle: #efe5d5;
+
+    --focus-ring: 2px solid #b45309;
     --focus-offset: 2px;
-    --ring: 2px solid rgba(59, 130, 246, 0.8);
+    --ring: 2px solid rgba(180, 83, 9, 0.82);
   }
   
   * {
@@ -74,12 +86,15 @@
   body {
     @apply bg-manga-bg text-manga-text font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
+    font-kerning: normal;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     
-    /* Dark theme background */
     background-image: 
-      radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 40% 40%, rgba(99, 102, 241, 0.03) 0%, transparent 50%);
+      radial-gradient(circle at 18% 78%, rgba(249, 115, 22, 0.12) 0%, transparent 48%),
+      radial-gradient(circle at 82% 18%, rgba(14, 165, 233, 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 50% 35%, rgba(234, 179, 8, 0.03) 0%, transparent 45%);
     
     /* Prevent horizontal scrolling */
     overflow-x: hidden;
@@ -91,19 +106,41 @@
   .light body,
   [data-theme="light"] body {
     background-image: 
-      radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.03) 0%, transparent 50%),
-      radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.02) 0%, transparent 50%);
+      radial-gradient(circle at 18% 78%, rgba(180, 83, 9, 0.08) 0%, transparent 46%),
+      radial-gradient(circle at 82% 18%, rgba(228, 192, 144, 0.2) 0%, transparent 38%),
+      radial-gradient(circle at 42% 32%, rgba(202, 138, 4, 0.05) 0%, transparent 42%);
   }
 
-  /* Smooth theme transitions */
-  * {
-    transition: 
+  /* Keep theme transitions scoped to actual surfaces and controls instead of every DOM node */
+  body,
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  svg,
+  .card,
+  .card-elevated,
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost,
+  .btn-accent,
+  .input,
+  .theme-bg,
+  .theme-card,
+  .theme-surface,
+  .theme-text,
+  .theme-text-secondary,
+  .theme-muted {
+    transition:
       background-color 0.2s ease-in-out,
       border-color 0.2s ease-in-out,
       color 0.2s ease-in-out,
       fill 0.2s ease-in-out,
-      stroke 0.2s ease-in-out;
+      stroke 0.2s ease-in-out,
+      box-shadow 0.2s ease-in-out,
+      opacity 0.2s ease-in-out,
+      transform 0.2s ease-in-out;
   }
 
   /* Theme-aware utility classes */
@@ -210,54 +247,76 @@
 
 @layer components {
   /* Typography Hierarchy */
+  .eyebrow {
+    @apply text-[0.6875rem] font-semibold uppercase leading-5;
+    color: var(--muted);
+    letter-spacing: 0.28em;
+  }
+
   .heading-1 {
-    @apply text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight;
+    @apply font-heading font-semibold;
     color: var(--text);
+    font-size: clamp(2.75rem, 6vw, 4.75rem);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
   }
   
   .heading-2 {
-    @apply text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight;
+    @apply font-heading font-semibold;
     color: var(--text);
+    font-size: clamp(1.9rem, 3.3vw, 3rem);
+    line-height: 1.05;
+    letter-spacing: -0.024em;
+    text-wrap: balance;
   }
   
   .heading-3 {
-    @apply text-xl sm:text-2xl font-semibold leading-snug;
+    @apply font-heading text-xl sm:text-2xl font-semibold;
     color: var(--text);
+    line-height: 1.14;
+    letter-spacing: -0.015em;
   }
   
   .heading-4 {
-    @apply text-lg sm:text-xl font-semibold leading-snug;
+    @apply text-base sm:text-lg font-semibold leading-snug;
     color: var(--text-secondary);
+    letter-spacing: 0.01em;
   }
   
   .body-large {
-    @apply text-lg sm:text-xl leading-relaxed;
+    @apply text-base sm:text-lg;
     color: var(--text-secondary);
+    line-height: 1.75;
+    max-width: 65ch;
   }
   
   .body-text {
-    @apply text-base sm:text-lg leading-relaxed;
+    @apply text-base;
     color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 68ch;
   }
   
   .caption {
-    @apply text-sm leading-normal;
+    @apply text-xs sm:text-sm font-medium;
     color: var(--muted);
+    line-height: 1.6;
+    letter-spacing: 0.02em;
   }
 
   /* Button Components */
   .btn-primary {
-    @apply px-6 py-3 rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 transform hover:scale-105 active:scale-95;
+    @apply px-6 py-3 rounded-lg font-semibold transition-colors duration-200 focus:outline-none focus:ring-2;
     background-color: var(--accent);
-    color: #fff;
+    color: var(--on-accent);
     box-shadow: none;
   }
   .btn-primary:hover { background-color: var(--accent-hover); }
-  .btn-primary:active { filter: brightness(0.95); }
   .btn-primary:focus { outline: var(--focus-ring); outline-offset: var(--focus-offset); }
 
   .btn-secondary {
-    @apply px-6 py-3 rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2;
+    @apply px-6 py-3 rounded-lg font-semibold transition-colors duration-200 focus:outline-none focus:ring-2;
     background-color: var(--surface);
     color: var(--text);
     border: 1px solid var(--border);
@@ -265,41 +324,43 @@
   .btn-secondary:hover { background-color: var(--card); }
 
   .btn-ghost {
-    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2;
+    @apply px-4 py-2 rounded-lg font-medium transition-colors duration-200 focus:outline-none focus:ring-2;
     background-color: transparent;
     color: var(--muted);
   }
   .btn-ghost:hover { background-color: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--text); }
 
   .btn-accent {
-    @apply px-6 py-3 rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 transform hover:scale-105 active:scale-95;
+    @apply px-6 py-3 rounded-lg font-semibold transition-colors duration-200 focus:outline-none focus:ring-2;
     background-color: var(--accent);
-    color: #fff;
+    color: var(--on-accent);
   }
   .btn-accent:hover { background-color: var(--accent-hover); }
 
   /* Card Components */
   .card {
-    @apply rounded-xl shadow-lg overflow-hidden transition-all duration-200 hover:shadow-xl;
+    @apply rounded-xl shadow-lg overflow-hidden hover:shadow-xl;
     background-color: var(--card);
     border: 1px solid var(--border);
+    box-shadow: 0 14px 36px -28px color-mix(in srgb, var(--text) 35%, transparent);
   }
   
   .card-elevated {
-    @apply rounded-xl shadow-xl overflow-hidden transition-all duration-200 hover:shadow-2xl;
+    @apply rounded-xl shadow-xl overflow-hidden hover:shadow-2xl;
     background-color: var(--card);
     border: 1px solid var(--border);
+    box-shadow: 0 22px 44px -30px color-mix(in srgb, var(--text) 44%, transparent);
   }
   
   /* Input Components */
   .input {
-    @apply w-full px-4 py-3 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2;
+    @apply w-full px-4 py-3 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2;
     background-color: var(--surface);
     border: 1px solid var(--border);
     color: var(--text);
   }
   .input::placeholder { color: var(--muted); }
-  .input:hover { border-color: var(--border); filter: brightness(1.03); }
+  .input:hover { border-color: color-mix(in srgb, var(--border) 78%, var(--accent-light)); }
   .input:focus { border-color: transparent; box-shadow: 0 0 0 2px var(--accent); }
 
   /* Accent helpers */
@@ -310,6 +371,61 @@
   .theme-accent-border { border-color: var(--accent); }
   .theme-accent-tint-20 { background-color: color-mix(in srgb, var(--accent) 20%, transparent); }
   .theme-accent-gradient { background-image: linear-gradient(to right, color-mix(in srgb, var(--accent) 85%, #000), var(--accent)); }
+  .theme-backdrop { background-color: color-mix(in srgb, var(--overlay-strong) 78%, transparent); }
+  .theme-backdrop-strong { background-color: color-mix(in srgb, var(--overlay-strong) 92%, transparent); }
+  .theme-chip { @apply inline-flex items-center rounded-full border font-medium; }
+  .theme-chip-accent {
+    background-color: var(--accent);
+    color: var(--on-accent);
+    border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+  .theme-chip-accent-soft {
+    background-color: color-mix(in srgb, var(--accent) 14%, var(--card));
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
+  }
+  .theme-chip-info {
+    background-color: color-mix(in srgb, var(--accent-secondary) 18%, var(--card));
+    color: var(--text);
+    border-color: color-mix(in srgb, var(--accent-secondary) 38%, var(--border));
+  }
+  .theme-chip-success {
+    background-color: color-mix(in srgb, var(--success) 18%, var(--card));
+    color: var(--text);
+    border-color: color-mix(in srgb, var(--success) 38%, var(--border));
+  }
+  .theme-chip-warning {
+    background-color: color-mix(in srgb, var(--warning) 18%, var(--card));
+    color: var(--text);
+    border-color: color-mix(in srgb, var(--warning) 34%, var(--border));
+  }
+  .theme-chip-danger {
+    background-color: color-mix(in srgb, var(--danger) 12%, var(--card));
+    color: color-mix(in srgb, var(--danger) 78%, var(--text));
+    border-color: color-mix(in srgb, var(--danger) 28%, var(--border));
+  }
+  .theme-chip-neutral {
+    background-color: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+  }
+  .theme-danger-text { color: var(--danger); }
+  .theme-danger-bg { background-color: var(--danger); }
+  .theme-danger-surface {
+    background-color: color-mix(in srgb, var(--danger) 12%, var(--card));
+    color: color-mix(in srgb, var(--danger) 78%, var(--text));
+    border-color: color-mix(in srgb, var(--danger) 28%, var(--border));
+  }
+  .theme-danger-border { border-color: color-mix(in srgb, var(--danger) 28%, var(--border)); }
+  .theme-danger-text-strong { color: color-mix(in srgb, var(--danger) 78%, var(--text)); }
+  .theme-skeleton-shimmer {
+    background-image: linear-gradient(
+      to right,
+      transparent,
+      color-mix(in srgb, var(--overlay-text) 14%, transparent),
+      transparent
+    );
+  }
 
   /* Animation Classes */
   .jitter-hover {
@@ -396,6 +512,11 @@
   /* Fast tooltip for titles */
   .fast-tooltip {
     position: relative;
+  }
+
+  .deferred-render {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 720px;
   }
   
   .fast-tooltip:hover::after {

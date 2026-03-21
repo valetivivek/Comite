@@ -196,7 +196,7 @@ const DashboardPage = () => {
                     onClick={() => handlePageChange(page)}
                     className={`px-3 py-2 rounded-lg transition-colors ${
                       currentPage === page
-                        ? 'bg-manga-accent text-white'
+                        ? 'bg-manga-accent text-manga-on-accent'
                         : 'border border-manga-border hover:bg-manga-surface'
                     }`}
                   >

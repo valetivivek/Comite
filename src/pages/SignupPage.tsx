@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import PasswordConfirmationPreview from '../components/PasswordConfirmationPreview';
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -102,8 +103,8 @@ const SignupPage = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3">
-                <p className="text-red-400 text-sm">{error}</p>
+              <div className="theme-danger-surface theme-danger-border rounded-lg border p-3" role="alert" aria-live="polite">
+                <p className="theme-danger-text-strong text-sm">{error}</p>
               </div>
             )}
 
@@ -120,6 +121,9 @@ const SignupPage = () => {
                 required
                 className="input"
                 placeholder="Choose a username"
+                autoComplete="username"
+                minLength={3}
+                maxLength={32}
               />
             </div>
 
@@ -136,6 +140,8 @@ const SignupPage = () => {
                 required
                 className="input"
                 placeholder="Enter your email"
+                autoComplete="email"
+                maxLength={120}
               />
             </div>
 
@@ -153,11 +159,15 @@ const SignupPage = () => {
                   required
                   className="input pr-10"
                   placeholder="Create a password"
+                  autoComplete="new-password"
+                  minLength={6}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-manga-muted hover:text-manga-text transition-colors"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-pressed={showPassword}
                 >
                   {showPassword ? (
                     <EyeSlashIcon className="h-5 w-5" />
@@ -182,11 +192,15 @@ const SignupPage = () => {
                   required
                   className="input pr-10"
                   placeholder="Confirm your password"
+                  autoComplete="new-password"
+                  minLength={6}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-manga-muted hover:text-manga-text transition-colors"
+                  aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+                  aria-pressed={showConfirmPassword}
                 >
                   {showConfirmPassword ? (
                     <EyeSlashIcon className="h-5 w-5" />
@@ -195,6 +209,10 @@ const SignupPage = () => {
                   )}
                 </button>
               </div>
+              <PasswordConfirmationPreview
+                password={formData.password}
+                confirmPassword={formData.confirmPassword}
+              />
             </div>
 
             <button

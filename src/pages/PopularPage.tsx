@@ -137,7 +137,7 @@ const PopularPage = () => {
                       onClick={() => handlePageChange(page)}
                       className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                         page === currentPage
-                          ? 'bg-manga-accent text-white'
+                          ? 'bg-manga-accent text-manga-on-accent'
                           : 'text-manga-text bg-manga-surface border border-manga-border hover:bg-manga-border'
                       }`}
                     >
@@ -171,7 +171,7 @@ const PopularPage = () => {
                  </p>
                  <a 
                    href="/" 
-                   className="inline-flex items-center px-4 py-2 bg-manga-accent text-white rounded-lg hover:brightness-95 transition-colors"
+                   className="inline-flex items-center rounded-lg bg-manga-accent px-4 py-2 text-manga-on-accent transition-colors hover:bg-manga-accent-hover"
                  >
                    Browse All Comics
                  </a>

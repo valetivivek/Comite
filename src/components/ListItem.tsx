@@ -91,12 +91,12 @@ const ListItem = ({ series }: ListItemProps) => {
     <motion.div
       whileHover={{ scale: 1.02, y: -2 }}
       whileTap={{ scale: 0.98 }}
-      className="card hover:shadow-xl hover:border-midnight-primary-500/30 transition-all duration-300 relative group h-[200px]"
+      className="card relative group min-h-[220px] transition-all duration-300 hover:border-manga-accent/30 hover:shadow-xl sm:h-[200px]"
     >
-      <div className="flex p-3 h-full">
+      <div className="flex h-full gap-3 p-3">
         {/* Cover Image - Left aligned with specified dimensions */}
-        <div className="relative flex-shrink-0 w-[90px] sm:w-[100px] lg:w-[110px] aspect-[3/4] rounded-lg overflow-hidden mr-3">
-          <Link to={`/series/${series.id}`} className="block">
+        <div className="relative flex-shrink-0 w-[90px] sm:w-[100px] lg:w-[110px] aspect-[3/4] rounded-lg overflow-hidden">
+          <Link to={`/series/${series.id}`} className="block h-full">
             <img
               src={series.coverImage}
               alt={series.title}
@@ -116,14 +116,14 @@ const ListItem = ({ series }: ListItemProps) => {
               <Link to={`/series/${series.id}`} className="block">
                 <div className="flex items-center gap-2">
                   <h3 
-                    className="font-semibold text-manga-text text-base hover:text-midnight-primary-400 transition-colors truncate max-w-[120px] fast-tooltip"
+                    className="fast-tooltip truncate text-base font-semibold text-manga-text transition-colors hover:text-manga-accent"
                     title={series.title}
                   >
                     {series.title.length > 15 ? `${series.title.substring(0, 15)}...` : series.title}
                   </h3>
-                  <div className="flex items-center gap-1 bg-midnight-primary-500/20 px-1.5 py-0.5 rounded-full border border-midnight-primary-500/30 flex-shrink-0">
-                    <span className="text-white text-xs drop-shadow-sm">★</span>
-                    <span className="text-white text-xs font-semibold" aria-label={`Rating ${series.rating}`}>
+                  <div className="flex items-center gap-1 rounded-full border border-manga-accent/20 bg-manga-accent/10 px-1.5 py-0.5 flex-shrink-0">
+                    <span className="text-manga-warning text-xs drop-shadow-sm" aria-hidden="true">&#9733;</span>
+                    <span className="text-manga-accent text-xs font-semibold" aria-label={`Rating ${series.rating}`}>
                       {series.rating}
                     </span>
                   </div>
@@ -139,9 +139,10 @@ const ListItem = ({ series }: ListItemProps) => {
             <button
               onClick={handleBookmark}
               disabled={isLoading}
-              className={`ml-2 p-2.5 rounded-lg bg-manga-surface hover:bg-manga-border transition-colors flex-shrink-0 min-h-[40px] min-w-[40px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:ring-offset-2 focus:ring-offset-manga-bg ${
-                isBookmarked ? 'text-yellow-500' : 'text-manga-muted'
+              className={`ml-2 flex min-h-[44px] min-w-[44px] flex-shrink-0 items-center justify-center rounded-lg bg-manga-surface p-2.5 transition-colors hover:bg-manga-border focus:outline-none focus:ring-2 focus:ring-manga-accent focus:ring-offset-2 focus:ring-offset-manga-bg ${
+                isBookmarked ? 'text-manga-warning' : 'text-manga-muted'
               }`}
+              type="button"
               aria-pressed={isBookmarked}
               aria-label={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
               title={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
@@ -159,7 +160,7 @@ const ListItem = ({ series }: ListItemProps) => {
             {series.tags.slice(0, 2).map((tag) => (
               <span
                 key={tag}
-                className="px-1.5 py-0.5 text-xs font-medium rounded-full bg-midnight-primary-500/20 text-midnight-primary-300 border border-midnight-primary-500/30"
+                className="rounded-full border border-manga-accent/18 bg-manga-accent/10 px-1.5 py-0.5 text-xs font-medium text-manga-accent"
               >
                 {tag}
               </span>
@@ -172,19 +173,19 @@ const ListItem = ({ series }: ListItemProps) => {
           </div>
 
           {/* Recent Chapters - Vertical List */}
-          <div className="space-y-0.5">
-            {recentChapters.slice(0, 3).map((chapter) => (
+          <div className="space-y-1">
+            {recentChapters.slice(0, 3).map((chapter, index) => (
               <Link
                 key={chapter.id}
                 to={`/series/${series.id}/chapter/${chapter.id}`}
-                className={`block text-xs py-1 px-1.5 rounded transition-all duration-200 hover:bg-manga-surface hover:scale-[1.02] min-h-[24px] flex items-center justify-between group/chapter ${
+                className={`${index === 2 ? 'hidden sm:flex' : 'flex'} min-h-[44px] items-center justify-between rounded-lg px-2 py-2 text-xs transition-colors duration-200 hover:bg-manga-surface focus:outline-none focus:ring-2 focus:ring-manga-accent focus:ring-offset-2 focus:ring-offset-manga-bg ${
                   chapter.isRead 
                     ? 'text-manga-text-secondary hover:text-manga-text' 
-                    : 'text-midnight-primary-400 hover:text-manga-text font-medium'
+                    : 'text-manga-accent hover:text-manga-text font-medium'
                 }`}
                 aria-label={`Chapter ${chapter.chapterNumber}`}
               >
-                <div className="flex justify-between items-center w-full">
+                <div className="flex w-full items-center justify-between gap-3">
                   <span>Ch. {chapter.chapterNumber}</span>
                   {chapter.publishedAt && formatRelativeTime(chapter.publishedAt) && (
                     <span 

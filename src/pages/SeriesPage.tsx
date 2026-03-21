@@ -135,7 +135,7 @@ const SeriesPage = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-midnight-primary-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-manga-accent"></div>
       </div>
     );
   }
@@ -216,7 +216,7 @@ const SeriesPage = () => {
           className="h-64 md:h-80 lg:h-96 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${series.bannerImage || series.coverImage})` }}
         >
-          <div className="absolute inset-0 bg-black bg-opacity-60" />
+          <div className="absolute inset-0 bg-manga-overlay-strong" />
         </div>
 
         {/* Content */}
@@ -236,21 +236,21 @@ const SeriesPage = () => {
               </div>
 
               {/* Series Info */}
-              <div className="flex-1 text-white text-center sm:text-left">
+              <div className="flex-1 text-manga-overlay-text text-center sm:text-left">
                 <div className="flex items-center gap-4 mb-2 justify-center sm:justify-start flex-wrap">
                   <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">{series.title}</h1>
                   <div className="flex items-center gap-1">
-                    <span className="text-yellow-400 text-xl sm:text-2xl">★</span>
-                    <span className="text-white font-medium text-lg sm:text-xl">{series.rating}</span>
+                    <span className="text-manga-warning text-xl sm:text-2xl" aria-hidden="true">&#9733;</span>
+                    <span className="text-manga-overlay-text font-medium text-lg sm:text-xl">{series.rating}</span>
                   </div>
                 </div>
-                <p className="text-base sm:text-lg md:text-xl text-gray-200 mb-4">by {series.author}</p>
+                <p className="text-base sm:text-lg md:text-xl text-manga-overlay-text-secondary mb-4">by {series.author}</p>
                 
                 <div className="flex flex-wrap gap-2 mb-4 justify-center sm:justify-start">
                   {series.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-2 sm:px-3 py-1 bg-white bg-opacity-20 text-white text-xs sm:text-sm rounded-full backdrop-blur-sm"
+                      className="rounded-full border border-manga-overlay-border bg-manga-overlay-soft px-2 sm:px-3 py-1 text-xs sm:text-sm text-manga-overlay-text backdrop-blur-sm"
                     >
                       {tag}
                     </span>
@@ -258,8 +258,8 @@ const SeriesPage = () => {
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-6 mb-4">
-                  <span className="text-gray-200 text-sm sm:text-base">{series.totalChapters} chapters</span>
-                  <span className="text-gray-200 capitalize text-sm sm:text-base">{series.status}</span>
+                  <span className="text-manga-overlay-text-secondary text-sm sm:text-base">{series.totalChapters} chapters</span>
+                  <span className="text-manga-overlay-text-secondary capitalize text-sm sm:text-base">{series.status}</span>
                 </div>
 
                 {/* Dual Ratings */}
@@ -297,7 +297,7 @@ const SeriesPage = () => {
               <div className="flex justify-center mt-2">
                 <button
                   onClick={() => setShowDescription(!showDescription)}
-                  className="text-midnight-primary-500 hover:text-midnight-primary-400 font-medium flex items-center transition-colors"
+                  className="text-manga-accent hover:text-manga-accent-hover font-medium flex items-center transition-colors"
                 >
                   {showDescription ? (
                     <>
@@ -324,13 +324,13 @@ const SeriesPage = () => {
             {/* Chapter List - Fixed Height Scrollable */}
             <div className="card p-0">
               <div className="p-4 border-b border-manga-border">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <h2 className="text-xl font-bold text-manga-text">Chapters</h2>
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-wrap items-center gap-3">
                     {/* Sort Toggle - Single Icon Button */}
                     <button
                       onClick={() => handleSortChange(sortOrder === 'desc' ? 'asc' : 'desc')}
-                      className="p-2 rounded-lg bg-manga-surface border border-manga-border text-manga-text hover:bg-manga-border transition-colors focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:ring-offset-2 focus:ring-offset-manga-bg min-h-[44px] min-w-[44px] flex items-center justify-center"
+                      className="p-2 rounded-lg bg-manga-surface border border-manga-border text-manga-text hover:bg-manga-border transition-colors focus:outline-none focus:ring-2 focus:ring-manga-accent focus:ring-offset-2 focus:ring-offset-manga-bg min-h-[44px] min-w-[44px] flex items-center justify-center"
                       aria-pressed={sortOrder === 'desc'}
                       aria-label={sortOrder === 'desc' ? 'Sort: Newest First' : 'Sort: Oldest First'}
                     >
@@ -345,7 +345,8 @@ const SeriesPage = () => {
                     <div className="relative">
                       <button
                         onClick={() => setShowChapterDropdown(!showChapterDropdown)}
-                        className="flex items-center px-3 py-2 bg-manga-surface border border-manga-border rounded-lg text-sm text-manga-text hover:bg-manga-border transition-colors"
+                        className="flex min-h-[44px] items-center rounded-lg border border-manga-border bg-manga-surface px-3 py-2 text-sm text-manga-text transition-colors hover:bg-manga-border focus:outline-none focus:ring-2 focus:ring-manga-accent focus:ring-offset-2 focus:ring-offset-manga-bg"
+                        type="button"
                       >
                         Jump to Chapter
                         <ChevronDownIcon className="ml-2 h-4 w-4" />
@@ -384,7 +385,8 @@ const SeriesPage = () => {
                                       });
                                     }
                                   }}
-                                  className="block w-full px-3 py-2 text-sm text-manga-text hover:bg-manga-surface border-b border-manga-border last:border-b-0 transition-colors text-left"
+                                  className="block min-h-[44px] w-full border-b border-manga-border px-3 py-2 text-left text-sm text-manga-text transition-colors hover:bg-manga-surface last:border-b-0"
+                                  type="button"
                                 >
                                   Chapter {chapter.chapterNumber}
                                 </button>
@@ -404,7 +406,7 @@ const SeriesPage = () => {
                         key={chapter.id}
                         id={`chapter-${chapter.id}`}
                         to={`/series/${series.id}/chapter/${chapter.id}`}
-                        className="block w-full p-3 rounded-lg transition-all duration-200 hover:bg-manga-surface active:bg-manga-border min-h-[44px] focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:ring-offset-2 focus:ring-offset-manga-bg"
+                        className="block w-full p-3 rounded-lg transition-all duration-200 hover:bg-manga-surface active:bg-manga-border min-h-[44px] focus:outline-none focus:ring-2 focus:ring-manga-accent focus:ring-offset-2 focus:ring-offset-manga-bg"
                         aria-label={`Chapter ${chapter.chapterNumber}${chapter.title ? `, ${chapter.title}` : ''}${chapter.isRead ? ', read' : isChapterNew(chapter.publishedAt) ? ', new' : ''}${chapter.publishedAt && formatRelativeTime(chapter.publishedAt) ? `, ${formatRelativeTime(chapter.publishedAt)}` : ''}`}
                       >
                         {/* Desktop: Two-region grid */}
@@ -414,7 +416,7 @@ const SeriesPage = () => {
                             <h3 className={`font-semibold text-left transition-all duration-200 text-sm ${
                               chapter.isRead 
                                 ? 'text-manga-text-secondary' 
-                                : 'text-midnight-primary-400'
+                                : 'text-manga-accent'
                             }`}>
                               Ch. {chapter.chapterNumber}
                               {chapter.title && (
@@ -426,11 +428,11 @@ const SeriesPage = () => {
                             
                             {/* Status badges */}
                             {chapter.isRead ? (
-                              <span className="text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium flex-shrink-0" aria-label="read">
+                              <span className="text-xs bg-manga-success text-manga-on-success px-2 py-1 rounded-full font-medium flex-shrink-0" aria-label="read">
                                 Read
                               </span>
                             ) : isChapterNew(chapter.publishedAt) ? (
-                              <span className="text-xs bg-midnight-primary-500 text-white px-2 py-1 rounded-full font-medium flex-shrink-0" aria-label="new">
+                              <span className="text-xs bg-manga-accent text-manga-on-accent px-2 py-1 rounded-full font-medium flex-shrink-0" aria-label="new">
                                 New
                               </span>
                             ) : null}
@@ -441,7 +443,7 @@ const SeriesPage = () => {
                             {chapter.publishedAt && formatRelativeTime(chapter.publishedAt) && (
                               <time 
                                 dateTime={new Date(chapter.publishedAt).toISOString()}
-                                className="text-xs text-neutral-400 font-medium"
+                                className="text-xs text-manga-muted font-medium"
                               >
                                 {formatRelativeTime(chapter.publishedAt)}
                               </time>
@@ -455,7 +457,7 @@ const SeriesPage = () => {
                             <h3 className={`font-semibold text-left transition-all duration-200 text-sm ${
                               chapter.isRead 
                                 ? 'text-manga-text-secondary' 
-                                : 'text-midnight-primary-400'
+                                : 'text-manga-accent'
                             }`}>
                               Ch. {chapter.chapterNumber}
                               {chapter.title && (
@@ -467,11 +469,11 @@ const SeriesPage = () => {
                             
                             {/* Status badges */}
                             {chapter.isRead ? (
-                              <span className="text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium flex-shrink-0" aria-label="read">
+                              <span className="text-xs bg-manga-success text-manga-on-success px-2 py-1 rounded-full font-medium flex-shrink-0" aria-label="read">
                                 Read
                               </span>
                             ) : isChapterNew(chapter.publishedAt) ? (
-                              <span className="text-xs bg-midnight-primary-500 text-white px-2 py-1 rounded-full font-medium flex-shrink-0" aria-label="new">
+                              <span className="text-xs bg-manga-accent text-manga-on-accent px-2 py-1 rounded-full font-medium flex-shrink-0" aria-label="new">
                                 New
                               </span>
                             ) : null}
@@ -481,7 +483,7 @@ const SeriesPage = () => {
                           {chapter.publishedAt && formatRelativeTime(chapter.publishedAt) && (
                             <time 
                               dateTime={new Date(chapter.publishedAt).toISOString()}
-                              className="text-xs text-neutral-400 font-medium"
+                              className="text-xs text-manga-muted font-medium"
                             >
                               {formatRelativeTime(chapter.publishedAt)}
                             </time>
@@ -517,7 +519,7 @@ const SeriesPage = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             onClick={scrollToTop}
-            className="fixed bottom-6 right-6 p-3 bg-midnight-primary-500 hover:bg-midnight-primary-600 text-white rounded-full shadow-lg transition-colors jitter-hover z-20"
+            className="fixed bottom-6 right-6 z-20 rounded-full bg-manga-accent p-3 text-manga-on-accent shadow-lg transition-colors duration-200 hover:bg-manga-accent-hover"
           >
             <ArrowUpIcon className="h-5 w-5" />
           </motion.button>

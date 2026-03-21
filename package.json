@@ -14,12 +14,12 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.624.0",
     "@aws-sdk/s3-request-presigner": "^3.624.0",
+    "@heroicons/react": "^2.0.18",
+    "clsx": "^2.0.0",
+    "framer-motion": "^10.16.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.20.1",
-    "framer-motion": "^10.16.16",
-    "clsx": "^2.0.0",
-    "@heroicons/react": "^2.0.18"
+    "react-router-dom": "^6.20.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
@@ -34,6 +34,6 @@
     "postcss": "^8.4.32",
     "tailwindcss": "^3.3.6",
     "typescript": "^5.2.2",
-    "vite": "^5.0.8"
+    "vite": "^8.0.1"
   }
 }

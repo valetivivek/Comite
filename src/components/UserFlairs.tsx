@@ -46,21 +46,21 @@ const UserFlairs = ({ userId, variant = 'dashboard', className = '' }: UserFlair
 
   const getRankColor = (rank: string): string => {
     switch (rank) {
-      case 'Archivist': return 'bg-purple-600 text-white';
-      case 'Binger': return 'bg-blue-600 text-white';
-      case 'Enthusiast': return 'bg-green-600 text-white';
-      case 'Reader': return 'bg-yellow-600 text-white';
-      default: return 'bg-gray-600 text-white';
+      case 'Archivist': return 'theme-chip theme-chip-info';
+      case 'Binger': return 'theme-chip theme-chip-accent';
+      case 'Enthusiast': return 'theme-chip theme-chip-success';
+      case 'Reader': return 'theme-chip theme-chip-warning';
+      default: return 'theme-chip theme-chip-neutral';
     }
   };
 
   const getGenreColor = (index: number): string => {
     const colors = [
-      'bg-manga-accent text-white',
-      'bg-orange-500 text-white',
-      'bg-pink-500 text-white'
+      'theme-chip theme-chip-accent-soft',
+      'theme-chip theme-chip-info',
+      'theme-chip theme-chip-warning'
     ];
-    return colors[index] || 'bg-gray-500 text-white';
+    return colors[index] || 'theme-chip theme-chip-neutral';
   };
 
   const getSizeClasses = (variant: string) => {

@@ -95,7 +95,7 @@ const UsersAdminPage = () => {
                 </td>
                 <td className="p-3 text-right">
                   {e !== 'ultimategamervivek@gmail.com' && (
-                    <button className="text-red-400" onClick={()=>removeEmail(e)} disabled={!isOwner}>Remove</button>
+                    <button className="text-manga-danger disabled:text-manga-muted" onClick={()=>removeEmail(e)} disabled={!isOwner}>Remove</button>
                   )}
                 </td>
               </tr>

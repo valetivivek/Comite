@@ -12,9 +12,10 @@ import {
   PencilIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
-import { StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
+import { CheckBadgeIcon, StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
 import { User, UserRating, ReadingHistory, Bookmark } from '../types';
 import { dataService } from '../services/dataService';
+import DestructiveTextButton from '../components/DestructiveTextButton';
 
 const ProfilePage = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -155,12 +156,12 @@ const ProfilePage = () => {
             </Link>
             <h1 className="text-3xl font-bold text-manga-text">Profile</h1>
           </div>
-          <button
+          <DestructiveTextButton
             onClick={handleLogout}
-            className="btn-secondary"
+            className="min-w-[88px] justify-end"
           >
             Logout
-          </button>
+          </DestructiveTextButton>
         </div>
 
         <div className="max-w-4xl mx-auto">
@@ -174,36 +175,43 @@ const ProfilePage = () => {
               {/* Profile Picture */}
               <div className="relative">
                 {isEditing ? (
-                  <div className="w-20 h-20 rounded-full overflow-hidden bg-manga-surface border-2 border-manga-border">
-                    {tempPicture ? (
-                      <img
-                        src={tempPicture}
-                        alt="Profile"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <UserIcon className="h-10 w-10 text-manga-muted" />
-                      </div>
-                    )}
+                  <div className="relative h-24 w-24 rounded-full bg-[linear-gradient(140deg,rgba(249,115,22,0.55),rgba(14,165,233,0.28),rgba(234,179,8,0.4))] p-[3px] shadow-[0_22px_45px_-30px_rgba(15,23,42,0.95)]">
+                    <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full border border-manga-border bg-manga-surface">
+                      {tempPicture ? (
+                        <img
+                          src={tempPicture}
+                          alt="Profile"
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center">
+                          <UserIcon className="h-10 w-10 text-manga-muted" />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ) : (
-                  <div className="w-20 h-20 rounded-full overflow-hidden bg-manga-accent flex items-center justify-center">
-                    {profilePicture ? (
-                      <img
-                        src={profilePicture}
-                        alt="Profile"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <UserIcon className="h-10 w-10 text-white" />
-                    )}
+                  <div className="relative h-24 w-24 rounded-full bg-[linear-gradient(140deg,rgba(249,115,22,0.78),rgba(14,165,233,0.34),rgba(234,179,8,0.46))] p-[3px] shadow-[0_28px_55px_-34px_rgba(15,23,42,0.95)]">
+                    <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full border border-manga-border bg-manga-accent">
+                      {profilePicture ? (
+                        <img
+                          src={profilePicture}
+                          alt="Profile"
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <UserIcon className="h-10 w-10 text-manga-on-accent" />
+                      )}
+                    </div>
+                    <span className="absolute -bottom-0.5 -right-0.5 flex h-8 w-8 items-center justify-center rounded-full border-2 border-manga-card bg-manga-card shadow-[0_14px_24px_-20px_rgba(15,23,42,0.9)]">
+                      <CheckBadgeIcon className="h-5 w-5 text-manga-accent" />
+                    </span>
                   </div>
                 )}
                 
                 {isEditing && (
-                  <label className="absolute -bottom-1 -right-1 w-6 h-6 bg-manga-accent rounded-full flex items-center justify-center cursor-pointer hover:brightness-95 transition-colors">
-                    <CameraIcon className="h-3 w-3 text-white" />
+                  <label className="absolute -bottom-1 -right-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-manga-accent transition-colors hover:bg-manga-accent-hover">
+                    <CameraIcon className="h-3 w-3 text-manga-on-accent" />
                     <input
                       type="file"
                       accept="image/*"
@@ -242,9 +250,9 @@ const ProfilePage = () => {
                   <>
                     <button
                       onClick={handleSaveProfile}
-                      className="p-2 bg-manga-accent hover:brightness-95 rounded-lg transition-colors"
+                      className="rounded-lg bg-manga-accent p-2 transition-colors hover:bg-manga-accent-hover"
                     >
-                      <PencilIcon className="h-5 w-5 text-white" />
+                      <PencilIcon className="h-5 w-5 text-manga-on-accent" />
                     </button>
                     <button
                       onClick={handleCancelEdit}
@@ -407,7 +415,7 @@ const ProfilePage = () => {
                         <StarSolidIcon
                           key={i}
                           className={`h-4 w-4 ${
-                            i < rating.rating ? 'text-yellow-400' : 'text-manga-muted'
+                            i < rating.rating ? 'text-manga-warning' : 'text-manga-muted'
                           }`}
                         />
                       ))}

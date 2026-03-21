@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -154,26 +154,26 @@ const ReaderPage = () => {
 
 
 
-  const getPreviousChapter = () => {
+  const getPreviousChapter = useCallback(() => {
     if (!series || !chapter) return null;
     const prevChapterNumber = chapter.chapterNumber - 1;
     return series.chapters.find(ch => ch.chapterNumber === prevChapterNumber) || null;
-  };
+  }, [chapter, series]);
 
-  const getNextChapter = () => {
+  const getNextChapter = useCallback(() => {
     if (!series || !chapter) return null;
     const nextChapterNumber = chapter.chapterNumber + 1;
     return series.chapters.find(ch => ch.chapterNumber === nextChapterNumber) || null;
-  };
+  }, [chapter, series]);
 
-  const goToPreviousChapter = () => {
+  const goToPreviousChapter = useCallback(() => {
     const prevChapter = getPreviousChapter();
     if (prevChapter) {
       navigate(`/series/${seriesId}/chapter/${prevChapter.id}`);
     }
-  };
+  }, [getPreviousChapter, navigate, seriesId]);
 
-  const goToNextChapter = () => {
+  const goToNextChapter = useCallback(() => {
     const nextChapter = getNextChapter();
     if (nextChapter) {
       navigate(`/series/${seriesId}/chapter/${nextChapter.id}`);
@@ -184,7 +184,7 @@ const ReaderPage = () => {
       }
       navigate(`/series/${seriesId}`);
     }
-  };
+  }, [chapter, chapterId, getNextChapter, navigate, seriesId]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -384,7 +384,7 @@ const ReaderPage = () => {
                             to={`/series/${seriesId}/chapter/${ch.id}`}
                             onClick={() => setShowChapterList(false)}
                             className={`block px-3 py-2 text-sm rounded hover:bg-manga-surface transition-colors ${
-                              ch.id === chapter.id ? 'bg-manga-accent text-white' : 'text-manga-text'
+                              ch.id === chapter.id ? 'bg-manga-accent text-manga-on-accent' : 'text-manga-text'
                             }`}
                           >
                             <div className="flex items-center justify-between">
@@ -453,13 +453,13 @@ const ReaderPage = () => {
                 {getPreviousChapter() ? (
                   <button
                     onClick={goToPreviousChapter}
-                    className="w-full flex items-center justify-center px-4 py-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors jitter-hover"
+                    className="w-full flex items-center justify-center rounded-lg border border-manga-border bg-manga-surface px-4 py-3 text-manga-text transition-colors duration-200 hover:bg-manga-card"
                   >
                     <ChevronLeftIcon className="h-5 w-5 mr-2" />
                     <span className="text-sm font-medium">Previous</span>
                   </button>
                 ) : (
-                  <div className="w-full px-4 py-3 text-gray-500 text-center text-sm">
+                  <div className="w-full rounded-lg border border-dashed border-manga-border px-4 py-3 text-center text-sm text-manga-muted">
                     No Previous
                   </div>
                 )}
@@ -469,7 +469,7 @@ const ReaderPage = () => {
                 {getNextChapter() ? (
                   <button
                     onClick={goToNextChapter}
-                    className="w-full flex items-center justify-center px-4 py-3 bg-manga-accent hover:brightness-95 rounded-lg transition-colors jitter-hover text-white"
+                    className="w-full flex items-center justify-center rounded-lg bg-manga-accent px-4 py-3 text-manga-on-accent transition-colors duration-200 hover:bg-manga-accent-hover"
                   >
                     <span className="text-sm font-medium">Next</span>
                     <ChevronRightIcon className="h-5 w-5 ml-2" />
@@ -477,7 +477,7 @@ const ReaderPage = () => {
                 ) : (
                   <button
                     onClick={() => navigate(`/series/${seriesId}`)}
-                    className="w-full flex items-center justify-center px-4 py-3 bg-manga-accent hover:brightness-95 rounded-lg transition-colors jitter-hover text-white"
+                    className="w-full flex items-center justify-center rounded-lg bg-manga-accent px-4 py-3 text-manga-on-accent transition-colors duration-200 hover:bg-manga-accent-hover"
                   >
                     <span className="text-sm font-medium">Back to Series</span>
                     <ChevronRightIcon className="h-5 w-5 ml-2" />
@@ -494,13 +494,13 @@ const ReaderPage = () => {
                 {getPreviousChapter() ? (
                   <button
                     onClick={goToPreviousChapter}
-                    className="flex items-center px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors jitter-hover"
+                    className="flex items-center rounded-lg border border-manga-border bg-manga-surface px-4 py-2 text-manga-text transition-colors duration-200 hover:bg-manga-card"
                   >
                     <ChevronLeftIcon className="h-4 w-4 mr-2" />
                     Previous Chapter
                   </button>
                 ) : (
-                  <div className="px-4 py-2 text-gray-500">
+                  <div className="rounded-lg border border-dashed border-manga-border px-4 py-2 text-manga-muted">
                     No Previous Chapter
                   </div>
                 )}
@@ -510,7 +510,7 @@ const ReaderPage = () => {
                 {getNextChapter() ? (
                   <button
                     onClick={goToNextChapter}
-                    className="flex items-center px-4 py-2 bg-manga-accent hover:brightness-95 rounded-lg transition-colors jitter-hover text-white"
+                    className="flex items-center rounded-lg bg-manga-accent px-4 py-2 text-manga-on-accent transition-colors duration-200 hover:bg-manga-accent-hover"
                   >
                     Next Chapter
                     <ChevronRightIcon className="h-4 w-4 ml-2" />
@@ -518,7 +518,7 @@ const ReaderPage = () => {
                 ) : (
                   <button
                     onClick={() => navigate(`/series/${seriesId}`)}
-                    className="flex items-center px-4 py-2 bg-manga-accent hover:brightness-95 rounded-lg transition-colors jitter-hover text-white"
+                    className="flex items-center rounded-lg bg-manga-accent px-4 py-2 text-manga-on-accent transition-colors duration-200 hover:bg-manga-accent-hover"
                   >
                     Back to Series
                     <ChevronRightIcon className="h-4 w-4 ml-2" />
@@ -542,7 +542,7 @@ const ReaderPage = () => {
       {/* Scroll to Top Button */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-6 right-4 z-50 p-3 bg-manga-accent hover:brightness-95 text-white rounded-full shadow-lg transition-colors duration-200"
+        className="fixed bottom-6 right-4 z-50 rounded-full bg-manga-accent p-3 text-manga-on-accent shadow-lg transition-colors duration-200 hover:bg-manga-accent-hover"
         aria-label="Scroll to top"
       >
         <ArrowUpIcon className="h-5 w-5" />

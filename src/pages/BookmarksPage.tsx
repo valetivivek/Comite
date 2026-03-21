@@ -67,7 +67,7 @@ const BookmarksPage = () => {
             <p className="text-manga-muted mb-6">
               Start bookmarking your favorite series to see them here
             </p>
-            <Link to="/" className="inline-flex items-center px-4 py-2 bg-manga-accent hover:brightness-95 text-white rounded-lg transition-colors">
+            <Link to="/" className="inline-flex items-center rounded-lg bg-manga-accent px-4 py-2 text-manga-on-accent transition-colors hover:bg-manga-accent-hover">
               Browse Series
             </Link>
           </div>
@@ -105,7 +105,7 @@ const BookmarksPage = () => {
                             {/* New Chapter Badge */}
                             {hasNewChapter && (
                               <div className="absolute top-2 left-2">
-                                <span className="px-2 py-1 bg-red-500 text-white text-xs rounded-full font-medium">
+                                <span className="theme-chip theme-chip-accent px-2 py-1 text-xs">
                                   New!
                                 </span>
                               </div>
@@ -118,19 +118,19 @@ const BookmarksPage = () => {
                                 e.stopPropagation();
                                 handleRemoveBookmark(series.id);
                               }}
-                              className="absolute top-2 right-2 p-1.5 bg-black bg-opacity-50 rounded-full hover:bg-opacity-70 transition-colors"
+                              className="theme-backdrop absolute top-2 right-2 rounded-full p-1.5 transition-opacity hover:opacity-90"
                             >
-                              <BookmarkSolidIcon className="h-4 w-4 text-yellow-400" />
+                              <BookmarkSolidIcon className="h-4 w-4 text-manga-warning" />
                             </button>
 
                             {/* Status Badge */}
                             <div className="absolute bottom-2 left-2">
-                              <span className={`px-2 py-1 text-xs rounded-full ${
+                              <span className={`theme-chip px-2 py-1 text-xs ${
                                 series.status === 'ongoing' 
-                                  ? 'bg-green-500 text-white' 
+                                  ? 'theme-chip-success'
                                   : series.status === 'completed'
-                                  ? 'bg-blue-500 text-white'
-                                  : 'bg-orange-500 text-white'
+                                  ? 'theme-chip-info'
+                                  : 'theme-chip-warning'
                               }`}>
                                 {series.status}
                               </span>
@@ -164,7 +164,7 @@ const BookmarksPage = () => {
                             {latestChapter && (
                               <Link
                                 to={`/series/${series.id}/chapter/${latestChapter.id}`}
-                                className="inline-flex items-center px-4 py-2 bg-manga-accent hover:brightness-95 text-white text-sm rounded-lg transition-colors"
+                                className="inline-flex items-center rounded-lg bg-manga-accent px-4 py-2 text-sm text-manga-on-accent transition-colors hover:bg-manga-accent-hover"
                               >
                                 {readChapters > 0 ? 'Continue Reading' : 'Start Reading'}
                                 <ChevronRightIcon className="h-4 w-4 ml-1" />

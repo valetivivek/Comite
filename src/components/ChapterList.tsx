@@ -124,11 +124,12 @@ const ChapterList = ({ chapters, seriesId }: ChapterListProps) => {
   return (
     <div className="space-y-4">
       {/* Sort Toggle */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-xl font-bold text-manga-text">Chapters</h2>
         <button
           onClick={toggleSort}
-          className="flex items-center gap-2 px-3 py-2 bg-manga-surface border border-manga-border rounded-lg text-sm text-manga-text hover:bg-manga-border transition-colors"
+          className="inline-flex min-h-[44px] items-center gap-2 self-start rounded-lg border border-manga-border bg-manga-surface px-3 py-2 text-sm text-manga-text transition-colors hover:bg-manga-border focus:outline-none focus:ring-2 focus:ring-manga-accent focus:ring-offset-2 focus:ring-offset-manga-bg"
+          type="button"
         >
           {sortOrder === 'asc' ? (
             <>
@@ -145,7 +146,7 @@ const ChapterList = ({ chapters, seriesId }: ChapterListProps) => {
       </div>
 
       {/* Chapter List - Vertical List Design */}
-      <div className="space-y-0.5">
+      <div className="space-y-1">
         <AnimatePresence>
           {visibleChapters.map((chapter, index) => (
             <motion.div
@@ -157,54 +158,37 @@ const ChapterList = ({ chapters, seriesId }: ChapterListProps) => {
             >
               <Link
                 to={`/series/${seriesId}/chapter/${chapter.id}`}
-                className="block w-full p-3 rounded-lg transition-all duration-200 hover:bg-manga-surface active:bg-manga-border min-h-[40px] focus:outline-none focus:ring-2 focus:ring-midnight-primary-500 focus:ring-offset-2 focus:ring-offset-manga-bg"
+                className="block w-full min-h-[44px] rounded-xl p-4 transition-all duration-200 hover:bg-manga-surface active:bg-manga-border focus:outline-none focus:ring-2 focus:ring-manga-accent focus:ring-offset-2 focus:ring-offset-manga-bg sm:p-3"
                 aria-label={`Open chapter ${chapter.chapterNumber}${chapter.publishedAt ? `, updated ${formatRelativeTime(chapter.publishedAt)}` : ''}`}
               >
-                <div className="flex items-center justify-between">
-                  {/* Left aligned chapter info */}
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex-1 min-w-0">
-                    <div className="chapter-main">
-                      <h3 className={`font-semibold text-left transition-all duration-200 text-sm sm:text-base ${
-                        chapter.isRead 
-                          ? 'text-manga-text' 
-                          : 'text-midnight-primary-400'
-                      }`}>
-                        Ch. {chapter.chapterNumber}
-                        {chapter.title && (
-                          <span className="block text-xs text-manga-muted mt-1 truncate">
-                            {chapter.title}
-                          </span>
-                        )}
-                      </h3>
-                    </div>
-                    
-                    {/* Mobile: time on second line */}
-                    <div className="chapter-time sm:hidden">
-                      {chapter.publishedAt && formatRelativeTime(chapter.publishedAt) && (
-                        <p className="text-xs text-neutral-400 font-medium mt-1">
-                          {formatRelativeTime(chapter.publishedAt)}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  
-                  {/* Right aligned status and time (desktop) */}
-                  <div className="flex items-center gap-3 ml-4">
-                    {/* Desktop: time right-aligned */}
-                    <div className="chapter-time hidden sm:block">
-                      {chapter.publishedAt && formatRelativeTime(chapter.publishedAt) && (
-                        <span className="text-xs text-neutral-400 font-medium">
-                          {formatRelativeTime(chapter.publishedAt)}
+                    <h3 className={`text-left text-sm font-semibold transition-all duration-200 sm:text-base ${
+                      chapter.isRead 
+                        ? 'text-manga-text' 
+                        : 'text-manga-accent'
+                    }`}>
+                      Ch. {chapter.chapterNumber}
+                      {chapter.title && (
+                        <span className="mt-1 block truncate text-xs text-manga-muted">
+                          {chapter.title}
                         </span>
                       )}
-                    </div>
-                    
+                    </h3>
+                  </div>
+                   
+                  <div className="flex flex-wrap items-center gap-2 sm:ml-4 sm:justify-end">
+                    {chapter.publishedAt && formatRelativeTime(chapter.publishedAt) && (
+                      <span className="basis-full text-xs font-medium text-manga-muted sm:basis-auto">
+                        {formatRelativeTime(chapter.publishedAt)}
+                      </span>
+                    )}
                     {chapter.isRead ? (
-                      <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full border border-green-500/30">
+                      <span className="inline-flex items-center rounded-full bg-manga-success px-2.5 py-1 text-xs font-medium text-manga-on-success">
                         Read
                       </span>
                     ) : (
-                      <span className="text-xs bg-midnight-primary-500/20 text-midnight-primary-400 px-2 py-1 rounded-full border border-midnight-primary-500/30">
+                      <span className="inline-flex items-center rounded-full bg-manga-accent px-2.5 py-1 text-xs font-medium text-manga-on-accent">
                         New
                       </span>
                     )}
@@ -212,7 +196,7 @@ const ChapterList = ({ chapters, seriesId }: ChapterListProps) => {
                       {chapter.pages.length} pages
                     </span>
                     {!chapter.isRead && (
-                      <span className="text-xs bg-midnight-primary-500/20 text-midnight-primary-400 px-2 py-1 rounded-full border border-midnight-primary-500/30">
+                      <span className="hidden items-center rounded-full border border-manga-accent px-2.5 py-1 text-xs font-medium text-manga-accent sm:inline-flex">
                         Continue Reading
                       </span>
                     )}
@@ -228,10 +212,10 @@ const ChapterList = ({ chapters, seriesId }: ChapterListProps) => {
       {hasMoreChapters && (
         <div ref={loadMoreRef} className="flex justify-center pt-4">
           {isLoading ? (
-            <div className="flex items-center gap-2 px-6 py-3 text-manga-muted">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-midnight-primary-500"></div>
-              Loading more chapters...
-            </div>
+              <div className="flex items-center gap-2 px-6 py-3 text-manga-muted">
+                <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-manga-accent"></div>
+                Loading more chapters...
+              </div>
           ) : (
             <div className="text-sm text-manga-muted">
               Scroll down to load more chapters ({sortedChapters.length - displayedChapters} remaining)

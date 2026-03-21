@@ -20,7 +20,7 @@ export class ReadingStatsService {
   private static instance: ReadingStatsService;
   private stats: { [userId: string]: ReadingStats } = {};
   private activeReads: { [key: string]: ValidReadData } = {};
-  private heartbeatTimers: { [key: string]: NodeJS.Timeout } = {};
+  private heartbeatTimers: { [key: string]: ReturnType<typeof setInterval> } = {};
   private lastActivityTimes: { [key: string]: number } = {};
 
   static getInstance(): ReadingStatsService {
@@ -186,8 +186,12 @@ export class ReadingStatsService {
   private isChapterAlreadyRead(userId: string, chapterId: string): boolean {
     // Check if chapter was already counted as read
     // This would integrate with your existing reading progress system
-    const userHistory = JSON.parse(localStorage.getItem('manga-reader-user-history') || '[]');
-    return userHistory.some((h: any) => h.userId === userId && h.chapterId === chapterId && h.validRead);
+    const userHistory: Array<{ userId?: string; chapterId?: string; validRead?: boolean }> =
+      JSON.parse(localStorage.getItem('manga-reader-user-history') || '[]');
+
+    return userHistory.some(
+      (entry) => entry.userId === userId && entry.chapterId === chapterId && entry.validRead === true
+    );
   }
 
   private saveStatsToStorage(): void {

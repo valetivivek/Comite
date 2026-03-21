@@ -32,7 +32,7 @@ const SkeletonLoader = ({ type, className = '', lines = 1 }: SkeletonLoaderProps
             transition={{ delay: index * 0.1 }}
           >
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+              className="theme-skeleton-shimmer absolute inset-0"
               animate={{ x: ['-100%', '100%'] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
             />
@@ -57,7 +57,7 @@ const SkeletonLoader = ({ type, className = '', lines = 1 }: SkeletonLoaderProps
               className={`${baseClasses} w-full h-full`}
             >
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                className="theme-skeleton-shimmer absolute inset-0"
                 animate={{ x: ['-100%', '100%'] }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
               />
@@ -69,21 +69,21 @@ const SkeletonLoader = ({ type, className = '', lines = 1 }: SkeletonLoaderProps
         <div className="p-3 space-y-2">
           <div className={`${baseClasses} h-4 w-3/4`}>
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+              className="theme-skeleton-shimmer absolute inset-0"
               animate={{ x: ['-100%', '100%'] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
             />
           </div>
           <div className={`${baseClasses} h-3 w-1/2`}>
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+              className="theme-skeleton-shimmer absolute inset-0"
               animate={{ x: ['-100%', '100%'] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
             />
           </div>
           <div className={`${baseClasses} h-3 w-1/3`}>
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+              className="theme-skeleton-shimmer absolute inset-0"
               animate={{ x: ['-100%', '100%'] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
             />
@@ -108,7 +108,7 @@ const SkeletonLoader = ({ type, className = '', lines = 1 }: SkeletonLoaderProps
               className={`${baseClasses} w-full h-full`}
             >
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                className="theme-skeleton-shimmer absolute inset-0"
                 animate={{ x: ['-100%', '100%'] }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
               />
@@ -119,21 +119,21 @@ const SkeletonLoader = ({ type, className = '', lines = 1 }: SkeletonLoaderProps
           <div className="flex-1 min-w-0 space-y-2">
             <div className={`${baseClasses} h-5 w-3/4`}>
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                className="theme-skeleton-shimmer absolute inset-0"
                 animate={{ x: ['-100%', '100%'] }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
               />
             </div>
             <div className={`${baseClasses} h-4 w-1/2`}>
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                className="theme-skeleton-shimmer absolute inset-0"
                 animate={{ x: ['-100%', '100%'] }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
               />
             </div>
             <div className={`${baseClasses} h-3 w-1/4`}>
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                className="theme-skeleton-shimmer absolute inset-0"
                 animate={{ x: ['-100%', '100%'] }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
               />
@@ -153,7 +153,7 @@ const SkeletonLoader = ({ type, className = '', lines = 1 }: SkeletonLoaderProps
     >
       {/* Shimmer effect */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+        className="theme-skeleton-shimmer absolute inset-0"
         animate={{ x: ['-100%', '100%'] }}
         transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
       />

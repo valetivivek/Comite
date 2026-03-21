@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
@@ -14,15 +14,16 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // If already signed in, redirect to dashboard
-  if (typeof window !== 'undefined') {
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const stored = localStorage.getItem('manga-reader-user');
-    if (stored) {
-      const params = new URLSearchParams(location.search);
-      const returnTo = params.get('returnTo');
-      navigate(returnTo ? decodeURIComponent(returnTo) : '/dashboard', { replace: true });
-    }
-  }
+    if (!stored) return;
+
+    const params = new URLSearchParams(location.search);
+    const returnTo = params.get('returnTo');
+    navigate(returnTo ? decodeURIComponent(returnTo) : '/dashboard', { replace: true });
+  }, [location.search, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -77,7 +78,9 @@ const LoginPage = () => {
         if (list.includes(mockUser.email)) {
           localStorage.setItem('manga-reader-user', JSON.stringify({ ...mockUser, role: 'admin' }));
         }
-      } catch {}
+      } catch {
+        localStorage.removeItem('comite-admin-emails');
+      }
       const params = new URLSearchParams(location.search);
       const returnTo = params.get('returnTo');
       navigate(returnTo ? decodeURIComponent(returnTo) : '/');
@@ -103,8 +106,8 @@ const LoginPage = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3">
-                <p className="text-red-400 text-sm">{error}</p>
+              <div className="theme-danger-surface theme-danger-border rounded-lg border p-3" role="alert" aria-live="polite">
+                <p className="theme-danger-text-strong text-sm">{error}</p>
               </div>
             )}
 
@@ -121,6 +124,8 @@ const LoginPage = () => {
                 required
                 className="input"
                 placeholder="Enter your email"
+                autoComplete="email"
+                maxLength={120}
               />
             </div>
 
@@ -138,11 +143,14 @@ const LoginPage = () => {
                   required
                   className="input pr-10"
                   placeholder="Enter your password"
+                  autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-manga-muted hover:text-manga-text transition-colors"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-pressed={showPassword}
                 >
                   {showPassword ? (
                     <EyeSlashIcon className="h-5 w-5" />

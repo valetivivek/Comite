@@ -10,6 +10,9 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+.next/
+*.tsbuildinfo
+.vercel/
 *.local
 
 # Editor directories and files
@@ -29,3 +32,6 @@ dist-ssr
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Legacy Next.js artifacts in this Vite repo
+next-env.d.ts

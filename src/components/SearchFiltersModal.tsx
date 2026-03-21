@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { SearchFilters } from '../types';
+import { useDialogAccessibility } from '../hooks/useDialogAccessibility';
 
 interface SearchFiltersModalProps {
   isOpen: boolean;
@@ -17,6 +18,19 @@ const SearchFiltersModal = ({
   onFiltersChange 
 }: SearchFiltersModalProps) => {
   const [localFilters, setLocalFilters] = useState<SearchFilters>(filters);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setLocalFilters(filters);
+    }
+  }, [filters, isOpen]);
+
+  useDialogAccessibility({
+    isOpen,
+    onClose,
+    containerRef: dialogRef
+  });
 
   const genres = [
     'Action', 'Adventure', 'Comedy', 'Drama', 'Fantasy', 'Horror',
@@ -81,7 +95,7 @@ const SearchFiltersModal = ({
           className="fixed inset-0 z-50 overflow-y-auto"
         >
           {/* Backdrop */}
-          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />
+          <div className="theme-backdrop fixed inset-0" onClick={onClose} />
           
           {/* Modal */}
           <div className="flex min-h-full items-center justify-center p-4">
@@ -90,14 +104,23 @@ const SearchFiltersModal = ({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              ref={dialogRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="search-filters-title"
+              tabIndex={-1}
               className="relative w-full max-w-2xl bg-manga-card rounded-xl shadow-xl"
             >
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-manga-border">
-                <h2 className="text-xl font-semibold text-manga-text">Search Filters</h2>
+                <h2 id="search-filters-title" className="text-xl font-semibold text-manga-text">
+                  Search Filters
+                </h2>
                 <button
+                  type="button"
                   onClick={onClose}
                   className="p-2 hover:bg-manga-surface rounded-lg transition-colors jitter-hover"
+                  aria-label="Close search filters"
                 >
                   <XMarkIcon className="h-5 w-5 text-manga-muted" />
                 </button>
@@ -118,7 +141,7 @@ const SearchFiltersModal = ({
                           checked={localFilters.sortBy === option.value}
                           onChange={(e) => setLocalFilters(prev => ({
                             ...prev,
-                            sortBy: e.target.value as any
+                            sortBy: e.target.value as SearchFilters['sortBy']
                           }))}
                           className="mr-2 text-manga-accent focus:ring-manga-accent"
                         />
@@ -166,12 +189,14 @@ const SearchFiltersModal = ({
                     {genres.map((genre) => (
                       <button
                         key={genre}
+                        type="button"
                         onClick={() => handleGenreToggle(genre)}
                         className={`px-3 py-1.5 text-sm rounded-full transition-colors ${
                           localFilters.genre.includes(genre)
-                            ? 'bg-manga-accent text-white'
+                            ? 'bg-manga-accent text-manga-on-accent'
                             : 'bg-manga-surface text-manga-text hover:bg-manga-border'
                         }`}
+                        aria-pressed={localFilters.genre.includes(genre)}
                       >
                         {genre}
                       </button>
@@ -186,12 +211,14 @@ const SearchFiltersModal = ({
                     {statuses.map((status) => (
                       <button
                         key={status.value}
+                        type="button"
                         onClick={() => handleStatusToggle(status.value)}
                         className={`px-3 py-1.5 text-sm rounded-full transition-colors ${
                           localFilters.status.includes(status.value)
-                            ? 'bg-manga-accent text-white'
+                            ? 'bg-manga-accent text-manga-on-accent'
                             : 'bg-manga-surface text-manga-text hover:bg-manga-border'
                         }`}
+                        aria-pressed={localFilters.status.includes(status.value)}
                       >
                         {status.label}
                       </button>
@@ -203,6 +230,7 @@ const SearchFiltersModal = ({
               {/* Footer */}
               <div className="flex items-center justify-between p-6 border-t border-manga-border">
                 <button
+                  type="button"
                   onClick={handleReset}
                   className="px-4 py-2 text-sm font-medium text-manga-muted hover:text-manga-text transition-colors"
                 >
@@ -210,12 +238,14 @@ const SearchFiltersModal = ({
                 </button>
                 <div className="flex gap-3">
                   <button
+                    type="button"
                     onClick={onClose}
                     className="btn-secondary"
                   >
                     Cancel
                   </button>
                   <button
+                    type="button"
                     onClick={handleApply}
                     className="btn-primary"
                   >

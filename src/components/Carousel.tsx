@@ -39,7 +39,7 @@ const Carousel = ({ series }: CarouselProps) => {
   if (series.length === 0) {
     return (
       <div className="h-full bg-gradient-to-r from-manga-accent to-manga-accent-secondary flex items-center justify-center">
-        <p className="text-white text-xl">No series available</p>
+        <p className="text-manga-on-accent text-xl">No series available</p>
       </div>
     );
   }
@@ -80,7 +80,7 @@ const Carousel = ({ series }: CarouselProps) => {
                 />
                 
                 {/* Overlay */}
-                <div className="absolute inset-0 bg-black bg-opacity-60" />
+                <div className="absolute inset-0 bg-manga-overlay-strong" />
                 
                 {/* Content */}
                 <div className="relative h-full flex items-center">
@@ -92,12 +92,12 @@ const Carousel = ({ series }: CarouselProps) => {
                         transition={{ delay: 0.2 }}
                         className="flex items-center gap-4 mb-4 flex-wrap"
                       >
-                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">
+                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-manga-overlay-text">
                           {series[currentIndex].title}
                         </h2>
                         <div className="flex items-center gap-1">
-                          <span className="text-yellow-400 text-2xl md:text-3xl">★</span>
-                          <span className="text-white text-xl md:text-2xl font-medium">
+                          <span className="text-manga-warning text-2xl md:text-3xl" aria-hidden="true">&#9733;</span>
+                          <span className="text-manga-overlay-text text-xl md:text-2xl font-medium">
                             {series[currentIndex].rating}
                           </span>
                         </div>
@@ -107,7 +107,7 @@ const Carousel = ({ series }: CarouselProps) => {
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.3 }}
-                        className="text-lg md:text-xl text-white/80 mb-4"
+                        className="text-lg md:text-xl text-manga-overlay-text-secondary mb-4"
                       >
                         by {series[currentIndex].author}
                       </motion.p>
@@ -121,13 +121,13 @@ const Carousel = ({ series }: CarouselProps) => {
                         {series[currentIndex].tags.slice(0, 3).map((tag) => (
                           <span
                             key={tag}
-                            className="px-3 py-1 bg-white bg-opacity-20 text-white text-sm rounded-full backdrop-blur-sm"
+                            className="rounded-full border border-manga-overlay-border bg-manga-overlay-soft px-3 py-1 text-sm text-manga-overlay-text backdrop-blur-sm"
                           >
                             {tag}
                           </span>
                         ))}
                         {series[currentIndex].tags.length > 3 && (
-                          <span className="px-3 py-1 bg-white bg-opacity-10 text-white text-sm rounded-full backdrop-blur-sm">
+                          <span className="rounded-full border border-manga-overlay-border bg-manga-overlay-soft px-3 py-1 text-sm text-manga-overlay-text-secondary backdrop-blur-sm">
                             +{series[currentIndex].tags.length - 3} more
                           </span>
                         )}
@@ -139,10 +139,10 @@ const Carousel = ({ series }: CarouselProps) => {
                         transition={{ delay: 0.5 }}
                         className="flex items-center gap-4"
                       >
-                        <span className="text-white/80">
+                        <span className="text-manga-overlay-text-secondary">
                           {series[currentIndex].totalChapters} chapters
                         </span>
-                        <span className="text-white/80 capitalize">
+                        <span className="text-manga-overlay-text-secondary capitalize">
                           {series[currentIndex].status}
                         </span>
                       </motion.div>
@@ -160,18 +160,20 @@ const Carousel = ({ series }: CarouselProps) => {
         <>
           <button
             onClick={goToPrevious}
-            className="hidden md:block absolute left-4 top-1/2 transform -translate-y-1/2 p-2 bg-white bg-opacity-20 rounded-full transition-opacity duration-200"
+            className="hidden md:flex absolute left-4 top-1/2 min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-full border border-manga-overlay-border bg-manga-overlay-soft text-manga-overlay-text backdrop-blur-sm transition-colors duration-200 hover:bg-manga-overlay"
             aria-label="Previous slide"
+            type="button"
           >
-            <ChevronLeftIcon className="h-6 w-6 text-white" />
+            <ChevronLeftIcon className="h-6 w-6" />
           </button>
           
           <button
             onClick={goToNext}
-            className="hidden md:block absolute right-4 top-1/2 transform -translate-y-1/2 p-2 bg-white bg-opacity-20 rounded-full transition-opacity duration-200"
+            className="hidden md:flex absolute right-4 top-1/2 min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-full border border-manga-overlay-border bg-manga-overlay-soft text-manga-overlay-text backdrop-blur-sm transition-colors duration-200 hover:bg-manga-overlay"
             aria-label="Next slide"
+            type="button"
           >
-            <ChevronRightIcon className="h-6 w-6 text-white" />
+            <ChevronRightIcon className="h-6 w-6" />
           </button>
         </>
       )}
@@ -185,10 +187,11 @@ const Carousel = ({ series }: CarouselProps) => {
               onClick={() => goToSlide(index)}
               className={`w-2 h-2 rounded-full transition-all duration-200 ${
                 index === currentIndex
-                  ? 'bg-white scale-125'
-                  : 'bg-white bg-opacity-50 hover:bg-opacity-75'
+                  ? 'bg-manga-overlay-text scale-125'
+                  : 'border border-manga-overlay-border bg-manga-overlay-soft hover:bg-manga-overlay-text-secondary'
               }`}
               aria-label={`Go to slide ${index + 1}`}
+              type="button"
             />
           ))}
         </div>

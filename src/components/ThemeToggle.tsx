@@ -25,7 +25,7 @@ const ThemeToggle = ({ className = '', size = 'md' }: ThemeToggleProps) => {
   return (
     <motion.button
       onClick={toggleTheme}
-      className={`rounded-lg bg-manga-surface hover:bg-manga-border border border-manga-border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-manga-accent focus:ring-offset-2 focus:ring-offset-manga-bg ${buttonSizeClasses[size]} ${className}`}
+      className={`rounded-lg border border-manga-border bg-manga-surface transition-colors duration-200 hover:bg-manga-border focus:outline-none focus:ring-2 focus:ring-manga-accent focus:ring-offset-2 focus:ring-offset-manga-bg ${buttonSizeClasses[size]} ${className}`}
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
       title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
       whileHover={{ scale: 1.05 }}
