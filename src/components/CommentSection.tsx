@@ -13,6 +13,7 @@ import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 import { Comment } from '../types';
 import UserFlairs from './UserFlairs';
 import { useAuth } from '../contexts/AuthContext';
+import { Input, Textarea } from './ui/input';
 
 // Emoji picker data
 const EMOJIS = ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇', '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '😋', '😛', '😝', '😜', '🤪', '🤨', '🧐', '🤓', '😎', '🤩', '🥳', '😏', '😒', '😞', '😔', '😟', '😕', '🙁', '☹️', '😣', '😖', '😫', '😩', '🥺', '😢', '😭', '😤', '😠', '😡', '🤬', '🤯', '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓', '🤗', '🤔', '🤭', '🤫', '🤥', '😶', '😐', '😑', '😬', '🙄', '😯', '😦', '😧', '😮', '😲', '🥱', '😴', '🤤', '😪', '😵', '🤐', '🥴', '🤢', '🤮', '🤧', '😷', '🤒', '🤕', '🤑', '🤠', '😈', '👿', '👹', '👺', '🤡', '💩', '👻', '💀', '☠️', '👽', '👾', '🤖', '🎃', '😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾'];
@@ -205,33 +206,25 @@ const CommentSection = ({ contextId, contextType, title = 'Comments' }: CommentS
 
           {/* Author Name Input */}
           <div>
-            <label htmlFor={`author-${contextId}`} className="block text-sm font-medium text-manga-text mb-2">
-              Your Name
-            </label>
-            <input
+            <Input
               id={`author-${contextId}`}
-              type="text"
+              label="Your Name (optional)"
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
-              placeholder="Enter your name (optional)"
-              className="w-full px-3 py-2 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-manga-accent focus:border-transparent"
               aria-label="Your name for comments"
             />
           </div>
           
           {/* Comment Text Input */}
           <div>
-            <label htmlFor={`comment-${contextId}`} className="block text-sm font-medium text-manga-text mb-2">
-              Add a Comment
-            </label>
             <div className="relative">
-              <textarea
+              <Textarea
                 id={`comment-${contextId}`}
+                label="Share your thoughts..."
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Share your thoughts..."
                 rows={3}
-                className="w-full px-3 py-2 pr-20 bg-manga-surface border border-manga-border rounded-lg text-manga-text placeholder-manga-muted focus:outline-none focus:ring-2 focus:ring-manga-accent focus:border-transparent resize-none"
+                className="w-full"
                 aria-label="Comment text"
               />
               

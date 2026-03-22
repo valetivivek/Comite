@@ -4,6 +4,7 @@ import { Bars3Icon, MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/o
 import { dataService } from '../../services/dataService';
 import { Series } from '../../types';
 import { useDialogAccessibility } from '../../hooks/useDialogAccessibility';
+import BrandLogo from '../../components/BrandLogo';
 
 interface Props { children: ReactNode }
 interface AdminNavItem {
@@ -110,7 +111,12 @@ const AdminLayout = ({ children }: Props) => {
       <header className="sticky top-0 z-30 border-b border-manga-border bg-manga-card backdrop-blur-sm">
         <div className="container-spacing flex items-center gap-3 py-3 md:py-4">
           <div className="min-w-0 flex-1">
-            <Link to="/admin" className="text-xl font-bold text-manga-text" aria-label="Admin home">ComiTe Admin</Link>
+            <Link to="/admin" className="inline-flex items-center gap-3" aria-label="Admin home">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-manga-border bg-manga-surface shadow-[0_16px_40px_-28px_rgba(15,23,42,0.9)]">
+                <BrandLogo variant="mark" className="h-6 w-6" />
+              </span>
+              <span className="text-xl font-bold text-manga-text">ComiTe Admin</span>
+            </Link>
             <p className="mt-1 text-xs text-manga-muted md:hidden">Quick edits, uploads, and review tools.</p>
           </div>
 

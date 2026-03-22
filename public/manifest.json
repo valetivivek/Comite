@@ -4,20 +4,20 @@
   "description": "Read comics with a clean, fast, mobile-first UI",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#6366f1",
+  "background_color": "#1c1917",
+  "theme_color": "#b45309",
   "orientation": "portrait-primary",
   "scope": "/",
   "icons": [
     {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable any"
+      "src": "/branding/comite-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
+      "src": "/branding/comite-icon.png",
+      "sizes": "160x160",
       "type": "image/png",
       "purpose": "maskable any"
     }

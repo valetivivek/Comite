@@ -6,6 +6,7 @@ import { dataService } from '../services/dataService';
 import { ReadingHistory, Series } from '../types';
 import Carousel from '../components/Carousel';
 import HeroAnnouncementPill from '../components/HeroAnnouncementPill';
+import { HeroSection } from '../components/ui/hero-odyssey';
 
 const HomePage = () => {
   const [series, setSeries] = useState<Series[]>([]);
@@ -89,7 +90,10 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-manga-bg">
-      <section className="mobile-container pt-8 pb-12 sm:pt-12 sm:pb-16 lg:pt-16">
+      <div className="px-4 sm:px-6 lg:px-8 mt-2 mb-8">
+        <HeroSection />
+      </div>
+      <section className="mobile-container pt-2 pb-12 sm:pt-4 sm:pb-16 lg:pt-8">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)] lg:items-start lg:gap-12">
           <motion.div
             initial={{ opacity: 0, y: 18 }}

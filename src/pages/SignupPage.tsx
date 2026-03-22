@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import PasswordConfirmationPreview from '../components/PasswordConfirmationPreview';
+import { Eye, EyeOff, ChevronLeft } from 'lucide-react';
+import { Button, Logo, BackgroundDecoration, TermsAndConditions } from '@/components/ui/auth-form';
+import { AssistedPasswordConfirmation } from '@/components/ui/assisted-password-confirmation';
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -12,7 +13,6 @@ const SignupPage = () => {
     confirmPassword: '',
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -29,7 +29,6 @@ const SignupPage = () => {
     setIsLoading(true);
     setError('');
 
-    // Basic validation
     if (!formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
       setError('Please fill in all fields');
       setIsLoading(false);
@@ -61,10 +60,8 @@ const SignupPage = () => {
     }
 
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Mock successful signup
       const mockUser = {
         id: `user-${Date.now()}`,
         username: formData.username,
@@ -72,7 +69,7 @@ const SignupPage = () => {
         createdAt: new Date().toISOString(),
         preferences: {
           theme: 'dark' as const,
-          viewMode: 'list' as const, // Default to list view
+          viewMode: 'list' as const,
           itemsPerPage: 10,
           autoMarkAsRead: true,
           notifications: true,
@@ -89,157 +86,129 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-manga-bg flex items-center justify-center px-4">
+    <div className="bg-zinc-950 min-h-screen py-12 sm:py-20 text-zinc-200 selection:bg-zinc-600 relative overflow-hidden">
+      
+      {/* Go Back button */}
+      <div className="absolute top-6 left-6 z-20">
+        <button 
+          onClick={() => navigate('/')} 
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition-colors"
+        >
+          <ChevronLeft size={16} />
+          <span className="text-sm font-medium">Go back</span>
+        </button>
+      </div>
+
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+        className="relative z-10 mx-auto w-full max-w-xl p-4 mt-4"
       >
-        <div className="card p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-manga-text mb-2">Create Account</h1>
-            <p className="text-manga-muted">Join the manga reading community</p>
+        <Logo />
+        
+        <div className="mb-6 text-center">
+          <h1 className="text-2xl font-semibold text-white">Create Account</h1>
+          <p className="mt-2 text-zinc-400">
+            Join the ComiTe reading community
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="mb-8 relative z-20">
+          {error && (
+            <div className="mb-6 rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-center">
+              <p className="text-red-400 text-sm">{error}</p>
+            </div>
+          )}
+
+          <div className="mb-4">
+            <label htmlFor="username" className="mb-1.5 block text-sm font-medium text-zinc-400">
+              Username
+            </label>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Choose a username"
+              className="w-full rounded-md border border-zinc-700 bg-zinc-900 px-3 py-2 text-zinc-200 placeholder-zinc-500 ring-1 ring-transparent transition-shadow focus:outline-0 focus:ring-manga-accent focus:border-manga-accent"
+              required
+              minLength={3}
+              maxLength={32}
+            />
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="theme-danger-surface theme-danger-border rounded-lg border p-3" role="alert" aria-live="polite">
-                <p className="theme-danger-text-strong text-sm">{error}</p>
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-manga-text mb-2">
-                Username
-              </label>
+          <div className="mb-4">
+            <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-zinc-400">
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="your.email@provider.com"
+              className="w-full rounded-md border border-zinc-700 bg-zinc-900 px-3 py-2 text-zinc-200 placeholder-zinc-500 ring-1 ring-transparent transition-shadow focus:outline-0 focus:ring-manga-accent focus:border-manga-accent"
+              required
+            />
+          </div>
+          
+          <div className="mb-4">
+            <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-zinc-400">
+              Password
+            </label>
+            <div className="relative">
               <input
-                type="text"
-                id="username"
-                name="username"
-                value={formData.username}
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                value={formData.password}
                 onChange={handleChange}
+                placeholder="Create a password"
+                className="w-full rounded-md border border-zinc-700 bg-zinc-900 px-3 py-2 pr-10 text-zinc-200 placeholder-zinc-500 ring-1 ring-transparent transition-shadow focus:outline-0 focus:ring-manga-accent focus:border-manga-accent"
                 required
-                className="input"
-                placeholder="Choose a username"
-                autoComplete="username"
-                minLength={3}
-                maxLength={32}
+                minLength={6}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors focus:outline-none"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
+          </div>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-manga-text mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="input"
-                placeholder="Enter your email"
-                autoComplete="email"
-                maxLength={120}
-              />
-            </div>
+          <div className="mb-8">
+            <label htmlFor="confirmPassword" className="mb-1.5 block text-sm font-medium text-zinc-400">
+              Confirm Password
+            </label>
+            <AssistedPasswordConfirmation
+              password={formData.password}
+              confirmPassword={formData.confirmPassword}
+              onChange={(val) => setFormData(prev => ({ ...prev, confirmPassword: val }))}
+            />
+          </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-manga-text mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  className="input pr-10"
-                  placeholder="Create a password"
-                  autoComplete="new-password"
-                  minLength={6}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-manga-muted hover:text-manga-text transition-colors"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  aria-pressed={showPassword}
-                >
-                  {showPassword ? (
-                    <EyeSlashIcon className="h-5 w-5" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-manga-text mb-2">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
-                  className="input pr-10"
-                  placeholder="Confirm your password"
-                  autoComplete="new-password"
-                  minLength={6}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-manga-muted hover:text-manga-text transition-colors"
-                  aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
-                  aria-pressed={showConfirmPassword}
-                >
-                  {showConfirmPassword ? (
-                    <EyeSlashIcon className="h-5 w-5" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
-              <PasswordConfirmationPreview
-                password={formData.password}
-                confirmPassword={formData.confirmPassword}
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? 'Creating Account...' : 'Create Account'}
-            </button>
-          </form>
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? 'Creating Account...' : 'Create Account'}
+          </Button>
 
           <div className="mt-6 text-center">
-            <p className="text-manga-muted text-sm">
+            <p className="text-zinc-400 text-sm">
               Already have an account?{' '}
-              <Link to="/login" className="text-manga-accent hover:brightness-110 transition-colors">
+              <Link to="/login" className="text-manga-accent hover:underline">
                 Sign in
               </Link>
             </p>
           </div>
+        </form>
 
-          <div className="mt-4 text-center">
-            <Link to="/" className="text-manga-muted hover:text-manga-text text-sm transition-colors">
-              ← Back to Home
-            </Link>
-          </div>
-        </div>
+        <TermsAndConditions />
       </motion.div>
+      <BackgroundDecoration />
     </div>
   );
 };

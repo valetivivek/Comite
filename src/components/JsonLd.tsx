@@ -79,7 +79,7 @@ export function generateWebsiteSchema() {
       "name": "Comite",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://comitecomic.vercel.app/logo.png"
+        "url": "https://comitecomic.vercel.app/branding/comite-primary.png"
       }
     }
   };

@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { Eye, EyeOff, ChevronLeft } from 'lucide-react';
+import { Button, Logo, SocialButtons, Divider, BackgroundDecoration, TermsAndConditions } from '@/components/ui/auth-form';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -37,7 +38,6 @@ const LoginPage = () => {
     setIsLoading(true);
     setError('');
 
-    // Basic validation
     if (!formData.email || !formData.password) {
       setError('Please fill in all fields');
       setIsLoading(false);
@@ -51,10 +51,8 @@ const LoginPage = () => {
     }
 
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Mock successful login
       const mockUser = {
         id: 'user-1',
         username: formData.email.split('@')[0],
@@ -63,7 +61,7 @@ const LoginPage = () => {
         createdAt: new Date().toISOString(),
         preferences: {
           theme: 'dark' as const,
-          viewMode: 'list' as const, // Default to list view
+          viewMode: 'list' as const,
           itemsPerPage: 10,
           autoMarkAsRead: true,
           notifications: true,
@@ -71,7 +69,6 @@ const LoginPage = () => {
       };
 
       localStorage.setItem('manga-reader-user', JSON.stringify(mockUser));
-      // Elevate to admin if email is in allowlist
       try {
         const allow = localStorage.getItem('comite-admin-emails');
         const list = allow ? (JSON.parse(allow) as string[]) : ['ultimategamervivek@gmail.com'];
@@ -92,100 +89,112 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-manga-bg flex items-center justify-center px-4">
+    <div className="bg-zinc-950 min-h-screen py-12 sm:py-20 text-zinc-200 selection:bg-zinc-600 relative overflow-hidden">
+      
+      {/* Go Back button placed statically at the top left of the container */}
+      <div className="absolute top-6 left-6 z-20">
+        <button 
+          onClick={() => navigate('/')} 
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-800/50 transition-colors"
+        >
+          <ChevronLeft size={16} />
+          <span className="text-sm font-medium">Go back</span>
+        </button>
+      </div>
+
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+        className="relative z-10 mx-auto w-full max-w-xl p-4 mt-8"
       >
-        <div className="card p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-manga-text mb-2">Welcome Back</h1>
-            <p className="text-manga-muted">Sign in to your account</p>
-          </div>
+        <Logo />
+        
+        <div className="mb-6 text-center">
+          <h1 className="text-2xl font-semibold text-white">Sign in to your account</h1>
+          <p className="mt-2 text-zinc-400">
+            Don't have an account?{" "}
+            <Link to="/signup" className="text-manga-accent hover:underline">
+              Create one
+            </Link>
+          </p>
+        </div>
+        
+        <SocialButtons />
+        <Divider />
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="theme-danger-surface theme-danger-border rounded-lg border p-3" role="alert" aria-live="polite">
-                <p className="theme-danger-text-strong text-sm">{error}</p>
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-manga-text mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="input"
-                placeholder="Enter your email"
-                autoComplete="email"
-                maxLength={120}
-              />
+        <form onSubmit={handleSubmit} className="mb-8 relative z-20">
+          {error && (
+            <div className="mb-6 rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-center">
+              <p className="text-red-400 text-sm">{error}</p>
             </div>
+          )}
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-manga-text mb-2">
+          <div className="mb-4">
+            <label
+              htmlFor="email"
+              className="mb-1.5 block text-sm font-medium text-zinc-400"
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="your.email@provider.com"
+              className="w-full rounded-md border border-zinc-700 
+              bg-zinc-900 px-3 py-2 text-zinc-200
+              placeholder-zinc-500 
+              ring-1 ring-transparent transition-shadow focus:outline-0 focus:ring-manga-accent focus:border-manga-accent"
+              required
+            />
+          </div>
+          
+          <div className="mb-6">
+            <div className="mb-1.5 flex items-end justify-between">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-zinc-400"
+              >
                 Password
               </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  className="input pr-10"
-                  placeholder="Enter your password"
-                  autoComplete="current-password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-manga-muted hover:text-manga-text transition-colors"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  aria-pressed={showPassword}
-                >
-                  {showPassword ? (
-                    <EyeSlashIcon className="h-5 w-5" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
+              <a href="#" className="text-sm text-manga-accent hover:underline">
+                Forgot?
+              </a>
             </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? 'Signing In...' : 'Sign In'}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-manga-muted text-sm">
-              Don't have an account?{' '}
-              <Link to="/signup" className="text-manga-accent hover:brightness-110 transition-colors">
-                Sign up
-              </Link>
-            </p>
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="••••••••••••"
+                className="w-full rounded-md border border-zinc-700 
+                bg-zinc-900 px-3 py-2 pr-10 text-zinc-200
+                placeholder-zinc-500 
+                ring-1 ring-transparent transition-shadow focus:outline-0 focus:ring-manga-accent focus:border-manga-accent"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors focus:outline-none"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? 'Signing In...' : 'Sign in'}
+          </Button>
+        </form>
 
-          <div className="mt-4 text-center">
-            <Link to="/" className="text-manga-muted hover:text-manga-text text-sm transition-colors">
-              ← Back to Home
-            </Link>
-          </div>
-        </div>
+        <TermsAndConditions />
       </motion.div>
+      <BackgroundDecoration />
     </div>
   );
 };

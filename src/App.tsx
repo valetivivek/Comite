@@ -35,6 +35,7 @@ import SettingsPage from './pages/SettingsPage';
 import NotificationsPage from './pages/NotificationsPage';
 import LibraryPage from './pages/LibraryPage';
 import NotFoundPage from './pages/NotFoundPage';
+import BackToTop from './components/BackToTop';
 
 const SIGNATURE = "cricky";
 
@@ -55,6 +56,7 @@ function App() {
         <Router>
           <div className="min-h-screen bg-manga-bg" data-signature={SIGNATURE}>
             <Layout>
+              <BackToTop />
               <Routes>
                 <Route path="/" element={<DashboardPage />} />
                 <Route path="/welcome" element={<HomePage />} />

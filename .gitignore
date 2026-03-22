@@ -35,3 +35,6 @@ dist-ssr
 
 # Legacy Next.js artifacts in this Vite repo
 next-env.d.ts
+
+# Local project documentation workspace
+docs/

@@ -4,15 +4,17 @@
 import { ReactNode, useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  MagnifyingGlassIcon,
+import {
   XMarkIcon,
   UserIcon,
   ClockIcon,
   BellIcon,
   BookmarkIcon,
   BookOpenIcon,
-  CheckCircleIcon
+  CheckCircleIcon,
+  HomeIcon,
+  FireIcon,
+  SparklesIcon,
 } from '@heroicons/react/24/outline';
 import { User, Notification } from '../types';
 import { useAuth } from '../contexts/AuthContext';
@@ -22,9 +24,12 @@ import Footer from './Footer';
 import UserFlairs from './UserFlairs';
 import FlairManager from './FlairManager';
 import LazyImage from './LazyImage';
-import ThemeToggle from './ThemeToggle';
 import DestructiveTextButton from './DestructiveTextButton';
 import { useDialogAccessibility } from '../hooks/useDialogAccessibility';
+import BrandLogo from './BrandLogo';
+import { cn } from '@/lib/utils';
+import ExpandableSearchBar from '@/components/ui/expandable-search-bar';
+import { MagnetizeButton } from '@/components/ui/magnetize-button';
 
 interface LayoutProps {
   children: ReactNode;
@@ -39,10 +44,10 @@ const Layout = ({ children }: LayoutProps) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isSurpriseMeRolling, setIsSurpriseMeRolling] = useState(false);
+  const [hoveredNavItem, setHoveredNavItem] = useState<string | null>(null);
   const [flairUpdateKey, setFlairUpdateKey] = useState(0);
   const [showEasterGif, setShowEasterGif] = useState(false);
   const [surpriseMessage, setSurpriseMessage] = useState<string | null>(null);
-  const searchRef = useRef<HTMLDivElement>(null);
   const profileDrawerRef = useRef<HTMLDivElement>(null);
   const easterGifDialogRef = useRef<HTMLDivElement>(null);
   const {
@@ -53,13 +58,14 @@ const Layout = ({ children }: LayoutProps) => {
     showResults,
     setShowResults,
     clearSearch,
-    handleResultClick
+    handleResultClick,
   } = useNavSearch();
+
   const primaryNavItems = [
-    { to: '/', label: 'Browse', end: true },
-    { to: '/popular', label: 'Popular' },
-    { to: '/new-releases', label: 'New Releases' },
-    { to: '/history', label: 'History' }
+    { to: '/', label: 'Browse', end: true, icon: HomeIcon, gradient: 'radial-gradient(circle, rgba(249,115,22,0.14) 0%, transparent 70%)' },
+    { to: '/popular', label: 'Popular', end: false, icon: FireIcon, gradient: 'radial-gradient(circle, rgba(234,179,8,0.14) 0%, transparent 70%)' },
+    { to: '/new-releases', label: 'New Releases', end: false, icon: SparklesIcon, gradient: 'radial-gradient(circle, rgba(14,165,233,0.14) 0%, transparent 70%)' },
+    { to: '/history', label: 'History', end: false, icon: ClockIcon, gradient: 'radial-gradient(circle, rgba(155,170,114,0.14) 0%, transparent 70%)' },
   ];
 
   const closeProfileDrawer = () => setIsProfileDrawerOpen(false);
@@ -69,13 +75,13 @@ const Layout = ({ children }: LayoutProps) => {
     isOpen: isProfileDrawerOpen,
     isEnabled: !showEasterGif,
     onClose: closeProfileDrawer,
-    containerRef: profileDrawerRef
+    containerRef: profileDrawerRef,
   });
 
   useDialogAccessibility({
     isOpen: showEasterGif,
     onClose: closeEasterGif,
-    containerRef: easterGifDialogRef
+    containerRef: easterGifDialogRef,
   });
 
   useEffect(() => {
@@ -89,11 +95,9 @@ const Layout = ({ children }: LayoutProps) => {
 
   useEffect(() => {
     if (!surpriseMessage) return;
-
     const timeoutId = window.setTimeout(() => {
       setSurpriseMessage(null);
     }, 3000);
-
     return () => window.clearTimeout(timeoutId);
   }, [surpriseMessage]);
 
@@ -103,27 +107,21 @@ const Layout = ({ children }: LayoutProps) => {
       try {
         const notificationData = await dataService.getNotifications();
         setNotifications(notificationData);
-        setUnreadCount(notificationData.filter(n => !n.isRead).length);
+        setUnreadCount(notificationData.filter((n) => !n.isRead).length);
       } catch (error) {
         console.error('Error loading notifications:', error);
       }
     };
-
     loadNotifications();
   }, []);
 
   const handleNotificationClick = async (notification: Notification) => {
-    // Mark as read
     await dataService.markNotificationAsRead(notification.id);
-    
-    // Update local state
-    setNotifications(prev => 
-      prev.map(n => n.id === notification.id ? { ...n, isRead: true } : n)
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === notification.id ? { ...n, isRead: true } : n))
     );
-    setUnreadCount(prev => Math.max(0, prev - 1));
+    setUnreadCount((prev) => Math.max(0, prev - 1));
     setIsNotificationOpen(false);
-
-    // Navigate to chapter if available
     if (notification.chapterId) {
       navigate(`/series/${notification.seriesId}/chapter/${notification.chapterId}`);
     } else {
@@ -132,11 +130,10 @@ const Layout = ({ children }: LayoutProps) => {
   };
 
   const markAllNotificationsAsRead = async () => {
-    // Mark all unread notifications as read in service and state
-    const unread = notifications.filter(n => !n.isRead);
+    const unread = notifications.filter((n) => !n.isRead);
     if (unread.length === 0) return;
-    await Promise.all(unread.map(n => dataService.markNotificationAsRead(n.id)));
-    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+    await Promise.all(unread.map((n) => dataService.markNotificationAsRead(n.id)));
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
     setUnreadCount(0);
   };
 
@@ -152,37 +149,21 @@ const Layout = ({ children }: LayoutProps) => {
       return;
     }
 
-    // Easter egg for admins/owner
-    if (isAdmin || isOwner) {
-      if (Math.random() < 0.5) {
-        // Show Rickroll GIF inline to avoid autoplay restrictions
-        setShowEasterGif(true);
-      } else {
-        alert("Why don't you search it up yourself? 😉");
-      }
-      return;
-    }
-    
     setIsSurpriseMeRolling(true);
-    
     try {
-      // Start both the animation and the selection logic in parallel
       const [selectedSeries] = await Promise.all([
-        user 
+        user
           ? dataService.getPersonalizedSurpriseSeries(user.id)
           : dataService.getRandomSeries(),
-        new Promise(resolve => setTimeout(resolve, 1000)) // Minimum 1 second wait
+        new Promise((resolve) => setTimeout(resolve, 1000)),
       ]);
-      
-      // Wait for either 1.5 seconds total or until selection is complete
-      const maxWait = new Promise(resolve => setTimeout(resolve, 1500));
+      const maxWait = new Promise((resolve) => setTimeout(resolve, 1500));
       await Promise.race([Promise.resolve(selectedSeries), maxWait]);
 
       if (!selectedSeries) {
         setSurpriseMessage('No series is available for a surprise pick right now.');
         return;
       }
-
       if (selectedSeries) {
         navigate(`/series/${selectedSeries.id}`);
         closeProfileDrawer();
@@ -196,7 +177,7 @@ const Layout = ({ children }: LayoutProps) => {
   };
 
   const handleFlairsUpdated = () => {
-    setFlairUpdateKey(prev => prev + 1);
+    setFlairUpdateKey((prev) => prev + 1);
   };
 
   const handleSignOut = () => {
@@ -208,261 +189,173 @@ const Layout = ({ children }: LayoutProps) => {
     navigate('/');
   };
 
-
   const clearAllNotifications = async () => {
     await dataService.clearAllNotifications();
     setNotifications([]);
     setUnreadCount(0);
   };
 
-  // Handle click outside search results
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setShowResults(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [setShowResults]);
-
 
   return (
     <div className="min-h-screen bg-manga-bg">
-      {/* Top Navigation Bar */}
-      <nav className="static z-50 bg-manga-card border-b border-manga-border">
-        <div className="mobile-container py-3 sm:py-4">
-          <div className="flex items-center justify-between gap-4">
-            {/* Wordmark */}
-            <div className="min-w-0">
-              <Link 
-                to="/" 
-                onClick={(e) => { e.preventDefault(); navigate('/?page=1', { replace: true, state: { resetHome: true } }); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                className="group relative inline-flex flex-col"
-              >
-                <span
-                  className="pointer-events-none absolute inset-x-3 top-2 h-7 rounded-full bg-manga-accent/25 blur-2xl transition-opacity duration-300 group-hover:opacity-100"
-                  aria-hidden="true"
-                />
-                <span className="relative bg-gradient-to-r from-manga-accent-light via-manga-accent to-manga-warning bg-clip-text font-heading text-[1.95rem] font-semibold tracking-[-0.04em] text-transparent drop-shadow-[0_0_24px_rgba(180,83,9,0.2)] transition-transform duration-300 group-hover:scale-[1.02] sm:text-[2.2rem]">
-                  ComiTe
-                </span>
-              </Link>
-              <p className="eyebrow mt-1 hidden sm:block">
-                Read manga, manhwa & comics without losing your place
-              </p>
-            </div>
+      {/* ── Top Navigation Bar ── */}
+      <nav className="navbar-container">
+        <div className="mobile-container">
+          <div className="flex items-center h-14">
+            {/* Logo */}
+            <Link
+              to="/"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate('/?page=1', { replace: true, state: { resetHome: true } });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="flex items-center gap-2.5 flex-shrink-0"
+            >
+              <BrandLogo variant="mark" className="h-7 w-7" />
+              <span className="text-[1.25rem] font-semibold tracking-[-0.03em] text-manga-text">
+                <span style={{ fontFamily: "'CaskaydiaMono NF', monospace" }}>Comi</span>
+                <span style={{ fontFamily: "'Hurmit NF', monospace" }}>Te</span>
+              </span>
+            </Link>
 
-            {/* Primary Navigation - Desktop */}
-            <div className="hidden lg:flex items-center gap-1 rounded-full border border-manga-border/70 bg-manga-surface/80 p-1 shadow-[0_14px_40px_-28px_rgba(15,23,42,0.8)] backdrop-blur">
+            {/* Desktop Nav Links — Animated Tabs */}
+            <div className="hidden lg:flex items-center ml-6 xl:ml-10">
               {primaryNavItems.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   end={item.end}
-                  className={({ isActive }) =>
-                    `rounded-full px-4 py-2 text-[0.95rem] font-medium tracking-[0.01em] transition-all duration-200 ${
-                      isActive
-                        ? 'bg-manga-card text-manga-accent shadow-[0_10px_25px_-18px_rgba(99,102,241,0.9)]'
-                        : 'text-manga-muted hover:bg-manga-card hover:text-manga-text'
-                    }`
-                  }
+                  className="py-2 relative"
+                  onMouseEnter={() => setHoveredNavItem(item.to)}
+                  onMouseLeave={() => setHoveredNavItem(null)}
                 >
-                  {item.label}
+                  {({ isActive }) => (
+                    <>
+                      <div className={cn(
+                        'px-5 py-2 relative duration-300 transition-colors hover:!text-manga-accent',
+                        isActive ? 'text-manga-accent' : 'text-manga-muted'
+                      )}>
+                        <span className="relative z-10">{item.label}</span>
+                        {hoveredNavItem === item.to && (
+                          <motion.div
+                            layoutId="nav-hover-bg"
+                            className="absolute bottom-0 left-0 right-0 w-full h-full bg-manga-accent/10"
+                            style={{ borderRadius: 6 }}
+                          />
+                        )}
+                      </div>
+                      {isActive && (
+                        <motion.div
+                          layoutId="nav-active"
+                          className="absolute bottom-0 left-0 right-0 w-full h-0.5 bg-manga-accent"
+                        />
+                      )}
+                      {hoveredNavItem === item.to && (
+                        <motion.div
+                          layoutId="nav-hover"
+                          className="absolute bottom-0 left-0 right-0 w-full h-0.5 bg-manga-accent"
+                        />
+                      )}
+                    </>
+                  )}
                 </NavLink>
               ))}
             </div>
 
-            {/* Search Bar - Desktop */}
-            <div className="hidden lg:flex items-center flex-1 max-w-md mx-2" ref={searchRef}>
-              <div className="relative w-full overflow-hidden rounded-full border border-manga-border/70 bg-manga-surface/85 shadow-[0_16px_45px_-32px_rgba(15,23,42,0.85)] backdrop-blur">
-                <span className="pointer-events-none absolute inset-y-2 left-8 w-px bg-manga-border/70" aria-hidden="true" />
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-manga-muted" />
-                <input
-                  type="text"
-                  placeholder="Search titles or authors"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onFocus={() => setShowResults(true)}
-                  className="w-full bg-transparent py-2.5 pl-12 pr-10 text-manga-text placeholder-manga-muted transition-colors focus:outline-none focus:ring-2 focus:ring-manga-accent/70"
-                  aria-label="Search titles or authors"
-                />
-                {query && (
-                  <button
-                    onClick={clearSearch}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full p-1.5 transition-colors hover:bg-manga-border"
-                    aria-label="Clear search"
-                  >
-                    <XMarkIcon className="h-4 w-4 text-manga-muted" />
-                  </button>
-                )}
-                
-                {/* Search Results Dropdown */}
-                <AnimatePresence>
-                  {showResults && (query || results.length > 0) && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="absolute top-full left-0 right-0 mt-1 bg-manga-card border border-manga-border rounded-lg shadow-xl z-50 max-h-80 overflow-y-auto"
-                    >
-                      {isSearching ? (
-                        <div className="p-4 text-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-manga-accent mx-auto"></div>
-                          <p className="text-sm text-manga-muted mt-2">Searching...</p>
-                        </div>
-                      ) : results.length > 0 ? (
-                        <div className="py-2">
-                          {results.slice(0, 8).map((series) => (
-                            <Link
-                              key={series.id}
-                              to={`/series/${series.id}`}
-                              onClick={handleResultClick}
-                              className="block px-4 py-3 hover:bg-manga-surface transition-colors"
-                            >
-                              <div className="flex items-center gap-3">
-                                <LazyImage
-                                  src={series.coverImage}
-                                  alt={series.title}
-                                  className="w-10 h-14 rounded"
-                                />
-                                <div className="flex-1 min-w-0">
-                                  <h4 className="text-sm font-medium text-manga-text truncate">
-                                    {series.title}
-                                  </h4>
-                                  <p className="text-xs text-manga-muted">
-                                    by {series.author}
-                                  </p>
-                                </div>
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-                      ) : query ? (
-                        <div className="p-4 text-center">
-                          <p className="text-sm text-manga-muted">No results found</p>
-                        </div>
-                      ) : null}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
+            {/* Spacer */}
+            <div className="flex-1" />
 
-            {/* Mobile Search Bar */}
-            <div className="flex lg:hidden items-center flex-1 max-w-[200px] mx-1" ref={searchRef}>
-              <div className="relative w-full overflow-hidden rounded-full border border-manga-border/70 bg-manga-surface/85 shadow-[0_16px_45px_-32px_rgba(15,23,42,0.85)] backdrop-blur">
-                <span className="pointer-events-none absolute inset-y-2 left-7 w-px bg-manga-border/70" aria-hidden="true" />
-                <MagnifyingGlassIcon className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-manga-muted" />
-                <input
-                  type="text"
-                  placeholder="Search titles or authors"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onFocus={() => setShowResults(true)}
-                  className="w-full bg-transparent py-2 pl-9 pr-8 text-sm text-manga-text placeholder-manga-muted transition-colors focus:outline-none focus:ring-2 focus:ring-manga-accent/70"
-                  aria-label="Search titles or authors"
-                />
-                {query && (
-                  <button
-                    onClick={clearSearch}
-                    className="absolute right-1.5 top-1/2 transform -translate-y-1/2 rounded-full p-1 transition-colors hover:bg-manga-border"
-                    aria-label="Clear search"
+            {/* Right: Search + Notifications + Profile */}
+            <div className="flex items-center gap-0.5">
+              {/* Search */}
+              <ExpandableSearchBar
+                expandDirection="left"
+                placeholder="Search titles or authors"
+                value={query}
+                onChange={(v) => {
+                  setQuery(v);
+                  setShowResults(true);
+                }}
+                onClear={clearSearch}
+                width={340}
+              >
+                {/* Search results dropdown */}
+                {showResults && (query || results.length > 0) && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.12 }}
+                    className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-manga-card border border-manga-border rounded-xl shadow-xl z-50 overflow-hidden"
                   >
-                    <XMarkIcon className="h-3 w-3 text-manga-muted" />
-                  </button>
+                    {isSearching ? (
+                      <div className="p-4 text-center">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-manga-accent mx-auto" />
+                        <p className="text-sm text-manga-muted mt-2">Searching...</p>
+                      </div>
+                    ) : results.length > 0 ? (
+                      <div className="py-1">
+                        {results.slice(0, 8).map((series) => (
+                          <Link
+                            key={series.id}
+                            to={`/series/${series.id}`}
+                            onClick={() => handleResultClick()}
+                            className="flex items-center gap-3 px-3 py-2.5 hover:bg-manga-surface transition-colors"
+                          >
+                            <LazyImage
+                              src={series.coverImage}
+                              alt={series.title}
+                              className="w-9 h-12 rounded"
+                            />
+                            <div className="min-w-0 flex-1">
+                              <h4 className="text-sm font-medium text-manga-text truncate">
+                                {series.title}
+                              </h4>
+                              <p className="text-xs text-manga-muted">by {series.author}</p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    ) : query ? (
+                      <div className="p-4 text-center">
+                        <p className="text-sm text-manga-muted">No results found</p>
+                      </div>
+                    ) : null}
+                  </motion.div>
                 )}
-                
-                {/* Mobile Search Results Dropdown */}
-                <AnimatePresence>
-                  {showResults && (query || results.length > 0) && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="absolute top-full left-0 right-0 mt-1 bg-manga-card border border-manga-border rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto"
-                    >
-                      {isSearching ? (
-                        <div className="p-3 text-center">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-manga-accent mx-auto"></div>
-                          <p className="text-xs text-manga-muted mt-2">Searching...</p>
-                        </div>
-                      ) : results.length > 0 ? (
-                        <div className="py-1">
-                          {results.slice(0, 5).map((series) => (
-                            <Link
-                              key={series.id}
-                              to={`/series/${series.id}`}
-                              onClick={handleResultClick}
-                              className="block px-3 py-2 hover:bg-manga-surface transition-colors"
-                            >
-                              <div className="flex items-center gap-2">
-                                <LazyImage
-                                  src={series.coverImage}
-                                  alt={series.title}
-                                  className="w-8 h-10 rounded"
-                                />
-                                <div className="flex-1 min-w-0">
-                                  <h4 className="text-xs font-medium text-manga-text truncate">
-                                    {series.title}
-                                  </h4>
-                                  <p className="text-xs text-manga-muted truncate">
-                                    by {series.author}
-                                  </p>
-                                </div>
-                              </div>
-                            </Link>
-                          ))}
-                        </div>
-                      ) : query ? (
-                        <div className="p-3 text-center">
-                          <p className="text-xs text-manga-muted">No results found</p>
-                        </div>
-                      ) : null}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
+              </ExpandableSearchBar>
 
-            {/* Right Side Icons */}
-            <div className="flex items-center gap-1 rounded-full border border-manga-border/70 bg-manga-surface/80 p-1 shadow-[0_14px_40px_-28px_rgba(15,23,42,0.8)] backdrop-blur sm:gap-1.5">
-              {/* Theme Toggle */}
-              <ThemeToggle size="md" />
-              
-              {/* Notification Icon */}
+              {/* Notifications */}
               <div className="relative">
                 <button
                   onClick={() => setIsNotificationOpen(!isNotificationOpen)}
-                  className="p-2 rounded-lg bg-manga-surface hover:bg-manga-border transition-colors relative"
+                  className="navbar-icon-btn"
                   aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
                   aria-haspopup="dialog"
                   aria-expanded={isNotificationOpen}
                   aria-controls="notifications-panel"
                   title={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
                 >
-                  <BellIcon className="h-6 w-6 text-manga-text" />
+                  <BellIcon className="h-5 w-5" />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-manga-accent text-manga-on-accent text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    <span className="absolute -top-0.5 -right-0.5 bg-manga-accent text-manga-on-accent text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center leading-none">
                       {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                   )}
                 </button>
 
-                {/* Notification Dropdown */}
                 <AnimatePresence>
                   {isNotificationOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
+                      initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                      transition={{ duration: 0.15 }}
                       id="notifications-panel"
                       role="region"
                       aria-label="Notifications"
-                      className="absolute right-0 top-full mt-2 w-80 bg-manga-card border border-manga-border rounded-lg shadow-xl z-50"
+                      className="absolute right-0 top-full mt-2 w-80 bg-manga-card border border-manga-border rounded-xl shadow-xl z-50"
                     >
                       <div className="p-3">
                         <div className="flex items-center justify-between mb-2">
@@ -496,7 +389,9 @@ const Layout = ({ children }: LayoutProps) => {
                         </div>
 
                         {notifications.length === 0 ? (
-                          <p className="text-manga-muted text-sm text-center py-4">No notifications</p>
+                          <p className="text-manga-muted text-sm text-center py-4">
+                            No notifications
+                          </p>
                         ) : (
                           <ul className="space-y-2 max-h-72 overflow-y-auto">
                             <AnimatePresence initial={false}>
@@ -510,16 +405,26 @@ const Layout = ({ children }: LayoutProps) => {
                                   <button
                                     onClick={() => handleNotificationClick(notification)}
                                     className={`w-full text-left p-3 rounded-lg border transition-colors flex items-start gap-3 ${
-                                      notification.isRead 
-                                        ? 'bg-manga-surface hover:bg-manga-border border-manga-border' 
+                                      notification.isRead
+                                        ? 'bg-manga-surface hover:bg-manga-border border-manga-border'
                                         : 'bg-manga-accent/10 hover:bg-manga-accent/15 border-manga-accent/20'
                                     } active:scale-[0.99]`}
                                   >
-                                    <div className={`mt-0.5 h-8 w-8 flex items-center justify-center rounded-lg flex-shrink-0 ${notification.isRead ? 'bg-manga-surface border border-manga-border' : 'bg-manga-accent text-manga-on-accent'} `}>
+                                    <div
+                                      className={`mt-0.5 h-8 w-8 flex items-center justify-center rounded-lg flex-shrink-0 ${
+                                        notification.isRead
+                                          ? 'bg-manga-surface border border-manga-border'
+                                          : 'bg-manga-accent text-manga-on-accent'
+                                      }`}
+                                    >
                                       {notification.type === 'new_chapter' ? (
-                                        <BookOpenIcon className={`h-5 w-5 ${notification.isRead ? 'text-manga-accent' : 'text-manga-on-accent'}`} />
+                                        <BookOpenIcon
+                                          className={`h-5 w-5 ${notification.isRead ? 'text-manga-accent' : 'text-manga-on-accent'}`}
+                                        />
                                       ) : (
-                                        <CheckCircleIcon className={`h-5 w-5 ${notification.isRead ? 'text-manga-accent' : 'text-manga-on-accent'}`} />
+                                        <CheckCircleIcon
+                                          className={`h-5 w-5 ${notification.isRead ? 'text-manga-accent' : 'text-manga-on-accent'}`}
+                                        />
                                       )}
                                     </div>
                                     <div className="min-w-0 flex-1">
@@ -545,25 +450,23 @@ const Layout = ({ children }: LayoutProps) => {
                 </AnimatePresence>
               </div>
 
-              {/* Profile Icon */}
+              {/* Profile */}
               <button
                 onClick={() => setIsProfileDrawerOpen(true)}
-                className="p-2 rounded-lg bg-manga-surface hover:bg-manga-border transition-colors"
+                className="navbar-icon-btn"
                 aria-label="Open profile dashboard"
                 aria-haspopup="dialog"
                 aria-expanded={isProfileDrawerOpen}
                 title="Open profile dashboard"
               >
-                <UserIcon className="h-6 w-6 text-manga-text" />
+                <UserIcon className="h-5 w-5" />
               </button>
             </div>
           </div>
         </div>
       </nav>
 
-
-
-      {/* Profile Dashboard Drawer */}
+      {/* ── Profile Dashboard Drawer ── */}
       <AnimatePresence>
         {isProfileDrawerOpen && (
           <motion.div
@@ -592,7 +495,9 @@ const Layout = ({ children }: LayoutProps) => {
           >
             <div className="p-6">
               <div className="flex items-center justify-between mb-8">
-                <h2 id="profile-drawer-title" className="text-xl font-bold text-manga-text">Dashboard</h2>
+                <h2 id="profile-drawer-title" className="text-xl font-bold text-manga-text">
+                  Dashboard
+                </h2>
                 <button
                   type="button"
                   onClick={closeProfileDrawer}
@@ -607,7 +512,6 @@ const Layout = ({ children }: LayoutProps) => {
               <div className="space-y-4">
                 {user ? (
                   <>
-                    {/* User Profile Section */}
                     <div className="p-4 bg-manga-surface rounded-lg">
                       <div className="flex items-center space-x-3 mb-3">
                         <div className="w-12 h-12 bg-manga-accent rounded-full flex items-center justify-center">
@@ -618,24 +522,26 @@ const Layout = ({ children }: LayoutProps) => {
                           <p className="text-sm text-manga-muted">{user.email}</p>
                         </div>
                       </div>
-                      {/* Admin/Owner badges or user flairs */}
                       {isAdmin ? (
                         <div className="flex items-center gap-2 mt-2" aria-label="Admin badges">
                           {isOwner && (
-                            <span className="theme-chip theme-chip-info px-2 py-1 text-xs">Owner</span>
+                            <span className="theme-chip theme-chip-info px-2 py-1 text-xs">
+                              Owner
+                            </span>
                           )}
-                          <span className="theme-chip theme-chip-danger px-2 py-1 text-xs">Admin</span>
+                          <span className="theme-chip theme-chip-danger px-2 py-1 text-xs">
+                            Admin
+                          </span>
                         </div>
                       ) : (
-                        <UserFlairs 
+                        <UserFlairs
                           key={`${user.id}-${flairUpdateKey}`}
-                          userId={user.id} 
-                          variant="dashboard" 
+                          userId={user.id}
+                          variant="dashboard"
                         />
                       )}
                     </div>
 
-                    {/* Dashboard Options */}
                     <div className="space-y-2">
                       {isAdmin && (
                         <Link
@@ -683,7 +589,6 @@ const Layout = ({ children }: LayoutProps) => {
                   </>
                 ) : (
                   <>
-                    {/* Guest User Options */}
                     <div className="space-y-2">
                       <Link
                         to="/login"
@@ -712,34 +617,15 @@ const Layout = ({ children }: LayoutProps) => {
                     </div>
                   </>
                 )}
-                
-                {/* Flair Manager - hide for admin/owner */}
+
+                {/* Flair Manager */}
                 {user && !isAdmin && !isOwner && (
                   <div className="mt-4 pt-4 border-t border-manga-border">
-                    <FlairManager 
-                      userId={user.id} 
-                      onFlairsUpdated={handleFlairsUpdated}
-                    />
+                    <FlairManager userId={user.id} onFlairsUpdated={handleFlairsUpdated} />
                   </div>
                 )}
-                
-                {/* Surprise Me Button - Available for all users */}
-                <div className="mt-4 pt-4 border-t border-manga-border">
-                  <button
-                    onClick={handleSurpriseMe}
-                    disabled={isSurpriseMeRolling}
-                    className={`flex items-center px-4 py-3 rounded-lg text-manga-text hover:bg-manga-surface transition-colors w-full text-left ${
-                      isSurpriseMeRolling ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
-                    aria-label="Surprise me"
-                    aria-busy={isSurpriseMeRolling}
-                  >
-                    <span className={`mr-3 text-lg ${isSurpriseMeRolling ? 'dice-rolling' : ''}`}>🎲</span>
-                    {isSurpriseMeRolling ? 'Rolling...' : 'Surprise me'}
-                  </button>
-                </div>
-                
-                {/* Sign Out Button - Only for signed-in users */}
+
+                {/* Sign Out */}
                 {user && (
                   <div className="mt-4 border-t border-manga-border px-4 pt-4">
                     <DestructiveTextButton
@@ -752,22 +638,56 @@ const Layout = ({ children }: LayoutProps) => {
                     </DestructiveTextButton>
                   </div>
                 )}
-                
+
+                {/* Surprise Me — MagnetizeButton */}
+                <div className="mt-4 pt-4 border-t border-manga-border">
+                  <MagnetizeButton
+                    onClick={handleSurpriseMe}
+                    isLoading={isSurpriseMeRolling}
+                    aria-label="Surprise me"
+                    aria-busy={isSurpriseMeRolling}
+                    particleCount={14}
+                  />
+                </div>
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Main content */}
+      {/* ── Main Content ── */}
       <div className="flex flex-col min-h-screen">
-        <main id="main" className="flex-1">
+        <main id="main" className="flex-1 pb-16 lg:pb-0">
           {children}
         </main>
         <Footer />
       </div>
 
-      {/* Admin/Owner Easter GIF Overlay */}
+      {/* ── Mobile Bottom Navigation ── */}
+      <nav className="mobile-bottom-bar lg:hidden" aria-label="Mobile navigation">
+        {primaryNavItems.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            end={item.end}
+            className={({ isActive }) =>
+              `mobile-bottom-link group ${isActive ? 'mobile-bottom-link-active' : ''}`
+            }
+          >
+            <span
+              className="navbar-link-glow"
+              style={{ background: item.gradient }}
+              aria-hidden="true"
+            />
+            <item.icon className="h-5 w-5 relative z-10" />
+            <span className="text-[0.625rem] font-medium relative z-10 leading-tight">
+              {item.label}
+            </span>
+          </NavLink>
+        ))}
+      </nav>
+
+      {/* ── Easter Egg GIF Overlay ── */}
       <AnimatePresence>
         {showEasterGif && (
           <motion.div
@@ -786,7 +706,9 @@ const Layout = ({ children }: LayoutProps) => {
               tabIndex={-1}
               onClick={(event) => event.stopPropagation()}
             >
-              <h2 id="easter-gif-title" className="sr-only">Surprise video</h2>
+              <h2 id="easter-gif-title" className="sr-only">
+                Surprise video
+              </h2>
               <div className="relative">
                 <button
                   className="absolute -top-3 -right-3 bg-manga-card border border-manga-border rounded-full p-2"
@@ -807,6 +729,7 @@ const Layout = ({ children }: LayoutProps) => {
         )}
       </AnimatePresence>
 
+      {/* ── Surprise Toast ── */}
       <AnimatePresence>
         {surpriseMessage && (
           <motion.div
@@ -815,16 +738,21 @@ const Layout = ({ children }: LayoutProps) => {
             exit={{ opacity: 0, y: 12 }}
             className="fixed bottom-4 left-1/2 z-[70] w-[min(90vw,28rem)] -translate-x-1/2"
           >
-            <div className="card px-4 py-3 text-sm text-manga-text" role="status" aria-live="polite">
+            <div
+              className="card px-4 py-3 text-sm text-manga-text"
+              role="status"
+              aria-live="polite"
+            >
               {surpriseMessage}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-      
-      {/* Dice rolling animation styles */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
+
+      {/* Dice rolling animation */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
           @keyframes diceRoll {
             0% { transform: rotate(0deg) scale(1); }
             25% { transform: rotate(90deg) scale(1.1); }
@@ -832,12 +760,12 @@ const Layout = ({ children }: LayoutProps) => {
             75% { transform: rotate(270deg) scale(1.1); }
             100% { transform: rotate(360deg) scale(1); }
           }
-          
           .dice-rolling {
             animation: diceRoll 0.3s linear infinite;
           }
-        `
-      }} />
+        `,
+        }}
+      />
     </div>
   );
 };
