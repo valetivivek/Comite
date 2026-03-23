@@ -26,12 +26,12 @@ The core browsing and reading experience exists. The backend story is still thin
 - The `/welcome` route now acts as a distilled reading-first landing page centered on browse, resume, and featured picks instead of a feature-marketing grid
 - The `/welcome` route now also uses a snippet-inspired announcement pill above the hero to surface resume or fresh-release context without adding another full content block
 - The shell now uses the restored gradient wordmark plus snippet-inspired pill navigation and CTA treatments instead of the flatter interim header
+- The main shell now renders a compact route-aware footer built from the shared UI footer block, with live browse, account, and legal links plus Vishnu Vivek Valeti portfolio attribution
 - Carousel hero, series hero, and reader navigation now use shared theme overlay and foreground tokens instead of one-off black, white, and gray styling
 - Alerts, status badges, modal backdrops, flair chips, and skeleton shimmer states now use shared theme helpers instead of raw red, gray, black, and white utility colors
 - Signup now includes a live password confirmation preview, profile uses a ring-and-badge avatar treatment, and destructive account actions use a shared text-button interaction instead of plain secondary buttons
-- Footer now uses a more expressive editorial composition with a large background wordmark and shared announcement pill treatment instead of a basic four-column block
 - Browse list rows and chapter links are adapted for touch-first mobile use with 44px targets and less cramped metadata layouts
-- Shared theme transitions are scoped to interactive surfaces, and the footer now uses deferred rendering to avoid work below the fold
+- Shared theme transitions are scoped to interactive surfaces
 - Notifications page
 - Settings page
 - Legal pages

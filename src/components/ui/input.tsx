@@ -47,7 +47,7 @@ export const Input = ({
   return (
     <div className={cn("relative", className)}>
       <motion.div
-        className="absolute top-1/2 -translate-y-1/2 pointer-events-none text-manga-muted text-sm font-medium pl-3"
+        className="absolute top-1/2 -translate-y-1/2 pointer-events-none text-manga-muted text-sm font-medium"
         variants={containerVariants}
         initial="initial"
         animate={showLabel ? "animate" : "initial"}
@@ -70,7 +70,7 @@ export const Input = ({
         onBlur={() => setIsFocused(false)}
         value={value}
         {...props}
-        className="outline-none border border-manga-border rounded-lg px-4 py-3 w-full text-base font-medium text-manga-text bg-manga-surface placeholder-transparent focus:ring-2 focus:ring-manga-accent focus:border-transparent transition-shadow"
+        className="outline-none border-b-2 border-manga-border py-2 w-full text-base font-medium text-manga-text bg-transparent placeholder-transparent transition-colors focus:border-manga-accent focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-none"
       />
     </div>
   );
@@ -110,7 +110,7 @@ export const Textarea = ({
         onBlur={() => setIsFocused(false)}
         value={value}
         {...props}
-        className="outline-none border border-manga-border rounded-lg px-4 py-3 w-full text-base font-medium text-manga-text bg-manga-surface placeholder-transparent focus:ring-2 focus:ring-manga-accent focus:border-transparent transition-shadow resize-none"
+        className="outline-none border border-manga-border rounded-lg px-4 py-3 w-full text-base font-medium text-manga-text bg-manga-surface placeholder-transparent transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-none resize-none"
       />
     </div>
   );

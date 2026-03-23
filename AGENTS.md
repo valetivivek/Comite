@@ -17,6 +17,10 @@
   - `docs/decisions.md` — rationale behind non-obvious choices
   - `docs/development.md` — commands, env vars, deployment, validation
 - Before finishing any material change, **update the affected `docs/*.md` files**.
+- Treat documentation as requiring refresh when either of these is true:
+  - the change affects architecture, routes, providers, services, APIs, environment variables, build/deploy config, storage model, theming foundations, or user-visible behavior
+  - the session changes `3+` implementation/config files, even if the drift seems small
+- For small focused edits under that threshold, update docs only if the written behavior or structure would become inaccurate.
 - `README.md` and `IMPLEMENTATION.md` are secondary/historical unless explicitly re-synced.
 
 ## Commands

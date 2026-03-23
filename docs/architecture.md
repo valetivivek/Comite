@@ -113,7 +113,6 @@ Primary keys used in `localStorage`:
 - `manga-reader-reading-stats`
 - `manga-reader-user-history`
 - `chapter-sort-order`
-- `comment-author`
 
 ### Service Layer
 

@@ -52,6 +52,7 @@ The upload endpoint only accepts JPG, PNG, and WebP files up to 10 MB, validates
 
 - Do not assume Next.js. This repo is currently Vite-driven.
 - Do not invent a test command. No test script exists today.
+- Shadcn CLI compatibility is configured through `components.json`; generated UI primitives should land in `src/components/ui` and point styles at `src/index.css`.
 - Preserve license and legal files.
 - Treat `README.md` as public-facing and `docs/` as the canonical internal knowledge base.
 - When you change architecture, behavior, commands, or project assumptions, update `docs/` in the same task.

@@ -11,7 +11,6 @@ import {
 import { dataService } from '../services/dataService';
 import { readingStatsService } from '../services/readingStatsService';
 import { Series, Chapter } from '../types';
-import CommentSection from '../components/CommentSection';
 import Breadcrumb from '../components/Breadcrumb';
 
 const ReaderPage = () => {
@@ -528,14 +527,6 @@ const ReaderPage = () => {
             </div>
           </div>
 
-          {/* Comments Section */}
-          <div className="py-8">
-            <CommentSection 
-              contextId={`${series.id}-${chapter.id}`} 
-              contextType="chapter" 
-              title={`Comments for Chapter ${chapter.chapterNumber}`}
-            />
-          </div>
         </div>
       </div>
 
